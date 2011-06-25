@@ -1,0 +1,19 @@
+main: de.MrX13415.ButtonLock.ButtonLock
+
+name: ButtonLock
+version: 0.3 r8 (MC 1.6.6)
+description: ---
+author: MrX13415
+
+commands:
+  setPassword:
+    aliases: setpw
+    description: Set, changes or removes a password
+    usage: |
+           <command> <password>   Set/changes a password
+           <command>              Removes a password 
+  Password:
+    aliases: pw
+    description: Enter a password
+    usage: |
+           <command> <password>   Enter a password

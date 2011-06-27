@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -14,18 +15,21 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
-
+/** ButtonLock for Bukkit
+ * 
+ * @author Oliver Daus
+ * @version 0.4 r10
+ */
 public class ButtonLock extends JavaPlugin {
 	
 	static Server server = null;
 	static Logger log = null;
 	static String pluginName = null;
 	static String consoleOutputHeader = null;
-//	static Config configFile = null;
+	static Config configFile = null;
 	static LockedBlocks lockedBlocksFile = null;
 	
 	//permissions
@@ -35,6 +39,7 @@ public class ButtonLock extends JavaPlugin {
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
 	public static ArrayList<Button> buttonlist = new ArrayList<Button>();
+	public static ArrayList<Material> lockableBlocksList = new ArrayList<Material>();
 	
 	private final ButtonLockPlayerListener pListener = new ButtonLockPlayerListener();
 	private final ButtonLockBlockListener bListener = new ButtonLockBlockListener();
@@ -60,14 +65,21 @@ public class ButtonLock extends JavaPlugin {
 
         log.info(consoleOutputHeader + " v" + pdfFile.getVersion() + " " + pdfFile.getAuthors() + " is enabled.");
   
-//        configFile = new Config();
-//        configFile.read();
+        //load config ...
+        configFile = new Config();
+        configFile.read();
+        
+        //load locked Buttons ...
+        lockedBlocksFile = new LockedBlocks();
+        lockedBlocksFile.read();
+		
         //---------------------
                 
         //register events ...
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
@@ -81,11 +93,6 @@ public class ButtonLock extends JavaPlugin {
 		}
 				
 		setupPermissions();
-		
-		//load locked Buttons ...
-        lockedBlocksFile = new LockedBlocks();
-        lockedBlocksFile.read();
-		
 	}
 	
 //    public boolean isDebugging(final Player player) {
@@ -102,10 +109,26 @@ public class ButtonLock extends JavaPlugin {
     
 	public static boolean isProtectable(Block block){
 		if (block != null) {
-			if ((block.getType() == Material.STONE_BUTTON) ||
-				(block.getType() == Material.LEVER)) return true;
+
+			for (int materialIndex = 0; materialIndex < lockableBlocksList.size(); materialIndex++) {
+				Material material = lockableBlocksList.get(materialIndex);
+
+				if (block.getType().equals(material)) return true;	
+			}
 		}
 		return false;
+	}
+		
+	public static Block getProtectableBlockAtBlock(Block block) {
+		BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP}; 
+		
+		for (BlockFace currentface : faces) {
+			Block attachedBlock = block.getFace(currentface);
+			if (ButtonLock.isProtectable(attachedBlock)) {
+				return attachedBlock;
+			}
+		}
+		return null;
 	}
 	
     private void setupPermissions() {
@@ -182,10 +205,10 @@ public class ButtonLock extends JavaPlugin {
 		return tmpButton;
 	}
 
-	public static void checkPassword(PlayerVars tmpVars, String code){
+	public static void checkPassword(PlayerVars tmpVars, int passwordHashCode){
 		//check if the password was correct ...
-		if (code.equals(tmpVars.getCurrentClickedLockedButton().getPassword())) {
-			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCESS);
+		if (passwordHashCode == tmpVars.getCurrentClickedLockedButton().getPassword()) {
+			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
 			tmpVars.getCurrentClickedLockedButton().setUnlock(true);
 		
 		}else{

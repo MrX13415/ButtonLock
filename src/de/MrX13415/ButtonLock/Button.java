@@ -7,14 +7,14 @@ public class Button{
 
 	private Block block;
 	
-	private String password = "";
+	private int password = 0;	//contains only the Hash of the password ...
 	private boolean unlocked = true;
 	
-	public void setPassword(String password){
-		this.password = password;
+	public void setPassword(int passwordHashCode){
+		this.password = passwordHashCode;
 	}
 	
-	public String getPassword(){
+	public int getPassword(){
 		return password;
 	}
 	
@@ -33,5 +33,5 @@ public class Button{
 	public void setBlock(Block block){
 		this.block = block;
 	}
-		
+
 }

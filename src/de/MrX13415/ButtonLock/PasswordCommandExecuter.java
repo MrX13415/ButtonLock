@@ -20,12 +20,13 @@ public class PasswordCommandExecuter implements CommandExecutor{
 	        
 	        if (tmpVars != null) {
 				if (args.length == 1){
-					String tmpPw = args[0];
+					String tmpPassword = args[0];
 
 					if (tmpVars.isEnteringCode()) {
-						player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(tmpPw));
-						ButtonLock.checkPassword(tmpVars, tmpPw);
+						player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(tmpPassword));
+						ButtonLock.checkPassword(tmpVars, tmpPassword.hashCode());
 						tmpVars.getCurrentClickedLockedButton().setUnlock(true);
+						tmpVars.setEnteringCode(false);
 						return true;
 					}
 				}

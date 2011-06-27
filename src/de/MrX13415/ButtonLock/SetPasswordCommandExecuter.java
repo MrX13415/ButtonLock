@@ -32,7 +32,7 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 					if (button.isUnlocked()) {
 						if (args.length == 1) {
 							button.setBlock(tmpVars.getCurrentClickedBlock());
-							button.setPassword(args[0]);
+							button.setPassword(args[0].hashCode());
 							button.setUnlock(false);
 							
 							if (isAnewButton) ButtonLock.addButton(button);

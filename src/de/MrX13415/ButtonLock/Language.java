@@ -4,9 +4,10 @@ import org.bukkit.ChatColor;
 
 public class Language {
 
-	static final String TEXT_SUCCESS = ChatColor.GREEN + "SUCCESS";
+	static final String TEXT_SUCCEED = ChatColor.GREEN + "SUCCEED";
 	static final String TEXT_DENIED = ChatColor.RED + "DENIED";
-	static final String TEXT_ENTER_CODE = ChatColor.WHITE + "Enter the required password in the Chat: ";
+	static final String TEXT_ENTER_CODE_CHAT = ChatColor.WHITE + "Enter the required password in the Chat: ";
+	static final String TEXT_ENTER_CODE_COMMAND = ChatColor.WHITE + "Enter the required password with '/pw <password>' ";
 	static final String TEXT_CODE = ChatColor.GOLD + "Password: ";
 	static final String TEXT_PW_CHANGED = ChatColor.GRAY + "Password changed ...";
 	static final String TEXT_WHICH_BUTTON = ChatColor.RED + "Select a Button first ...";

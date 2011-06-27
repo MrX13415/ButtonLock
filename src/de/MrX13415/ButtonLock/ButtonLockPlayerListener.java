@@ -48,7 +48,12 @@ public class ButtonLockPlayerListener extends PlayerListener {
 			if (! button.isUnlocked()) {
 				//inform player to enter a code ...
 				player.sendMessage(Language.TEXT_DENIED);
-				player.sendMessage(Language.TEXT_ENTER_CODE);
+				
+				if (ButtonLock.configFile.useChatforPasswordInput) {
+					player.sendMessage(Language.TEXT_ENTER_CODE_CHAT);
+				}else {
+					player.sendMessage(Language.TEXT_ENTER_CODE_COMMAND);
+				}
 				
 				currentPlayerVars.setEnteringCode(true);					//go into entering password mode
 				currentPlayerVars.setCurrentClickedLockedButton(button);	//set current button 
@@ -72,27 +77,22 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 		
 		if (currentPlayerVars.isEnteringCode()) {
-			//get entered text ...
-			String enteredCode = event.getMessage();
-			
-			//Don't display the entered text int the chat ... 
-			event.setCancelled(true);
-			
-			//display the password to the Player...
-			player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(enteredCode));
-			
-			//check if the password was correct ...
-			if (enteredCode.equals(currentPlayerVars.getCurrentClickedLockedButton().getPassword())) {
-				player.sendMessage(Language.TEXT_SUCCESS);
-				currentPlayerVars.getCurrentClickedLockedButton().setUnlock(true);
-			
-			}else{
-				player.sendMessage(Language.TEXT_DENIED);
-				currentPlayerVars.getCurrentClickedLockedButton().setUnlock(false);
+			if (ButtonLock.configFile.useChatforPasswordInput) {
+				//get entered text ...
+				String enteredCode = event.getMessage();
 				
+				//Don't display the entered text int the chat ... 
+				event.setCancelled(true);
+				
+				//display the password to the Player...
+				player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(enteredCode));
+				
+				//check if the password was correct ...
+				ButtonLock.checkPassword(currentPlayerVars, enteredCode.hashCode());
+
+				//leave password entering mode.
+				currentPlayerVars.setEnteringCode(false);	
 			}
-			//leave password entering mode.
-			currentPlayerVars.setEnteringCode(false);
 		}
     } 
     

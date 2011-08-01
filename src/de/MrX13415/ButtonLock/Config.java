@@ -13,14 +13,20 @@ public class Config {
 	private String configFileName = "config.yml";
 	private String configFilePath = "plugins/" + ButtonLock.pluginName + "/";
 	
-	private static final String keyUseChatforPasswordInput = "useChatforPasswordInput";
-	private static final String listLockableBlocks = "ListLockableBlocks:";
+	private static final String keyUseChatforPasswordInput = "UseChatforPasswordInput";
+	private static final String keyUsePermissions = "UsePermsissions";
+	private static final String keyUseIConomy = "UseIConomy";
+	private static final String keyIConomyCosts = "Costs";
+	private static final String listLockableBlocks = "LockableBlocksList:";
 	private static final String fileFormat_keys = "%s: %s"; 
 	private static final String fileFormat_lists_start = "  - "; 
 	private static final String fileFormat_lists = fileFormat_lists_start + "%s";
 		
 	//-- file content --
 	public boolean useChatforPasswordInput = true;
+	public boolean usePermissions = true;
+	public boolean useIConomy = false;
+	public double iConomyCosts = 0.50;
 	//------------------
 	public String currentlist;	
 	
@@ -47,16 +53,19 @@ public class Config {
 					String[] keyLine = line.replace(" ", "").split(":");
 					
 					if (keyLine[0].equalsIgnoreCase(keyUseChatforPasswordInput)) {
-						String tmpValue = keyLine[1].toLowerCase();
-						if (tmpValue.contains("true")) {
-							useChatforPasswordInput= true;
-						}else if (tmpValue.contains("false")) {
-							useChatforPasswordInput = false;
-						}else if (tmpValue.contains("1")) {
-							useChatforPasswordInput = true;
-						}else if (tmpValue.contains("0")) {
-							useChatforPasswordInput = false;
-						}
+						useChatforPasswordInput = Boolean.valueOf(keyLine[1]);
+					}
+										
+					if (keyLine[0].equalsIgnoreCase(keyUsePermissions)) {
+						usePermissions = Boolean.valueOf(keyLine[1]);
+					}
+					
+					if (keyLine[0].equalsIgnoreCase(keyUseIConomy)) {
+						useIConomy = Boolean.valueOf(keyLine[1]);
+					}
+					
+					if (keyLine[0].equalsIgnoreCase(keyIConomyCosts)) {
+						iConomyCosts = Double.valueOf(keyLine[1]);
 					}
 
 				}				
@@ -65,11 +74,14 @@ public class Config {
 			}
 
 		} catch (FileNotFoundException e) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: config.yml in '" + ButtonLock.pluginName + "' not found.");
+			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: config file not found.");
 			
 			ButtonLock.lockableBlocksList.add(Material.STONE_BUTTON);
 			ButtonLock.lockableBlocksList.add(Material.LEVER);
 			ButtonLock.lockableBlocksList.add(Material.CHEST);
+			ButtonLock.lockableBlocksList.add(Material.WOODEN_DOOR);
+			ButtonLock.lockableBlocksList.add(Material.IRON_DOOR_BLOCK);
+			ButtonLock.lockableBlocksList.add(Material.TRAP_DOOR);
 			if (write()) { //create new File
 				ButtonLock.log.info(ButtonLock.consoleOutputHeader + " New Config file created. (" + ButtonLock.pluginName + "/config.yml)");
 			}
@@ -85,6 +97,9 @@ public class Config {
 			writer = new FileWriter(configFilePath + configFileName);
 			
 			writer.write(String.format(fileFormat_keys, keyUseChatforPasswordInput, useChatforPasswordInput) + "\n");
+			writer.write(String.format(fileFormat_keys, keyUsePermissions, usePermissions) + "\n");
+			writer.write(String.format(fileFormat_keys, keyUseIConomy, useIConomy) + "\n");
+			writer.write(String.format(fileFormat_keys, keyIConomyCosts , iConomyCosts) + "\n");
 			writer.write(listLockableBlocks + "\n");
 			
 			for (int index = 0; index < ButtonLock.lockableBlocksList.size(); index++) {

@@ -8,7 +8,7 @@ public class PlayerVars{
 
 	private Player player;
 
-	private Button currentClickedLockedButton;
+	private LockedBlockGroup currentClickedLockedButton;
 	private Block currentClickedBlock;
 	
 	private boolean isEnteringCode = false;
@@ -22,11 +22,11 @@ public class PlayerVars{
 		return player;
 	}
 	
-	public Button getCurrentClickedLockedButton() {
+	public LockedBlockGroup getCurrentClickedLockedButton() {
 		return currentClickedLockedButton;
 	}
 	
-	public void setCurrentClickedLockedButton(Button button) {
+	public void setCurrentClickedLockedButton(LockedBlockGroup button) {
 		currentClickedLockedButton = button;
 	}
 	

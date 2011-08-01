@@ -16,6 +16,18 @@ public class PasswordCommandExecuter implements CommandExecutor{
 	    if (sender instanceof Player) {
 	        Player player = (Player) sender;
 
+	        if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+				//use Permission
+				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
+					return false;
+				}
+			}else{
+				//no Permission installed ! (op only)
+				if (! sender.isOp()) {
+					return false;
+				}
+			}
+	        
 	        PlayerVars tmpVars = ButtonLock.getPlayerVars(player);
 	        
 	        if (tmpVars != null) {
@@ -24,8 +36,8 @@ public class PasswordCommandExecuter implements CommandExecutor{
 
 					if (tmpVars.isEnteringCode()) {
 						player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(tmpPassword));
-						ButtonLock.checkPassword(tmpVars, tmpPassword.hashCode());
-						tmpVars.getCurrentClickedLockedButton().setUnlock(true);
+						LockedBlockGroup.checkPassword(tmpVars, tmpPassword.hashCode());
+//						tmpVars.getCurrentClickedLockedButton().setUnlock(true);
 						tmpVars.setEnteringCode(false);
 						return true;
 					}

@@ -5,27 +5,43 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 
+import com.iConomy.iConomy;
+import com.iConomy.system.Account;
+import com.iConomy.system.Holdings;
+
 
 public class ButtonLockPlayerListener extends PlayerListener {
-
+	
+	public String toBin(int bin){
+		String returnS = "00000000";
+		String binS = Integer.toBinaryString(bin); 
+		return returnS.substring(0, 7 - (binS.length() - 1)) + binS;
+	}
+	
 	public void onPlayerInteract(PlayerInteractEvent event){
+//		try {
+//			System.out.println("DATA: " + toBin(event.getClickedBlock().getData()) );
+//			System.out.println("MATERIAL: " + event.getClickedBlock().getType());
+//		} catch (Exception e) {
+//		}
+
     	if ((event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-//    		Player player = event.getPlayer();
+    		Player player = event.getPlayer();
     		Block block = event.getClickedBlock();
     	
-
-			//clicked block is a button ...
+			//clicked block is a protectable block ...
 			if (ButtonLock.isProtectable(block)) {
-
-//    		if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
-//    			//use Permission
-//    			if (ButtonLock.permissionHandler.permission(player, ButtonLock.PERMISSION_NODE_Massband_use)) {
-//        			playerInteract(player, block);
-//    			}
-//			}else{
-				//no Permission installed ! (everyone has access)
-				playerInteract(event);
-//			}
+	    		if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+	    			//use Permission
+	    			if (ButtonLock.permissionHandler.permission(player, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
+	        			playerInteract(event);
+	    			}
+				}else{
+					//no Permission installed ! (op only)
+					if (player.isOp()) {
+						playerInteract(event);
+					}
+				}
 			}
     	}
     }	
@@ -39,13 +55,13 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 
 		//find Button in the locked-button-list ...
-		Button button = ButtonLock.getButton(block);
-
+		LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+		
 		//button was founded ...
-		if (button != null) {
+		if (group != null) {
 		
 			//button is locked
-			if (! button.isUnlocked()) {
+			if (! group.isUnlocked()) {
 				//inform player to enter a code ...
 				player.sendMessage(Language.TEXT_DENIED);
 				
@@ -56,21 +72,55 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				}
 				
 				currentPlayerVars.setEnteringCode(true);					//go into entering password mode
-				currentPlayerVars.setCurrentClickedLockedButton(button);	//set current button 
+				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
 				currentPlayerVars.setCurrentClickedBlock(block);
 				
 				event.setCancelled(true);						//cancel event because the button is locked ...
 			}			
+
+			//iconom
+			if (ButtonLock.configFile.useIConomy && ! event.isCancelled()) {
+				if (iConomy.hasAccount(player.getName())){
+					
+					Account account = iConomy.getAccount(player.getName());
+					if(account != null){ // check if the account is valid
+						Holdings balance = account.getHoldings();
+						
+						Double costs = ButtonLock.configFile.iConomyCosts;
+						
+						if (balance.hasEnough(costs)) {
+							balance.subtract(costs);
+							player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED);
+						}else {
+							//not enough mony ...
+							player.sendMessage(Language.TEXT_DENIED);
+							player.sendMessage(Language.TEXT_ICONOMY_LESS_MONY);
+							event.setCancelled(true);
+						}
+					}else{
+						//acc is not valid ...
+						player.sendMessage(Language.TEXT_DENIED);
+						player.sendMessage(Language.TEXT_ICONOMY_NOT_VALID_ACC);
+						event.setCancelled(true);
+					}
+				}else{
+					//no acc ...
+					player.sendMessage(Language.TEXT_DENIED);
+					player.sendMessage(Language.TEXT_ICONOMY_NO_ACC);
+					event.setCancelled(true);
+				}
+			}
 			
-			//lock button
-			button.setUnlock(false);
+			//----------------------------------------------------
+			//button, etc. was successful pressed or similar ...
+			//-----------------------------------------------------
+			
+			group.setUnlock(false);
 		}else{
 			//add a button?
 			currentPlayerVars.setCurrentClickedBlock(block);
-		}
-		
-		
-	}
+		}		
+	}   
 
     public void onPlayerChat(PlayerChatEvent event){
 		Player player = event.getPlayer();
@@ -88,7 +138,7 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(enteredCode));
 				
 				//check if the password was correct ...
-				ButtonLock.checkPassword(currentPlayerVars, enteredCode.hashCode());
+				LockedBlockGroup.checkPassword(currentPlayerVars, enteredCode.hashCode());
 
 				//leave password entering mode.
 				currentPlayerVars.setEnteringCode(false);	

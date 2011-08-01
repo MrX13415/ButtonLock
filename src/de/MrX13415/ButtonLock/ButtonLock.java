@@ -3,11 +3,9 @@ package de.MrX13415.ButtonLock;
 import java.util.ArrayList;
 //import java.util.HashMap;
 import java.util.logging.Logger;
-
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -17,11 +15,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.iConomy.*;
 
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.4 r10
+ * @version 0.5 r13
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -30,15 +29,19 @@ public class ButtonLock extends JavaPlugin {
 	static String pluginName = null;
 	static String consoleOutputHeader = null;
 	static Config configFile = null;
-	static LockedBlocks lockedBlocksFile = null;
+	static LockedGroupsConfig lockedGroupsFile = null;
+	
+	//iconomy
+	public static iConomy iConomy = null;
 	
 	//permissions
 	static PermissionHandler permissionHandler;
-//	static final String PERMISSION_NODE_Massband_use = "Massband.use";
+	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
+	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
 	
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
-	public static ArrayList<Button> buttonlist = new ArrayList<Button>();
+	public static ArrayList<LockedBlockGroup> grouplist = new ArrayList<LockedBlockGroup>();
 	public static ArrayList<Material> lockableBlocksList = new ArrayList<Material>();
 	
 	private final ButtonLockPlayerListener pListener = new ButtonLockPlayerListener();
@@ -48,9 +51,9 @@ public class ButtonLock extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-        lockedBlocksFile = new LockedBlocks();
-        lockedBlocksFile.write();
-        log.info(consoleOutputHeader + " locked Blocks saved");
+        lockedGroupsFile = new LockedGroupsConfig();
+        lockedGroupsFile.write();
+        log.info(consoleOutputHeader + " locked Groups saved");
 	}
 
 	@Override
@@ -70,8 +73,8 @@ public class ButtonLock extends JavaPlugin {
         configFile.read();
         
         //load locked Buttons ...
-        lockedBlocksFile = new LockedBlocks();
-        lockedBlocksFile.read();
+        lockedGroupsFile = new LockedGroupsConfig();
+        lockedGroupsFile.read();
 		
         //---------------------
                 
@@ -80,6 +83,13 @@ public class ButtonLock extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
+
+		pm.registerEvent(Event.Type.BLOCK_FADE, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_FORM, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_FROMTO, bListener, Priority.Normal, this);
+		
+		pm.registerEvent(Event.Type.BLOCK_PHYSICS, bListener, Priority.Normal, this);
+		
 		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
@@ -92,6 +102,11 @@ public class ButtonLock extends JavaPlugin {
 			log.warning("[" + pdfFile.getName() + "] Error: Commands not definated in 'plugin.yaml'");
 		}
 				
+		//iconomy
+		getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_ENABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
+	    getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_DISABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
+	   
+		//permission
 		setupPermissions();
 	}
 	
@@ -118,17 +133,20 @@ public class ButtonLock extends JavaPlugin {
 		}
 		return false;
 	}
-		
-	public static Block getProtectableBlockAtBlock(Block block) {
-		BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP}; 
-		
-		for (BlockFace currentface : faces) {
-			Block attachedBlock = block.getFace(currentface);
-			if (ButtonLock.isProtectable(attachedBlock)) {
-				return attachedBlock;
+	
+	public static boolean isProtected(Block block){
+		for (int groupIndex = 0; groupIndex < grouplist.size(); groupIndex++) {
+			LockedBlockGroup group = grouplist.get(groupIndex);
+			
+			for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
+				Block protectedBlock = group.getBlock(blockIndex);
+
+				if (block.equals(protectedBlock)) {
+					return true;
+				}
 			}
 		}
-		return null;
+		return false;
 	}
 	
     private void setupPermissions() {
@@ -179,42 +197,30 @@ public class ButtonLock extends JavaPlugin {
 		return playerVars;
 	}
     
-    public static void addButton(Button button) {
-    	buttonlist.add(button);
+    public static void addLockedGroup(LockedBlockGroup block) {
+    	grouplist.add(block);
 	}
 	
-	public static void removeButton(Button button) {
-		if(button != null) buttonlist.remove(button);
+	public static void removeLockedBlock(LockedBlockGroup block) {
+		if(block != null) grouplist.remove(block);
 	}
     
-    /** returns the Button for the given block
+    /** returns the Group for the given block
 	 *   
 	 * @param player
 	 * @return
 	 */
-	public static Button getButton(Block block) {
-		Button tmpButton = null;
-		
-		for (int buttonIndex = 0; buttonIndex < buttonlist.size(); buttonIndex++) {
-    		if (buttonlist.get(buttonIndex).getBlock().equals(block)) {	//button found
-    			tmpButton = buttonlist.get(buttonIndex);
-    			break;
+	public static LockedBlockGroup getLockedGroup(Block block) {	
+		for (int buttonIndex = 0; buttonIndex < grouplist.size(); buttonIndex++) {
+    		LockedBlockGroup group = grouplist.get(buttonIndex);
+
+			for (int groupIndex = 0; groupIndex < group.getGroupSize(); groupIndex++) {
+				if (group.getBlock(groupIndex).equals(block)) {	//button found
+	    			return group;
+				}	
 			}
     	}
 
-		return tmpButton;
+		return null;
 	}
-
-	public static void checkPassword(PlayerVars tmpVars, int passwordHashCode){
-		//check if the password was correct ...
-		if (passwordHashCode == tmpVars.getCurrentClickedLockedButton().getPassword()) {
-			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
-			tmpVars.getCurrentClickedLockedButton().setUnlock(true);
-		
-		}else{
-			tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
-			tmpVars.getCurrentClickedLockedButton().setUnlock(false);
-		}
-	}
-	
 }

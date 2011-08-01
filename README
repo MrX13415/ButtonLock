@@ -3,13 +3,22 @@ Readme
 =======
 
 ButtonLock
-Version: 0.4 r10
+Version: 0.5 r13
 
 Locking able Buttons an Levers in Minecraft for Bukkit
 
 by: MrX13415
 
 Changelog:
+Version: 0.5
+    * ADD: Permission Support
+    * ADD: IConomy Support
+    * ADD: More options in the config
+    * FIX: Locked blocks save-file-format changed
+    * FIX: Better block protection
+    * FIX: Password bug
+    * FIX: Double-blocks (like doors) are full lockable too
+    
 Version: 0.4
     * ADD: Config file
     * ADD: Split save file into one file for each world.

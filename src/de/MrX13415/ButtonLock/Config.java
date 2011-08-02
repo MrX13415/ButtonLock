@@ -17,16 +17,19 @@ public class Config {
 	private static final String keyUsePermissions = "UsePermsissions";
 	private static final String keyUseIConomy = "UseIConomy";
 	private static final String keyIConomyCosts = "Costs";
+	private static final String keyTimeforEnteringPassword = "TimeforEnteringPassword";
 	private static final String listLockableBlocks = "LockableBlocksList:";
 	private static final String fileFormat_keys = "%s: %s"; 
 	private static final String fileFormat_lists_start = "  - "; 
 	private static final String fileFormat_lists = fileFormat_lists_start + "%s";
+	private static final String fileFormat_Comments_prefix = "#";
 		
 	//-- file content --
 	public boolean useChatforPasswordInput = true;
 	public boolean usePermissions = true;
 	public boolean useIConomy = false;
 	public double iConomyCosts = 0.50;
+	public long timeforEnteringPassword = 10000;  //millis
 	//------------------
 	public String currentlist;	
 	
@@ -40,34 +43,39 @@ public class Config {
 				while (reader.ready()) {
 					String line = reader.readLine();
 
-					if (line.startsWith(listLockableBlocks)) {
-						currentlist = listLockableBlocks;
-					}
+					if (! line.startsWith(fileFormat_Comments_prefix)) {
+						if (line.startsWith(listLockableBlocks)) {
+							currentlist = listLockableBlocks;
+						}
 
-					if (line.startsWith(fileFormat_lists_start)) {
-						if (currentlist.equals(listLockableBlocks)) {
-							ButtonLock.lockableBlocksList.add(Material.getMaterial(line.replace(fileFormat_lists_start, "")));
+						if (line.startsWith(fileFormat_lists_start)) {
+							if (currentlist.equals(listLockableBlocks)) {
+								ButtonLock.lockableBlocksList.add(Material.getMaterial(line.replace(fileFormat_lists_start, "")));
+							}
+						}
+						
+						String[] keyLine = line.replace(" ", "").split(":");
+						
+						if (keyLine[0].equalsIgnoreCase(keyUseChatforPasswordInput)) {
+							useChatforPasswordInput = Boolean.valueOf(keyLine[1]);
+						}
+											
+						if (keyLine[0].equalsIgnoreCase(keyUsePermissions)) {
+							usePermissions = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyUseIConomy)) {
+							useIConomy = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyIConomyCosts)) {
+							iConomyCosts = Double.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyTimeforEnteringPassword)) {
+							timeforEnteringPassword = Long.valueOf(keyLine[1]);
 						}
 					}
-					
-					String[] keyLine = line.replace(" ", "").split(":");
-					
-					if (keyLine[0].equalsIgnoreCase(keyUseChatforPasswordInput)) {
-						useChatforPasswordInput = Boolean.valueOf(keyLine[1]);
-					}
-										
-					if (keyLine[0].equalsIgnoreCase(keyUsePermissions)) {
-						usePermissions = Boolean.valueOf(keyLine[1]);
-					}
-					
-					if (keyLine[0].equalsIgnoreCase(keyUseIConomy)) {
-						useIConomy = Boolean.valueOf(keyLine[1]);
-					}
-					
-					if (keyLine[0].equalsIgnoreCase(keyIConomyCosts)) {
-						iConomyCosts = Double.valueOf(keyLine[1]);
-					}
-
 				}				
 			} catch (Exception e) {
 				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while reading.");
@@ -97,9 +105,14 @@ public class Config {
 			writer = new FileWriter(configFilePath + configFileName);
 			
 			writer.write(String.format(fileFormat_keys, keyUseChatforPasswordInput, useChatforPasswordInput) + "\n");
+			writer.write(fileFormat_Comments_prefix + " in milliseconds (1000 = 1 sec)\n");
+			writer.write(String.format(fileFormat_keys, keyTimeforEnteringPassword, timeforEnteringPassword) + "\n");
+			writer.write("\n");
 			writer.write(String.format(fileFormat_keys, keyUsePermissions, usePermissions) + "\n");
+			writer.write(fileFormat_Comments_prefix + " IConomy\n");
 			writer.write(String.format(fileFormat_keys, keyUseIConomy, useIConomy) + "\n");
 			writer.write(String.format(fileFormat_keys, keyIConomyCosts , iConomyCosts) + "\n");
+			writer.write("\n");
 			writer.write(listLockableBlocks + "\n");
 			
 			for (int index = 0; index < ButtonLock.lockableBlocksList.size(); index++) {

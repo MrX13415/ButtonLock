@@ -1,19 +1,24 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 0.5 (MC 1.7.3)
+version: 0.6 (MC 1.7.3)
 description: Lock Buttons, Levers and Blocks
 author: MrX13415
 
 commands:
-  setPassword:
+  setpassword:
     aliases: setpw
     description: Set, changes or removes a password
     usage: |
            <command> <password>   Set/changes a password
            <command>              Removes a password 
-  Password:
+  password:
     aliases: pw
     description: Enter a password
     usage: |
            <command> <password>   Enter a password
+  singleusepassword:
+    aliases: supw
+    description: add or remove a single-use-password
+    usage: |
+           <command> <add|remove> <password>  add/removes a single-use-password

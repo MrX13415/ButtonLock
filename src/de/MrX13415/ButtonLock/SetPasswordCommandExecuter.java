@@ -56,10 +56,6 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 								group.addBlock(attachedBlock);								
 							}
 							
-							//TODO: add more block egg. door, bed, chests ...
-							
-							
-							
 							group.setPassword(args[0].hashCode());
 							group.setUnlock(false);
 							
@@ -76,6 +72,9 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 						}
 					}else{
 						player.sendMessage(Language.TEXT_DENIED);
+						if (args.length == 0){
+							player.sendMessage(Language.TEXT_ENTER_CODE_FIRST);
+						}
 						return true;
 					}
 				}else{

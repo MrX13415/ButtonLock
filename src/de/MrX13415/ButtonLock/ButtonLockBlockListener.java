@@ -25,7 +25,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
-			event.setCancelled(true); // cancel event because the button is locked ...
+			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+			if (! group.isUnlocked()) {
+				event.setCancelled(true); // cancel event because the button is locked ...
+			}
 		}
 	}
 
@@ -35,7 +38,12 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
-			event.setCancelled(true); // cancel event because the button is locked ...
+			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+			if (! group.isUnlocked()) {
+				event.setCancelled(true); // cancel event because the button is locked ...
+			}else{
+				group.setUnlock(false);
+			}
 		}
 	}
 
@@ -45,7 +53,12 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
-			event.setCancelled(true); // cancel event because the button is locked ...
+			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+			if (! group.isUnlocked()) {
+				event.setCancelled(true); // cancel event because the button is locked ...
+			}else{
+				group.setUnlock(false);
+			}
 		}
 	}
 }

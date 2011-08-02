@@ -33,12 +33,15 @@ public class PasswordCommandExecuter implements CommandExecutor{
 	        if (tmpVars != null) {
 				if (args.length == 1){
 					String tmpPassword = args[0];
-
+					tmpVars.setLastPassword(tmpPassword);
+					
 					if (tmpVars.isEnteringCode()) {
 						player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(tmpPassword));
 						LockedBlockGroup.checkPassword(tmpVars, tmpPassword.hashCode());
-//						tmpVars.getCurrentClickedLockedButton().setUnlock(true);
 						tmpVars.setEnteringCode(false);
+						return true;
+					}else if(tmpVars.getLastPassword() != null){
+						player.sendMessage(Language.TEXT_UNLOCK_BLOCK);
 						return true;
 					}
 				}

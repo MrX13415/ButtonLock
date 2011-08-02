@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.5 r13
+ * @version 0.6 r14
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -38,6 +38,7 @@ public class ButtonLock extends JavaPlugin {
 	static PermissionHandler permissionHandler;
 	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
+	static final String PERMISSION_NODE_ButtonLock_singleUseCods = "ButtonLock.singleusecods";
 	
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
@@ -83,21 +84,17 @@ public class ButtonLock extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
-
-		pm.registerEvent(Event.Type.BLOCK_FADE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_FORM, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_FROMTO, bListener, Priority.Normal, this);
-		
 		pm.registerEvent(Event.Type.BLOCK_PHYSICS, bListener, Priority.Normal, this);
-		
+
 		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
 		
 		//register commands ...
 		try {
-			this.getCommand("setPassword").setExecutor(new SetPasswordCommandExecuter());
-			this.getCommand("Password").setExecutor(new PasswordCommandExecuter());
+			this.getCommand("setpassword").setExecutor(new SetPasswordCommandExecuter());
+			this.getCommand("password").setExecutor(new PasswordCommandExecuter());
+			this.getCommand("singleusepassword").setExecutor(new SingleUsePasswordCommandExecuter());
 		} catch (Exception e) {
 			log.warning("[" + pdfFile.getName() + "] Error: Commands not definated in 'plugin.yaml'");
 		}

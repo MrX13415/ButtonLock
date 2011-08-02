@@ -12,7 +12,8 @@ public class PlayerVars{
 	private Block currentClickedBlock;
 	
 	private boolean isEnteringCode = false;
-//	private String enteredCode = "";
+	private long timeSinceEnteringCode = 0;
+	private String lastPassword = null;
 	
 	public PlayerVars(Player player){
 		this.player = player;
@@ -22,7 +23,7 @@ public class PlayerVars{
 		return player;
 	}
 	
-	public LockedBlockGroup getCurrentClickedLockedButton() {
+	public LockedBlockGroup getCurrentClickedLockedGroup() {
 		return currentClickedLockedButton;
 	}
 	
@@ -42,8 +43,21 @@ public class PlayerVars{
 		return isEnteringCode;
 	}
 	
+	public void setLastPassword(String password) {
+		lastPassword = password;
+	}
+	
+	public String getLastPassword() {
+		return lastPassword;
+	}
+	
 	public void setEnteringCode(boolean isEnteringCode) {
+		timeSinceEnteringCode = System.currentTimeMillis();
 		this.isEnteringCode = isEnteringCode;
+	}
+	
+	public long getTimeSinceEnteringCode() {
+		return timeSinceEnteringCode;
 	}
 	
 }

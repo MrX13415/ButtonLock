@@ -9,8 +9,10 @@ public class LockedBlockGroup{
 	private ArrayList<Block> lockedBlocks = new ArrayList<Block>();
 	
 	private int password = 0;	//contains only the Hash of the password ...
-	private boolean unlocked = true;
+	private ArrayList<Integer> singleUseCods = new ArrayList<Integer>();
 	
+	private boolean unlocked = true;
+
 	public void setPassword(int passwordHashCode){
 		this.password = passwordHashCode;
 	}
@@ -21,13 +23,21 @@ public class LockedBlockGroup{
 	
 	public static void checkPassword(PlayerVars tmpVars, int passwordHashCode){
 		//check if the password was correct ...
-		if (passwordHashCode == tmpVars.getCurrentClickedLockedButton().getPassword()) {
-			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
-			tmpVars.getCurrentClickedLockedButton().setUnlock(true);
+		LockedBlockGroup group = tmpVars.getCurrentClickedLockedGroup();
 		
+		Boolean isSingleUseCode = group.checkSingleUseCode(passwordHashCode);
+		
+		if (passwordHashCode == group.getPassword() || isSingleUseCode) {
+			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+			tmpVars.getCurrentClickedLockedGroup().setUnlock(true);
+			
+			if (isSingleUseCode) {
+				group.singleUseCods.remove((Object) passwordHashCode);
+				tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_UESED);
+			}
 		}else{
 			tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
-			tmpVars.getCurrentClickedLockedButton().setUnlock(false);
+			tmpVars.getCurrentClickedLockedGroup().setUnlock(false);
 		}
 	}
 	
@@ -39,13 +49,24 @@ public class LockedBlockGroup{
 		return unlocked;
 	}
 	
-//	public Block getBlockPart1(){
-//		return blockPart1;
-//	}
-//	
-//	public Block getBlockPart2(){
-//		return blockPart2;
-//	}
+	public void addSingleUseCode(int code){
+		singleUseCods.add(code);
+	}
+	
+	public void removeSingelUseCode(int code){
+		singleUseCods.remove(code);
+	}
+	
+	public int getSinglUseCode(int index) {
+		return singleUseCods.get(index);
+	}
+	
+	private boolean checkSingleUseCode(int code) {
+		for (int currentCode : singleUseCods) {
+			if (currentCode == code) return true;
+		}
+		return false;
+	}
 	
 	public void addBlock(Block block){
 		lockedBlocks.add(block);

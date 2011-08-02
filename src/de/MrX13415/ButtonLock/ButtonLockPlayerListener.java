@@ -60,62 +60,84 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		//button was founded ...
 		if (group != null) {
 		
-			//button is locked
-			if (! group.isUnlocked()) {
-				//inform player to enter a code ...
-				player.sendMessage(Language.TEXT_DENIED);
-				
-				if (ButtonLock.configFile.useChatforPasswordInput) {
-					player.sendMessage(Language.TEXT_ENTER_CODE_CHAT);
-				}else {
-					player.sendMessage(Language.TEXT_ENTER_CODE_COMMAND);
-				}
-				
-				currentPlayerVars.setEnteringCode(true);					//go into entering password mode
+			if (currentPlayerVars.getLastPassword() != null) {
 				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
 				currentPlayerVars.setCurrentClickedBlock(block);
 				
-				event.setCancelled(true);						//cancel event because the button is locked ...
-			}			
-
-			//iconom
-			if (ButtonLock.configFile.useIConomy && ! event.isCancelled()) {
-				if (iConomy.hasAccount(player.getName())){
+				player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(currentPlayerVars.getLastPassword()));
+				
+				LockedBlockGroup.checkPassword(currentPlayerVars, currentPlayerVars.getLastPassword().hashCode());
+				
+				currentPlayerVars.setLastPassword(null);
+				
+				if (! group.isUnlocked()) {
+					event.setCancelled(true);	
+				}
+			}else {
+				//button is locked
+				if (! group.isUnlocked()) {
+					//inform player to enter a code ...
+					player.sendMessage(Language.TEXT_DENIED);
 					
-					Account account = iConomy.getAccount(player.getName());
-					if(account != null){ // check if the account is valid
-						Holdings balance = account.getHoldings();
+					if (ButtonLock.configFile.useChatforPasswordInput) {
+						player.sendMessage(Language.TEXT_ENTER_CODE_CHAT);
+					}else {
+						player.sendMessage(Language.TEXT_ENTER_CODE_COMMAND);
+					}
+					
+					currentPlayerVars.setEnteringCode(true);					//go into entering password mode
+					currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
+					currentPlayerVars.setCurrentClickedBlock(block);
+					
+					event.setCancelled(true);						//cancel event because the button is locked ...
+				}	
+			}
+			
+				
+
+			if (group.isUnlocked()) {
+				//iconom
+				if (ButtonLock.configFile.useIConomy && ! event.isCancelled()) {
+					if (iConomy.hasAccount(player.getName())){
 						
-						Double costs = ButtonLock.configFile.iConomyCosts;
-						
-						if (balance.hasEnough(costs)) {
-							balance.subtract(costs);
-							player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED);
-						}else {
-							//not enough mony ...
+						Account account = iConomy.getAccount(player.getName());
+						if(account != null){ // check if the account is valid
+							Holdings balance = account.getHoldings();
+							
+							Double costs = ButtonLock.configFile.iConomyCosts;
+							
+							if (balance.hasEnough(costs)) {
+								balance.subtract(costs);
+								player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED);
+							}else {
+								//not enough mony ...
+								player.sendMessage(Language.TEXT_DENIED);
+								player.sendMessage(Language.TEXT_ICONOMY_LESS_MONY);
+								event.setCancelled(true);
+							}
+						}else{
+							//acc is not valid ...
 							player.sendMessage(Language.TEXT_DENIED);
-							player.sendMessage(Language.TEXT_ICONOMY_LESS_MONY);
+							player.sendMessage(Language.TEXT_ICONOMY_NOT_VALID_ACC);
 							event.setCancelled(true);
 						}
 					}else{
-						//acc is not valid ...
+						//no acc ...
 						player.sendMessage(Language.TEXT_DENIED);
-						player.sendMessage(Language.TEXT_ICONOMY_NOT_VALID_ACC);
+						player.sendMessage(Language.TEXT_ICONOMY_NO_ACC);
 						event.setCancelled(true);
 					}
-				}else{
-					//no acc ...
-					player.sendMessage(Language.TEXT_DENIED);
-					player.sendMessage(Language.TEXT_ICONOMY_NO_ACC);
-					event.setCancelled(true);
 				}
+				
+	
+				//----------------------------------------------------
+				//button, etc. was successful pressed or similar ...
+				//-----------------------------------------------------
+				
+				currentPlayerVars.setCurrentClickedLockedButton(null);	//reset
+				currentPlayerVars.setCurrentClickedBlock(null);
+				group.setUnlock(false);
 			}
-			
-			//----------------------------------------------------
-			//button, etc. was successful pressed or similar ...
-			//-----------------------------------------------------
-			
-			group.setUnlock(false);
 		}else{
 			//add a button?
 			currentPlayerVars.setCurrentClickedBlock(block);
@@ -126,7 +148,10 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 		
-		if (currentPlayerVars.isEnteringCode()) {
+		long timeDifference = ButtonLock.configFile.timeforEnteringPassword; //millis
+		long now = System.currentTimeMillis();
+		
+		if (currentPlayerVars.isEnteringCode() && (now - currentPlayerVars.getTimeSinceEnteringCode()) < timeDifference) {
 			if (ButtonLock.configFile.useChatforPasswordInput) {
 				//get entered text ...
 				String enteredCode = event.getMessage();

@@ -3,13 +3,18 @@ Readme
 =======
 
 ButtonLock
-Version: 0.5 r13
+Version: 0.6 r14
 
 Locking able Buttons an Levers in Minecraft for Bukkit
 
 by: MrX13415
 
 Changelog:
+Version: 0.6
+    * ADD: Singele-use-Passwords
+	* FIX: Use '/pw <password>' and than click at a block to unlock it.
+	* ADD: Entering password time out (see Config)
+    
 Version: 0.5
     * ADD: Permission Support
     * ADD: IConomy Support

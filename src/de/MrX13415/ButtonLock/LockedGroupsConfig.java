@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.LineNumberReader;
-
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -13,8 +12,8 @@ import org.bukkit.block.Block;
 public class LockedGroupsConfig {
 	
 	private String configFileName = "LockedGroups.yml";
-	private String configFilePath = "plugins/" + ButtonLock.pluginName + "/";
-	
+	private String configFilePath = "plugins" + File.separator + ButtonLock.pluginName + File.separator;
+
 	private static final String keyGroupNr = "LockedGroup#: ";
 	private static final String keyGroupPW = "GroupPW";
 	private static final String keyBlockNr = "Block#: ";
@@ -124,13 +123,12 @@ public class LockedGroupsConfig {
 				}
 			} catch (FileNotFoundException e) {
 				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Save files not found.");
-				write();
 			}
 			//-------------------
 			
 		}
 	}
-	
+
 	public boolean write() {
 		FileWriter writer;
 		
@@ -144,17 +142,14 @@ public class LockedGroupsConfig {
 				
 				//make a directory for each World
 				String filePath = configFilePath + currentworld.getName() + "/";
-
+				
 				//--- write a file ---
 				File directory = new File(filePath);
-				if (! directory.exists()) directory.mkdir();
-				
-				File file = new File(filePath + configFileName);	
-				file.delete();	//create a new file
+				if (! directory.exists()) directory.mkdirs();
+
+//				new File(filePath + configFileName).delete();
 				
 				writer = new FileWriter(filePath + configFileName);
-				
-				ButtonLock.log.info(ButtonLock.consoleOutputHeader + " New save file for World \"" + currentworld.getName() + "\" created. (" + ButtonLock.pluginName + File.separator + currentworld.getName() + File.separator + configFileName + ")");
 				
 				for (int groupIndex = 0; groupIndex < ButtonLock.grouplist.size(); groupIndex++) {
 					LockedBlockGroup group = ButtonLock.grouplist.get(groupIndex);

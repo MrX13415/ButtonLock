@@ -1,7 +1,7 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 0.6 (MC 1.7.3)
+version: 0.7 (MC 1.7.3)
 description: Lock Buttons, Levers and Blocks
 author: MrX13415
 
@@ -22,3 +22,8 @@ commands:
     description: add or remove a single-use-password
     usage: |
            <command> <add|remove> <password>  add/removes a single-use-password
+  buttonlock:
+    aliases: bl
+    description: reload, save or reset all config-files from Buttonlock
+    usage: |
+           <command> <save|reload|reset>  reload/save/reset all config-files from Buttonlock

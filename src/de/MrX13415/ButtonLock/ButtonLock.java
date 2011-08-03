@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.6 r14
+ * @version 0.7 r16 
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -39,6 +39,7 @@ public class ButtonLock extends JavaPlugin {
 	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
 	static final String PERMISSION_NODE_ButtonLock_singleUseCods = "ButtonLock.singleusecods";
+	static final String PERMISSION_NODE_ButtonLock_buttonlock = "ButtonLock.buttonlock";
 	
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
@@ -52,7 +53,6 @@ public class ButtonLock extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-        lockedGroupsFile = new LockedGroupsConfig();
         lockedGroupsFile.write();
         log.info(consoleOutputHeader + " locked Groups saved");
 	}
@@ -95,6 +95,8 @@ public class ButtonLock extends JavaPlugin {
 			this.getCommand("setpassword").setExecutor(new SetPasswordCommandExecuter());
 			this.getCommand("password").setExecutor(new PasswordCommandExecuter());
 			this.getCommand("singleusepassword").setExecutor(new SingleUsePasswordCommandExecuter());
+			this.getCommand("buttonlock").setExecutor(new ButtonLockCommandExecutor());
+			
 		} catch (Exception e) {
 			log.warning("[" + pdfFile.getName() + "] Error: Commands not definated in 'plugin.yaml'");
 		}

@@ -24,20 +24,21 @@ public class LockedBlockGroup{
 	public static void checkPassword(PlayerVars tmpVars, int passwordHashCode){
 		//check if the password was correct ...
 		LockedBlockGroup group = tmpVars.getCurrentClickedLockedGroup();
-		
-		Boolean isSingleUseCode = group.checkSingleUseCode(passwordHashCode);
-		
-		if (passwordHashCode == group.getPassword() || isSingleUseCode) {
-			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
-			tmpVars.getCurrentClickedLockedGroup().setUnlock(true);
+		if (group != null) {
+			Boolean isSingleUseCode = group.checkSingleUseCode(passwordHashCode);
 			
-			if (isSingleUseCode) {
-				group.singleUseCods.remove((Object) passwordHashCode);
-				tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_UESED);
+			if (passwordHashCode == group.getPassword() || isSingleUseCode) {
+				tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+				tmpVars.getCurrentClickedLockedGroup().setUnlock(true);
+				
+				if (isSingleUseCode) {
+					group.singleUseCods.remove((Object) passwordHashCode);
+					tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_UESED);
+				}
+			}else{
+				tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
+				tmpVars.getCurrentClickedLockedGroup().setUnlock(false);
 			}
-		}else{
-			tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
-			tmpVars.getCurrentClickedLockedGroup().setUnlock(false);
 		}
 	}
 	

@@ -15,6 +15,7 @@ public class Config {
 	
 	private static final String keyUseChatforPasswordInput = "UseChatforPasswordInput";
 	private static final String keyUsePermissions = "UsePermsissions";
+	private static final String keyOPOnly = "IfNoPermissionsOPOnly";
 	private static final String keyUseIConomy = "UseIConomy";
 	private static final String keyIConomyCosts = "Costs";
 	private static final String keyTimeforEnteringPassword = "TimeforEnteringPassword";
@@ -27,6 +28,7 @@ public class Config {
 	//-- file content --
 	public boolean useChatforPasswordInput = true;
 	public boolean usePermissions = true;
+	public boolean oPOnly = false;
 	public boolean useIConomy = false;
 	public double iConomyCosts = 0.50;
 	public long timeforEnteringPassword = 10000;  //millis
@@ -62,6 +64,10 @@ public class Config {
 											
 						if (keyLine[0].equalsIgnoreCase(keyUsePermissions)) {
 							usePermissions = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyOPOnly)) {
+							oPOnly = Boolean.valueOf(keyLine[1]);
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyUseIConomy)) {
@@ -109,6 +115,8 @@ public class Config {
 			writer.write(String.format(fileFormat_keys, keyTimeforEnteringPassword, timeforEnteringPassword) + "\n");
 			writer.write("\n");
 			writer.write(String.format(fileFormat_keys, keyUsePermissions, usePermissions) + "\n");
+			writer.write(String.format(fileFormat_keys, keyOPOnly, oPOnly) + "\n");
+			writer.write("\n");
 			writer.write(fileFormat_Comments_prefix + " IConomy\n");
 			writer.write(String.format(fileFormat_keys, keyUseIConomy, useIConomy) + "\n");
 			writer.write(String.format(fileFormat_keys, keyIConomyCosts , iConomyCosts) + "\n");

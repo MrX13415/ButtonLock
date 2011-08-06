@@ -17,7 +17,7 @@ public class Language {
 	static final String TEXT_ICONOMY_NOT_VALID_ACC = ChatColor.GRAY + "The account is not valid ...";
 	static final String TEXT_ICONOMY_LESS_MONY = ChatColor.GRAY + "You dont have enough mony. You need " + ChatColor.GOLD + "$" + ButtonLock.configFile.iConomyCosts;
 	static final String TEXT_ICONOMY_MONY_SUBTRACTED = ChatColor.GRAY + "Use costs " + ChatColor.GOLD + "$" + ButtonLock.configFile.iConomyCosts;
-	static final String TEXT_ENTER_CODE_FIRST = ChatColor.GRAY + "Enter the password firts ...";
+	static final String TEXT_ENTER_CODE_FIRST = ChatColor.GRAY + "Enter the password first ...";
 	static final String TEXT_UNLOCK_BLOCK = ChatColor.GRAY + "Password entered: Click at a Block to unlock it ...";
 	static final String TEXT_SINGEL_USE_CODE_UESED = ChatColor.GRAY + "Single-use-Password consumed ... (doesn't work a second time)";
 	static final String TEXT_SINGEL_USE_CODE_ADDED = ChatColor.GRAY + "Single-use-Password(s) added ...";

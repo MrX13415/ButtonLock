@@ -35,11 +35,17 @@ public class ButtonLockPlayerListener extends PlayerListener {
 	    			//use Permission
 	    			if (ButtonLock.permissionHandler.permission(player, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
 	        			playerInteract(event);
+	    			}else{
+	    				event.setCancelled(true);	
 	    			}
 				}else{
 					//no Permission installed ! (op only)
-					if (player.isOp()) {
+					if (player.isOp() && ButtonLock.configFile.oPOnly) {
 						playerInteract(event);
+					}else if (! ButtonLock.configFile.oPOnly){
+						playerInteract(event);
+					}else{
+					    event.setCancelled(true);	
 					}
 				}
 			}

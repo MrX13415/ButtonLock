@@ -3,13 +3,17 @@ Readme
 =======
 
 ButtonLock
-Version: 0.7 r16
+Version: 0.7.1 r18
 
 Locking able Buttons an Levers in Minecraft for Bukkit
 
 by: MrX13415
 
 Changelog:
+Version: 0.7.1
+    * FIX: Permissions bug
+    * FIX: NullPointerExeption
+    
 Version: 0.7
     * ADD: Command to reload/save/reset Buttonlock
     

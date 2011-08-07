@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.7.1 r18 
+ * @version 0.7.2 r19
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -196,9 +196,12 @@ public class ButtonLock extends JavaPlugin {
 		return playerVars;
 	}
     
-    public static void addLockedGroup(LockedBlockGroup block) {
-    	grouplist.add(block);
-	}
+    public static void addLockedGroup(LockedBlockGroup group) {
+    	//only add a group if it contains a locked block
+    	if (group.getGroupSize() > 0) {
+        	grouplist.add(group);
+		}
+    }
 	
 	public static void removeLockedBlock(LockedBlockGroup block) {
 		if(block != null) grouplist.remove(block);

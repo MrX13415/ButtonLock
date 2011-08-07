@@ -78,7 +78,7 @@ public class LockedBlockGroup{
 	}
 	
 	public Block getBlock(int index) {
-		return lockedBlocks.get(index);
+ 		return lockedBlocks.get(index);
 	}
 	
 	public void removeBlock(Block block) {

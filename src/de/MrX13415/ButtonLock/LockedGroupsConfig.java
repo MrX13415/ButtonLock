@@ -154,24 +154,28 @@ public class LockedGroupsConfig {
 				for (int groupIndex = 0; groupIndex < ButtonLock.grouplist.size(); groupIndex++) {
 					LockedBlockGroup group = ButtonLock.grouplist.get(groupIndex);
 					
-					if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
-						int blockPW = group.getPassword();
-						writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
-						writer.write(String.format(fileFormat_keys, keyGroupPW, blockPW) + "\n");
-						
-						for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
+
+					if (group.getGroupSize() != 0) {
+						if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
+							int blockPW = group.getPassword();
+							writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
+							writer.write(String.format(fileFormat_keys, keyGroupPW, blockPW) + "\n");
 							
-							int blockPosX = group.getBlock(blockIndex).getX();
-							int blockPosY = group.getBlock(blockIndex).getY();
-							int blockPosZ = group.getBlock(blockIndex).getZ();
-							
-							writer.write(String.format(fileFormat_Sub_Section, keyBlockNr + blockIndex) + "\n");
-		//					writer.write(String.format(fileFormat_Sub_Sub + fileFormat_keys, keyBlockWorld, blockWorld) + "\n");	//no need any more ...
-							writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosX, blockPosX) + "\n");
-							writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosY, blockPosY) + "\n");
-							writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosZ, blockPosZ) + "\n");
-						}
+							for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
+								
+								int blockPosX = group.getBlock(blockIndex).getX();
+								int blockPosY = group.getBlock(blockIndex).getY();
+								int blockPosZ = group.getBlock(blockIndex).getZ();
+								
+								writer.write(String.format(fileFormat_Sub_Section, keyBlockNr + blockIndex) + "\n");
+			//					writer.write(String.format(fileFormat_Sub_Sub + fileFormat_keys, keyBlockWorld, blockWorld) + "\n");	//no need any more ...
+								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosX, blockPosX) + "\n");
+								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosY, blockPosY) + "\n");
+								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosZ, blockPosZ) + "\n");
+							}
+						}					
 					}
+				
 				}
 				writer.close();
 				//--------------------
@@ -179,7 +183,8 @@ public class LockedGroupsConfig {
 			
 			return true;
 		} catch (Exception e1) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while saveing all locked groups");
+			System.err.println(ButtonLock.consoleOutputHeader + " Error: An error occurred while saveing all locked groups");
+			e1.printStackTrace();
 		}
 		
 		

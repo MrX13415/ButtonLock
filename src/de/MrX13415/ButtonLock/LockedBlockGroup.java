@@ -73,6 +73,10 @@ public class LockedBlockGroup{
 		lockedBlocks.add(block);
 	}
 	
+	public void clearGroup(){
+		lockedBlocks.clear();
+	}
+	
 	public int getGroupSize() {
 		return lockedBlocks.size();
 	}

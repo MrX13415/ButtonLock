@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.7.2 r19
+ * @version 0.7.3 r20
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -85,7 +85,17 @@ public class ButtonLock extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_PHYSICS, bListener, Priority.Normal, this);
-
+		pm.registerEvent(Event.Type.BLOCK_SPREAD, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_FADE, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_FORM, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_FROMTO, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_DISPENSE, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_CANBUILD, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_DAMAGE, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, bListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_PISTON_RETRACT, bListener, Priority.Normal, this);
+		
 		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);

@@ -22,6 +22,8 @@ public class Language {
 	static final String TEXT_SINGEL_USE_CODE_UESED = ChatColor.GRAY + "Single-use-Password consumed ... (doesn't work a second time)";
 	static final String TEXT_SINGEL_USE_CODE_ADDED = ChatColor.GRAY + "Single-use-Password(s) added ...";
 	static final String TEXT_SINGEL_USE_CODE_REMOVED = ChatColor.GRAY + "Single-use-Password(s) removed ...";
+	static final String TEXT_ERROR_LOADING = ChatColor.GRAY + ButtonLock.consoleOutputHeader + " " + ChatColor.RED + "Some errors occurred during loading ... (see console)";
+	
 	static final String MASK_CHR = ChatColor.GRAY + "*";
 	
 	

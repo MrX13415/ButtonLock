@@ -35,18 +35,24 @@ public class LockedGroupsConfig {
 	public void read() {
 		LineNumberReader reader;
 		
+		boolean errorsORwarinings = false;
+		
 		int groupNr = -1;
+		int blockNr = -1;
 		LockedBlockGroup currentGroup = null;
 		int groupPW = 0;
+		boolean pwIsSet = false;
 		
-		int blockNr = -1;
-		String blockWorld = "";
+//		String blockWorld;
 		int blockPosX = 0;
 		int blockPosY = 0;
 		int blockPosZ = 0;
 		
 		//get current Server ...
 		Server server = ButtonLock.server;
+		
+		//clear all current locked groups before loading ...
+		ButtonLock.grouplist.clear();
 
 		//read file for each World ...
 		for (int worldIndex = 0; worldIndex < server.getWorlds().size(); worldIndex++) {
@@ -54,7 +60,7 @@ public class LockedGroupsConfig {
 			
 			//make a directory for each World
 			String filePath = configFilePath + currentworld.getName() + "/";
-			blockWorld = currentworld.getName();
+//			blockWorld = currentworld.getName();
 			
 			//--- Read a file ---
 			try {
@@ -68,23 +74,70 @@ public class LockedGroupsConfig {
 						if (currentline.contains(keyGroupNr) && currentline.startsWith(fileFormat_Section_start)) {
 							//add Group if set before collecting date of the next group ...
 							if (currentGroup != null && groupNr > -1) {
+								if (! pwIsSet) {
+									ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+									errorsORwarinings = true;
+									groupPW = 49; //hash 49 = char "1" 
+								}
+								
+								currentGroup.setPassword(groupPW);
+								currentGroup.setUnlock(false);
 								ButtonLock.addLockedGroup(currentGroup);	//add group
+								currentGroup = null;
 							}
 						
 							currentGroup = new LockedBlockGroup();
-							groupNr = Integer.valueOf(currentline.replace(keyGroupNr, "").replace(fileFormat_Section_start, "").replace(fileFormat_Section_end, ""));  //filter next integer out and convert it to integer
-						}
-						
-						if (currentline.contains(keyBlockNr) && currentline.startsWith(fileFormat_Sub_Section_start)) {
-							//add Block if set before collecting date of the next Block ...
-							if (blockNr > -1) {
-								addNewBlock(currentGroup, blockWorld, groupPW, blockPosX, blockPosY, blockPosZ);
+							currentGroup.clearGroup();
+							pwIsSet = false;
+							groupNr += 1; //Integer.valueOf(currentline.replace(keyGroupNr, "").replace(fileFormat_Section_start, "").replace(fileFormat_Section_end, ""));  //filter next integer out and convert it to integer
+							blockNr = -1;
+						}else if (currentline.contains(keyBlockNr) && currentline.startsWith(fileFormat_Sub_Section_start)) {
+							blockNr += 1;
+							
+							boolean posXSet = false;
+							boolean posYSet = false;
+							boolean posZSet = false;
+							
+							//run 3 times
+							for (int index = 1; index <= 3; index++) {
+								currentline = reader.readLine();
+								lineNr += 1;
+								
+								if (currentline.contains(fileFormat_valueseperator)) {
+									String[] line = currentline.replace(" ", "").split(fileFormat_valueseperator);
+									
+									if (line[0].equalsIgnoreCase(keyBlockPosX)) {
+										posXSet = true;
+										blockPosX = Integer.valueOf(line[1]);
+									}
+									
+									if (line[0].equalsIgnoreCase(keyBlockPosY)) {
+										posYSet = true;
+										blockPosY = Integer.valueOf(line[1]);
+									}
+									
+									if (line[0].equalsIgnoreCase(keyBlockPosZ)) {
+										posZSet = true;
+										blockPosZ = Integer.valueOf(line[1]);
+									}
+								}
+							}
+							
+							//add Block ...
+							if (currentGroup != null) {
+								if (posXSet && posYSet && posZSet) {
+									posXSet = false;
+									posYSet = false;
+									posZSet = false;
+									Block block = currentworld.getBlockAt(blockPosX, blockPosY, blockPosZ);
+									currentGroup.addBlock(block);
+								}else{
+									ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
+									errorsORwarinings = true;
+								}
 							}
 						
-							blockNr = Integer.valueOf(currentline.replace(keyBlockNr, "").replace(fileFormat_Sub_Section_start, "").replace(fileFormat_Sub_Section_end, "").replace(fileFormat_Sub, ""));  //filter nlxy integer out and convert it to integer
-						}
-						
-						if (currentline.contains(fileFormat_valueseperator)) {
+						}else if (currentline.contains(fileFormat_valueseperator)) {
 							String[] line = currentline.replace(" ", "").split(fileFormat_valueseperator);
 							
 							//no need any more ...
@@ -92,41 +145,40 @@ public class LockedGroupsConfig {
 //								blockWorld = line[1];
 //							}
 							if (line[0].equalsIgnoreCase(keyGroupPW)) {
+								pwIsSet = true;
 								groupPW = Integer.valueOf(line[1]);
-							}
-
-							if (line[0].equalsIgnoreCase(keyBlockPosX)) {
-								blockPosX = Integer.valueOf(line[1]);
-							}
-							
-							if (line[0].equalsIgnoreCase(keyBlockPosY)) {
-								blockPosY = Integer.valueOf(line[1]);
-							}
-							
-							if (line[0].equalsIgnoreCase(keyBlockPosZ)) {
-								blockPosZ = Integer.valueOf(line[1]);
 							}
 						}
 					}
 
-					//add last Block
-					if (blockNr > -1) {
-						addNewBlock(currentGroup, blockWorld, groupPW, blockPosX, blockPosY, blockPosZ);
-					}
 					//add last Group
 					if (currentGroup != null && groupNr > -1) {
-						ButtonLock.addLockedGroup(currentGroup);	//add group
-						currentGroup = null;
+						if (pwIsSet) {
+							currentGroup.setPassword(groupPW);
+							currentGroup.setUnlock(false);
+							ButtonLock.addLockedGroup(currentGroup);	//add group
+							currentGroup = null;
+						}else{
+							ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+							errorsORwarinings = true;
+						}
 					}
 				} catch (Exception e) {
 					ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
+					errorsORwarinings = true;
 				}
 			} catch (FileNotFoundException e) {
 				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Save files not found.");
+				errorsORwarinings = true;
 			}
 			//-------------------
 			
 		}
+		
+		if (errorsORwarinings) {
+			ButtonLock.server.broadcastMessage(Language.TEXT_ERROR_LOADING);
+		}
+		
 	}
 
 	public boolean write() {
@@ -190,15 +242,5 @@ public class LockedGroupsConfig {
 		
 		return false;
 	}
-	
-	private void addNewBlock(LockedBlockGroup currentGroup, String blockWorld, int groupPW, int blockPosX, int blockPosY, int blockPosZ ){
-		if (currentGroup != null) {
-			World world = ButtonLock.server.getWorld(blockWorld);
-			Block block = world.getBlockAt(blockPosX, blockPosY, blockPosZ);
-			
-			currentGroup.addBlock(block);
-			currentGroup.setPassword(groupPW);
-			currentGroup.setUnlock(false);
-		}
-	}
+
 }

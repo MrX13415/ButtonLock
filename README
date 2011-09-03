@@ -1,15 +1,37 @@
+=================
+   R e a d m e
+=================
+    
+Title:        ButtonLock
+Version:      0.8 r21
 
-Readme
-=======
+Description:  Locking able Buttons an Levers in Minecraft for Bukkit
 
-ButtonLock
-Version: 0.7.3 r20
+Copyright (C) 2011 MrX13415
 
-Locking able Buttons an Levers in Minecraft for Bukkit
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software Foundation;
+either version 3 of the License, or (at your option) any later version.
 
-by: MrX13415
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program;
+if not, see <http://www.gnu.org/licenses/>.
+
 
 Changelog:
+Version: 0.8
+	* ADD: Password by-pass
+	* ADD: IConomy by-pass
+	* ADD: Settings to enable/disable by-pass
+	* ADD: You only need to enter the password once after login
+    * ADD: Command to change the cost of a group
+	* ADD: Command to add/remove blocks from a group
+	* ADD: Command to enforce a password every time from a group
+	* FIX: Protectable-Blocks list getting longer and longer sometimes
+	
 Version: 0.7.3
     * FIX: Locked-groups-config issue (again :( )
     
@@ -57,3 +79,4 @@ Version: 0.2
     
 Version: 0.1
     * init Version
+	

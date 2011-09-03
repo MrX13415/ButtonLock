@@ -16,6 +16,8 @@ public class LockedGroupsConfig {
 
 	private static final String keyGroupNr = "LockedGroup#: ";
 	private static final String keyGroupPW = "GroupPW";
+	private static final String keyForcePW = "ForcePW";
+	private static final String keyCosts = "Costs";
 	private static final String keyBlockNr = "Block#: ";
 //	private static final String keyBlockWorld = "BlockWorld";	//this file setting is not needed any more after 0.4 r10
 	private static final String keyBlockPosX = "BlockPosX";
@@ -41,6 +43,10 @@ public class LockedGroupsConfig {
 		int blockNr = -1;
 		LockedBlockGroup currentGroup = null;
 		int groupPW = 0;
+		boolean forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
+		double costs = ButtonLock.configFile.iConomyCosts;
+		boolean changedSetting_fpet = false;
+		boolean changedSetting_c = false;
 		boolean pwIsSet = false;
 		
 //		String blockWorld;
@@ -73,6 +79,7 @@ public class LockedGroupsConfig {
 						
 						if (currentline.contains(keyGroupNr) && currentline.startsWith(fileFormat_Section_start)) {
 							//add Group if set before collecting date of the next group ...
+						
 							if (currentGroup != null && groupNr > -1) {
 								if (! pwIsSet) {
 									ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
@@ -81,9 +88,18 @@ public class LockedGroupsConfig {
 								}
 								
 								currentGroup.setPassword(groupPW);
+								currentGroup.setForceEnterPasswordEveryTime(forcePW);
+								currentGroup.costs = costs;
+								currentGroup.changedSetting_forceEnterPasswordEveryTime = changedSetting_fpet;
+								currentGroup.ChangedSetting_costs = changedSetting_c;
 								currentGroup.setUnlock(false);
+								
 								ButtonLock.addLockedGroup(currentGroup);	//add group
 								currentGroup = null;
+								
+								//reset settings to default ...
+								forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
+								costs = ButtonLock.configFile.iConomyCosts;
 							}
 						
 							currentGroup = new LockedBlockGroup();
@@ -148,6 +164,16 @@ public class LockedGroupsConfig {
 								pwIsSet = true;
 								groupPW = Integer.valueOf(line[1]);
 							}
+							
+							if (line[0].equalsIgnoreCase(keyForcePW)) {
+								changedSetting_fpet = true;
+								forcePW = Boolean.parseBoolean(line[1]);
+							}
+							
+							if (line[0].equalsIgnoreCase(keyCosts)) {
+								changedSetting_c = true;
+								costs = Double.valueOf(line[1]);
+							}
 						}
 					}
 
@@ -155,7 +181,12 @@ public class LockedGroupsConfig {
 					if (currentGroup != null && groupNr > -1) {
 						if (pwIsSet) {
 							currentGroup.setPassword(groupPW);
+							currentGroup.setForceEnterPasswordEveryTime(forcePW);
+							currentGroup.costs = costs;
+							currentGroup.changedSetting_forceEnterPasswordEveryTime = changedSetting_fpet;
+							currentGroup.ChangedSetting_costs = changedSetting_c;
 							currentGroup.setUnlock(false);
+							
 							ButtonLock.addLockedGroup(currentGroup);	//add group
 							currentGroup = null;
 						}else{
@@ -209,9 +240,15 @@ public class LockedGroupsConfig {
 
 					if (group.getGroupSize() != 0) {
 						if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
-							int blockPW = group.getPassword();
+
 							writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
-							writer.write(String.format(fileFormat_keys, keyGroupPW, blockPW) + "\n");
+							writer.write(String.format(fileFormat_keys, keyGroupPW, group.getPassword()) + "\n");
+							
+							if (group.changedSetting_forceEnterPasswordEveryTime) 
+								writer.write(String.format(fileFormat_keys, keyForcePW, group.isForceingEnterPasswordEveryTime()) + "\n");
+							
+							if (group.ChangedSetting_costs) 
+								writer.write(String.format(fileFormat_keys, keyCosts, group.costs) + "\n");
 							
 							for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
 								

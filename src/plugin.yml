@@ -1,7 +1,7 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 0.7.3 (MC 1.7.3)
+version: 0.8 (MC 1.7.3)
 description: Lock Buttons, Levers and Blocks
 author: MrX13415
 
@@ -19,11 +19,14 @@ commands:
            <command> <password>   Enter a password
   singleusepassword:
     aliases: supw
-    description: add or remove a single-use-password
+    description: Add or remove a single-use-password
     usage: |
            <command> <add|remove> <password>  add/removes a single-use-password
   buttonlock:
     aliases: bl
-    description: reload, save or reset all config-files from Buttonlock
+    description: Managed Buttonlock and locked groups
     usage: |
            <command> <save|reload|reset>  reload/save/reset all config-files from Buttonlock
+           <command> group forcePassword <true|false>  enforces a password every time or not ... 
+           <command> group costs <costs>  change the costs of a locked group ... 
+           <command> group <add|remove>  adds or removes a Block to or from a locked group ... 

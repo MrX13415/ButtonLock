@@ -1,5 +1,7 @@
 package de.MrX13415.ButtonLock;
 
+import java.util.ArrayList;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -15,6 +17,11 @@ public class PlayerVars{
 	private long timeSinceEnteringCode = 0;
 	private String lastPassword = null;
 	
+	public LockedBlockGroup addNextclickedBlock = null;
+	public LockedBlockGroup removeNextclickedBlock = null;
+	
+	private ArrayList<Integer> enteredPasswords = new ArrayList<Integer>();
+		
 	public PlayerVars(Player player){
 		this.player = player;
 	}
@@ -60,4 +67,21 @@ public class PlayerVars{
 		return timeSinceEnteringCode;
 	}
 	
+	
+	public void addPassword(int passwordHash) {
+		enteredPasswords.add(passwordHash);
+	}
+	
+	public void removePassword(int passwordHash) {
+		enteredPasswords.remove((Object) passwordHash);
+	}
+	
+	public int getPassword(int index) {
+		return enteredPasswords.get(index);
+	}
+	
+	public int getEnteredPasswords() {
+		return enteredPasswords.size();
+	}
+		
 }

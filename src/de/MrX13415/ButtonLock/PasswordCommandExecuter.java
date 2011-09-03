@@ -28,19 +28,21 @@ public class PasswordCommandExecuter implements CommandExecutor{
 				}
 			}
 	        
-	        PlayerVars tmpVars = ButtonLock.getPlayerVars(player);
+	        PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 	        
-	        if (tmpVars != null) {
+	        if (currentPlayerVars != null) {
 				if (args.length == 1){
 					String tmpPassword = args[0];
-					tmpVars.setLastPassword(tmpPassword);
+					currentPlayerVars.setLastPassword(tmpPassword);
 					
-					if (tmpVars.isEnteringCode()) {
+					if (currentPlayerVars.isEnteringCode()) {
 						player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(tmpPassword));
-						LockedBlockGroup.checkPassword(tmpVars, tmpPassword.hashCode());
-						tmpVars.setEnteringCode(false);
+						LockedBlockGroup.checkPasswordAndPrintResault(currentPlayerVars, tmpPassword.hashCode());					
+						
+						currentPlayerVars.setEnteringCode(false);
 						return true;
-					}else if(tmpVars.getLastPassword() != null){
+				
+					}else if(currentPlayerVars.getLastPassword() != null){
 						player.sendMessage(Language.TEXT_UNLOCK_BLOCK);
 						return true;
 					}

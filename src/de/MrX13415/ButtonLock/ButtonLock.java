@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.7.3 r20
+ * @version 0.8 r21
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -36,6 +36,8 @@ public class ButtonLock extends JavaPlugin {
 	
 	//permissions
 	static PermissionHandler permissionHandler;
+	static final String PERMISSION_NODE_ButtonLock_bypass = "ButtonLock.bypass";
+	static final String PERMISSION_NODE_ButtonLock_iconcomy_bypass = "ButtonLock.iconomy.bypass";
 	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
 	static final String PERMISSION_NODE_ButtonLock_singleUseCods = "ButtonLock.singleusecods";
@@ -234,5 +236,33 @@ public class ButtonLock extends JavaPlugin {
     	}
 
 		return null;
+	}
+	
+	public static boolean byPass(Player player) {
+		if(ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions &&
+		   ButtonLock.permissionHandler.has(player, ButtonLock.PERMISSION_NODE_ButtonLock_bypass) && configFile.enablePasswordByPass){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean iConomyByPass(Player player) {
+		if(ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions &&
+		   ButtonLock.permissionHandler.has(player, ButtonLock.PERMISSION_NODE_ButtonLock_iconcomy_bypass) && configFile.enableIConomyByPass){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean passwordWasEntered(PlayerVars currentPlayerVars, LockedBlockGroup group) {
+		if (! group.isUnlocked() && currentPlayerVars.getEnteredPasswords() > 0 && group.isForceingEnterPasswordEveryTime() == false) {
+			for (int enteresPasswordHashIndex = 0; enteresPasswordHashIndex < currentPlayerVars.getEnteredPasswords(); enteresPasswordHashIndex++) {	
+			  	if (LockedBlockGroup.checkPassword(currentPlayerVars, currentPlayerVars.getPassword(enteresPasswordHashIndex))){
+//			  		currentPlayerVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+			  		return true;
+			  	}
+			}
+		}
+		return false;
 	}
 }

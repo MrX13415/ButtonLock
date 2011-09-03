@@ -29,29 +29,34 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 				}
 			}
 	        
-	        PlayerVars tmpVars = ButtonLock.getPlayerVars(player);
+	        PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 
-	        if (tmpVars != null) {
+	        if (currentPlayerVars != null) {
 
-				if (ButtonLock.isProtectable(tmpVars.getCurrentClickedBlock())) {
+				if (ButtonLock.isProtectable(currentPlayerVars.getCurrentClickedBlock())) {
 					//find Button in the locked-button-list ...
-					LockedBlockGroup group = ButtonLock.getLockedGroup(tmpVars.getCurrentClickedBlock());
+					LockedBlockGroup group = ButtonLock.getLockedGroup(currentPlayerVars.getCurrentClickedBlock());
 					boolean isAnewButton = false;
 					if (group == null) {
 						group = new LockedBlockGroup();
 						isAnewButton = true;
 					}
-			
+					
+					//unlock if the password was entered once
+					ButtonLock.passwordWasEntered(currentPlayerVars, group);
+					
+					if(ButtonLock.byPass(player)) group.setUnlock(true);
+					
 					if (group.isUnlocked()) {
 						if (args.length == 1) {
-							group.addBlock(tmpVars.getCurrentClickedBlock());
+							group.addBlock(currentPlayerVars.getCurrentClickedBlock());
 
-							Block partBlock = BlockFunctions.getPartBlock(tmpVars.getCurrentClickedBlock());
+							Block partBlock = BlockFunctions.getPartBlock(currentPlayerVars.getCurrentClickedBlock());
 							if (partBlock != null) {
 								group.addBlock(partBlock);								
 							}
 							
-							Block attachedBlock = BlockFunctions.getAttachedBlock(tmpVars.getCurrentClickedBlock());
+							Block attachedBlock = BlockFunctions.getAttachedBlock(currentPlayerVars.getCurrentClickedBlock());
 							if (attachedBlock != null) {
 								group.addBlock(attachedBlock);								
 							}

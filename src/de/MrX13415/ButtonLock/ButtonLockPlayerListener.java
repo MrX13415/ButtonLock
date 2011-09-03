@@ -48,6 +48,27 @@ public class ButtonLockPlayerListener extends PlayerListener {
 					    event.setCancelled(true);	
 					}
 				}
+			}else{
+
+				//find PlayerVars
+				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
+				if (currentPlayerVars != null) {
+
+					if (currentPlayerVars.addNextclickedBlock != null) {
+						player.sendMessage(Language.TEXT_GROUP_BLOCK_ADDED);
+						currentPlayerVars.addNextclickedBlock.addBlock(block);
+						currentPlayerVars.addNextclickedBlock.setUnlock(false);
+						currentPlayerVars.addNextclickedBlock = null;
+					}
+
+					if (currentPlayerVars.removeNextclickedBlock != null) {
+						player.sendMessage(Language.TEXT_GROUP_BLOCK_REMOVED);
+						currentPlayerVars.removeNextclickedBlock.removeBlock(block);
+						currentPlayerVars.removeNextclickedBlock.setUnlock(false);
+						currentPlayerVars.removeNextclickedBlock = null;
+					}
+					
+				}
 			}
     	}
     }	
@@ -66,19 +87,38 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		//button was founded ...
 		if (group != null) {
 		
-			if (currentPlayerVars.getLastPassword() != null) {
+			if (currentPlayerVars.getEnteredPasswords() > 0 && group.isForceingEnterPasswordEveryTime() == false) {
 				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
 				currentPlayerVars.setCurrentClickedBlock(block);
 				
-				player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(currentPlayerVars.getLastPassword()));
-				
-				LockedBlockGroup.checkPassword(currentPlayerVars, currentPlayerVars.getLastPassword().hashCode());
-				
-				currentPlayerVars.setLastPassword(null);
-				
+				if (ButtonLock.passwordWasEntered(currentPlayerVars, group)) currentPlayerVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+
 				if (! group.isUnlocked()) {
 					event.setCancelled(true);	
 				}
+			}
+				
+			if(ButtonLock.byPass(player)){
+				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
+				currentPlayerVars.setCurrentClickedBlock(block);
+				player.sendMessage(Language.TEXT_PW_BYPASS);
+				group.setUnlock(true);
+				
+			}else if (currentPlayerVars.getLastPassword() != null) {
+				if (! group.isUnlocked()) {
+					currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
+					currentPlayerVars.setCurrentClickedBlock(block);
+					
+					player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(currentPlayerVars.getLastPassword()));
+					
+					LockedBlockGroup.checkPasswordAndPrintResault(currentPlayerVars, currentPlayerVars.getLastPassword().hashCode());
+					
+//					if (group.isUnlocked()) currentPlayerVars.addPasssword(currentPlayerVars.getLastPassword().hashCode());
+					
+					currentPlayerVars.setLastPassword(null);
+				}
+				
+				if (! group.isUnlocked()) event.setCancelled(true);	
 			}else {
 				//button is locked
 				if (! group.isUnlocked()) {
@@ -99,39 +139,50 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				}	
 			}
 			
-				
-
 			if (group.isUnlocked()) {
+				
 				//iconom
 				if (ButtonLock.configFile.useIConomy && ! event.isCancelled()) {
-					if (iConomy.hasAccount(player.getName())){
+					
+					if (ButtonLock.iConomyByPass(player)) {
+						currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
+						currentPlayerVars.setCurrentClickedBlock(block);
+						player.sendMessage(Language.TEXT_ICONOMY_BYPASS);
 						
-						Account account = iConomy.getAccount(player.getName());
-						if(account != null){ // check if the account is valid
-							Holdings balance = account.getHoldings();
+					}else{
+						if (iConomy.hasAccount(player.getName())){
 							
-							Double costs = ButtonLock.configFile.iConomyCosts;
-							
-							if (balance.hasEnough(costs)) {
-								balance.subtract(costs);
-								player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED);
-							}else {
-								//not enough mony ...
+							Account account = iConomy.getAccount(player.getName());
+							if(account != null){ // check if the account is valid
+								Holdings balance = account.getHoldings();
+								
+								Double costs = group.costs;
+								
+								if (balance.hasEnough(costs)) {
+									balance.subtract(costs);
+									if (costs > 0) {
+										player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED + costs);
+									}else{
+										player.sendMessage(Language.TEXT_ICONOMY_MONY_SUBTRACTED_FREE);
+									}
+								}else {
+									//not enough mony ...
+									player.sendMessage(Language.TEXT_DENIED);
+									player.sendMessage(Language.TEXT_ICONOMY_LESS_MONY + costs);
+									event.setCancelled(true);
+								}
+							}else{
+								//acc is not valid ...
 								player.sendMessage(Language.TEXT_DENIED);
-								player.sendMessage(Language.TEXT_ICONOMY_LESS_MONY);
+								player.sendMessage(Language.TEXT_ICONOMY_NOT_VALID_ACC);
 								event.setCancelled(true);
 							}
 						}else{
-							//acc is not valid ...
+							//no acc ...
 							player.sendMessage(Language.TEXT_DENIED);
-							player.sendMessage(Language.TEXT_ICONOMY_NOT_VALID_ACC);
+							player.sendMessage(Language.TEXT_ICONOMY_NO_ACC);
 							event.setCancelled(true);
 						}
-					}else{
-						//no acc ...
-						player.sendMessage(Language.TEXT_DENIED);
-						player.sendMessage(Language.TEXT_ICONOMY_NO_ACC);
-						event.setCancelled(true);
 					}
 				}
 				
@@ -140,8 +191,8 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				//button, etc. was successful pressed or similar ...
 				//-----------------------------------------------------
 				
-				currentPlayerVars.setCurrentClickedLockedButton(null);	//reset
-				currentPlayerVars.setCurrentClickedBlock(null);
+//				currentPlayerVars.setCurrentClickedLockedButton(null);	//reset
+//				currentPlayerVars.setCurrentClickedBlock(null);
 				group.setUnlock(false);
 			}
 		}else{
@@ -169,8 +220,8 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				player.sendMessage(Language.TEXT_CODE + Language.getMaskedText(enteredCode));
 				
 				//check if the password was correct ...
-				LockedBlockGroup.checkPassword(currentPlayerVars, enteredCode.hashCode());
-
+				LockedBlockGroup.checkPasswordAndPrintResault(currentPlayerVars, enteredCode.hashCode());
+				
 				//leave password entering mode.
 				currentPlayerVars.setEnteringCode(false);	
 			}

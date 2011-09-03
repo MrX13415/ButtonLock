@@ -14,6 +14,9 @@ public class Config {
 	private String configFilePath = "plugins/" + ButtonLock.pluginName + "/";
 	
 	private static final String keyUseChatforPasswordInput = "UseChatforPasswordInput";
+	private static final String keyEnablePasswordByPass = "EnablePasswordByPass";
+	private static final String keyForcePasswordEveryTimeByDefault = "ForcePasswordEveryTimeByDefault";
+	private static final String keyEnableIConomyByPass = "EnableIConomyByPass";
 	private static final String keyUsePermissions = "UsePermsissions";
 	private static final String keyOPOnly = "IfNoPermissionsOPOnly";
 	private static final String keyUseIConomy = "UseIConomy";
@@ -30,6 +33,9 @@ public class Config {
 	public boolean usePermissions = true;
 	public boolean oPOnly = false;
 	public boolean useIConomy = false;
+	public boolean enableIConomyByPass = false;
+	public boolean enablePasswordByPass = false;
+	public boolean forcePasswordEveryTimeByDefault = false;
 	public double iConomyCosts = 0.50;
 	public long timeforEnteringPassword = 10000;  //millis
 	//------------------
@@ -48,6 +54,7 @@ public class Config {
 					if (! line.startsWith(fileFormat_Comments_prefix)) {
 						if (line.startsWith(listLockableBlocks)) {
 							currentlist = listLockableBlocks;
+							ButtonLock.lockableBlocksList.clear();
 						}
 
 						if (line.startsWith(fileFormat_lists_start)) {
@@ -81,6 +88,18 @@ public class Config {
 						if (keyLine[0].equalsIgnoreCase(keyTimeforEnteringPassword)) {
 							timeforEnteringPassword = Long.valueOf(keyLine[1]);
 						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyEnableIConomyByPass)) {
+							enableIConomyByPass = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyEnablePasswordByPass)) {
+							enablePasswordByPass = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyForcePasswordEveryTimeByDefault)) {
+							forcePasswordEveryTimeByDefault = Boolean.valueOf(keyLine[1]);
+						}
 					}
 				}				
 			} catch (Exception e) {
@@ -111,6 +130,8 @@ public class Config {
 			writer = new FileWriter(configFilePath + configFileName);
 			
 			writer.write(String.format(fileFormat_keys, keyUseChatforPasswordInput, useChatforPasswordInput) + "\n");
+			writer.write(String.format(fileFormat_keys, keyEnablePasswordByPass, enablePasswordByPass) + "\n");
+			writer.write(String.format(fileFormat_keys, keyForcePasswordEveryTimeByDefault, forcePasswordEveryTimeByDefault) + "\n");
 			writer.write(fileFormat_Comments_prefix + " in milliseconds (1000 = 1 sec)\n");
 			writer.write(String.format(fileFormat_keys, keyTimeforEnteringPassword, timeforEnteringPassword) + "\n");
 			writer.write("\n");
@@ -119,6 +140,7 @@ public class Config {
 			writer.write("\n");
 			writer.write(fileFormat_Comments_prefix + " IConomy\n");
 			writer.write(String.format(fileFormat_keys, keyUseIConomy, useIConomy) + "\n");
+			writer.write(String.format(fileFormat_keys, keyEnableIConomyByPass, enableIConomyByPass) + "\n");
 			writer.write(String.format(fileFormat_keys, keyIConomyCosts , iConomyCosts) + "\n");
 			writer.write("\n");
 			writer.write(listLockableBlocks + "\n");

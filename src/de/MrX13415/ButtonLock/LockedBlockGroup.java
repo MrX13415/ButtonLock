@@ -12,7 +12,11 @@ public class LockedBlockGroup{
 	private ArrayList<Integer> singleUseCods = new ArrayList<Integer>();
 	
 	private boolean unlocked = true;
-
+	private boolean forceEnterPasswordEveryTime = ButtonLock.configFile.forcePasswordEveryTimeByDefault; 
+	public double costs = ButtonLock.configFile.iConomyCosts;
+	public boolean changedSetting_forceEnterPasswordEveryTime = false;
+	public boolean ChangedSetting_costs = false;
+	
 	public void setPassword(int passwordHashCode){
 		this.password = passwordHashCode;
 	}
@@ -21,24 +25,39 @@ public class LockedBlockGroup{
 		return password;
 	}
 	
-	public static void checkPassword(PlayerVars tmpVars, int passwordHashCode){
+	public static boolean checkPassword(PlayerVars tmpVars, int passwordHashCode){
+		boolean returnvar = false;
 		//check if the password was correct ...
 		LockedBlockGroup group = tmpVars.getCurrentClickedLockedGroup();
 		if (group != null) {
 			Boolean isSingleUseCode = group.checkSingleUseCode(passwordHashCode);
 			
 			if (passwordHashCode == group.getPassword() || isSingleUseCode) {
-				tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+//				tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
 				tmpVars.getCurrentClickedLockedGroup().setUnlock(true);
+				returnvar = true;
 				
 				if (isSingleUseCode) {
 					group.singleUseCods.remove((Object) passwordHashCode);
 					tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_UESED);
+				}else{
+					tmpVars.addPassword(passwordHashCode);
 				}
 			}else{
-				tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
+				tmpVars.removePassword(passwordHashCode);
+//				tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
 				tmpVars.getCurrentClickedLockedGroup().setUnlock(false);
 			}
+		}
+		return returnvar;
+	}
+	
+	public static void checkPasswordAndPrintResault(PlayerVars tmpVars, int passwordHashCode){
+		boolean resault = checkPassword(tmpVars, passwordHashCode);
+		if (resault) {
+			tmpVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+		}else{
+			tmpVars.getPlayer().sendMessage(Language.TEXT_DENIED);
 		}
 	}
 	
@@ -89,5 +108,12 @@ public class LockedBlockGroup{
 		lockedBlocks.remove(block);
 	}
 
+	public void setForceEnterPasswordEveryTime(boolean force) {
+		forceEnterPasswordEveryTime = force;
+	}
+	
+	public boolean isForceingEnterPasswordEveryTime() {
+		return forceEnterPasswordEveryTime;
+	}
 
 }

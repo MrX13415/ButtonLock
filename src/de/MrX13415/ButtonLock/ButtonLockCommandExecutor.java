@@ -110,6 +110,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor{
 	 							}else{
 	 								sender.sendMessage(Language.TEXT_DENIED);
 	 							}		
+	 	  						currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 	 	  						return true;
 	 		  				}
 	 		  				
@@ -130,6 +131,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor{
 	 							}else{
 	 								sender.sendMessage(Language.TEXT_DENIED);
 	 							}		
+	 	  						currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 	 	  						return true;
 	 		  				}
 	 		  					  		    			 
@@ -140,21 +142,25 @@ public class ButtonLockCommandExecutor implements CommandExecutor{
 	  		    				if (args[1].equalsIgnoreCase("add")) {
 	  		    					currentPlayerVars.addNextclickedBlock = group;
 		  		  					sender.sendMessage(Language.TEXT_GROUP_BLOCK_ADD);
+		  		  					currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 		  	  						return true;
 		  		  				}
 		  		  				
 		  		  				if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r") ) {
 	  		    					currentPlayerVars.removeNextclickedBlock = group;
 		  		  					sender.sendMessage(Language.TEXT_GROUP_BLOCK_REMOVE);
+		  		  					currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 		  	  						return true;
 		  		  				}
 	  		    			}else{
  								sender.sendMessage(Language.TEXT_DENIED);
+ 								currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
  								return true;
 	  		    			}
 	  		  				
 						}else{
 							sender.sendMessage(Language.TEXT_WHICH_BLOCK);
+							currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 							return true;
 						}
  		  				

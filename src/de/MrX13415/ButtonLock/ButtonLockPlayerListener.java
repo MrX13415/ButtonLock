@@ -31,7 +31,11 @@ public class ButtonLockPlayerListener extends PlayerListener {
     	
 			//clicked block is a protectable block ...
 			if (ButtonLock.isProtectable(block)) {
-	    		if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+				//find PlayerVars
+				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
+				addBlockToLastGroup(currentPlayerVars, block);
+				
+	    		if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {					
 	    			//use Permission
 	    			if (ButtonLock.permissionHandler.permission(player, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
 	        			playerInteract(event);
@@ -49,29 +53,34 @@ public class ButtonLockPlayerListener extends PlayerListener {
 					}
 				}
 			}else{
-
 				//find PlayerVars
 				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
-				if (currentPlayerVars != null) {
-
-					if (currentPlayerVars.addNextclickedBlock != null) {
-						player.sendMessage(Language.TEXT_GROUP_BLOCK_ADDED);
-						currentPlayerVars.addNextclickedBlock.addBlock(block);
-						currentPlayerVars.addNextclickedBlock.setUnlock(false);
-						currentPlayerVars.addNextclickedBlock = null;
-					}
-
-					if (currentPlayerVars.removeNextclickedBlock != null) {
-						player.sendMessage(Language.TEXT_GROUP_BLOCK_REMOVED);
-						currentPlayerVars.removeNextclickedBlock.removeBlock(block);
-						currentPlayerVars.removeNextclickedBlock.setUnlock(false);
-						currentPlayerVars.removeNextclickedBlock = null;
-					}
-					
-				}
+				addBlockToLastGroup(currentPlayerVars, block);
+				
 			}
     	}
     }	
+	
+	
+	private void addBlockToLastGroup(PlayerVars currentPlayerVars, Block block) {
+		if (currentPlayerVars != null) {
+
+			if (currentPlayerVars.addNextclickedBlock != null) {
+				currentPlayerVars.getPlayer().sendMessage(Language.TEXT_GROUP_BLOCK_ADDED);
+				currentPlayerVars.addNextclickedBlock.addBlock(block);
+				currentPlayerVars.addNextclickedBlock.setUnlock(false);
+				currentPlayerVars.addNextclickedBlock = null;
+			}
+
+			if (currentPlayerVars.removeNextclickedBlock != null) {
+				currentPlayerVars.getPlayer().sendMessage(Language.TEXT_GROUP_BLOCK_REMOVED);
+				currentPlayerVars.removeNextclickedBlock.removeBlock(block);
+				currentPlayerVars.removeNextclickedBlock.setUnlock(false);
+				currentPlayerVars.removeNextclickedBlock = null;
+			}
+			
+		}
+	}
 	
 	private void playerInteract(PlayerInteractEvent event) {
 		//get event-infos ...

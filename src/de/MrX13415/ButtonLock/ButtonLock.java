@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.8 r21
+ * @version 0.8.1 r22
  */
 public class ButtonLock extends JavaPlugin {
 	

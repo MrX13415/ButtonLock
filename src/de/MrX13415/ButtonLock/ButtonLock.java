@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.8.2 r23
+ * @version 0.8.2 r24
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -106,7 +106,7 @@ public class ButtonLock extends JavaPlugin {
 		try {
 			this.getCommand("setpassword").setExecutor(new SetPasswordCommandExecuter());
 			this.getCommand("password").setExecutor(new PasswordCommandExecuter());
-			this.getCommand("singleusepassword").setExecutor(new OneTimePasswordsCommandExecuter());
+			this.getCommand("onetimepassword").setExecutor(new OneTimePasswordsCommandExecuter());
 			this.getCommand("buttonlock").setExecutor(new ButtonLockCommandExecutor());
 			
 		} catch (Exception e) {

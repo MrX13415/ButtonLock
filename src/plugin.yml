@@ -18,9 +18,9 @@ commands:
     usage: |
            <command> <password>   Enter a password
   onetimepassword:
-    aliases: otpw
-    description: Add or remove a one-tme password
-    usage: |
+   aliases: otpw
+   description: Add or remove a one-tme password
+   usage: |
            <command> <add|remove> <password>  add/removes a one-time password
   buttonlock:
     aliases: bl

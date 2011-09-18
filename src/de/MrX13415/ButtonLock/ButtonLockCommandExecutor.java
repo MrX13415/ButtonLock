@@ -109,7 +109,6 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 							}
 
 							if (args.length == 3) {
-
 								if (args[1].equalsIgnoreCase("forcePassword")
 										|| args[1].equalsIgnoreCase("forcepw")
 										|| args[1].equalsIgnoreCase("fpw")) {
@@ -203,8 +202,10 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 										.setUnlock(false);
 								return true;
 							}
+						}else{
+							sender.sendMessage(Language.TEXT_WHICH_BLOCK);
+							return true;
 						}
-
 					} else {
 						sender.sendMessage(Language.TEXT_WHICH_BLOCK);
 						return true;

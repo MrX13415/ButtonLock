@@ -21,8 +21,8 @@ public class Language {
 	static final String TEXT_ENTER_CODE_FIRST = ChatColor.GRAY + "Enter the password first ...";
 	static final String TEXT_UNLOCK_BLOCK = ChatColor.GRAY + "Password entered: Click at a Block to unlock it ...";
 	static final String TEXT_SINGEL_USE_CODE_UESED = ChatColor.GRAY + "Single-use-Password consumed ... (doesn't work a second time)";
-	static final String TEXT_SINGEL_USE_CODE_ADDED = ChatColor.GRAY + "Single-use-Password(s) added ...";
-	static final String TEXT_SINGEL_USE_CODE_REMOVED = ChatColor.GRAY + "Single-use-Password(s) removed ...";
+	static final String TEXT_ONE_TIME_CODE_ADDED = ChatColor.GRAY + "Single-use-Password(s) added ...";
+	static final String TEXT_ONE_TIME_CODE_REMOVED = ChatColor.GRAY + "Single-use-Password(s) removed ...";
 	static final String TEXT_ERROR_LOADING = ChatColor.GRAY + ButtonLock.consoleOutputHeader + " " + ChatColor.RED + "Some errors occurred during loading ... (see console)";
 	static final String TEXT_GROUP_FORCEPW = ChatColor.GRAY + "At this group, you must enter a password " + ChatColor.GOLD + "every time" + ChatColor.GRAY +  " ...";
 	static final String TEXT_GROUP_NOT_FORCEPW = ChatColor.GRAY + "At this group, you must enter a password " + ChatColor.GOLD + "only once" + ChatColor.GRAY + " ...";

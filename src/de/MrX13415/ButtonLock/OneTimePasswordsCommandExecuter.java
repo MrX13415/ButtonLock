@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SingleUsePasswordCommandExecuter implements CommandExecutor{
+public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {		
 		if (sender instanceof Player) {
@@ -14,7 +14,7 @@ public class SingleUsePasswordCommandExecuter implements CommandExecutor{
 	        
 	        if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
 				//use Permission
-				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_singleUseCods)) {
+				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_onetimeCods)) {
 					return false;
 				}
 			}else{
@@ -42,7 +42,7 @@ public class SingleUsePasswordCommandExecuter implements CommandExecutor{
 									for (int index = 1; index < args.length; index++) {
 										group.addSingleUseCode(args[index].hashCode());
 									}
-									tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_ADDED);
+									tmpVars.getPlayer().sendMessage(Language.TEXT_ONE_TIME_CODE_ADDED);
 									return true;
 								}
 								
@@ -50,7 +50,7 @@ public class SingleUsePasswordCommandExecuter implements CommandExecutor{
 									for (int index = 1; index < args.length; index++) {
 										group.addSingleUseCode(args[index].hashCode());
 									}
-									tmpVars.getPlayer().sendMessage(Language.TEXT_SINGEL_USE_CODE_REMOVED);
+									tmpVars.getPlayer().sendMessage(Language.TEXT_ONE_TIME_CODE_REMOVED);
 									return true;
 								}
 					

@@ -20,7 +20,7 @@ import com.iConomy.*;
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.8.1 r22
+ * @version 0.8.2 r23
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -40,7 +40,7 @@ public class ButtonLock extends JavaPlugin {
 	static final String PERMISSION_NODE_ButtonLock_iconcomy_bypass = "ButtonLock.iconomy.bypass";
 	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
-	static final String PERMISSION_NODE_ButtonLock_singleUseCods = "ButtonLock.singleusecods";
+	static final String PERMISSION_NODE_ButtonLock_onetimeCods = "ButtonLock.onetimecode";
 	static final String PERMISSION_NODE_ButtonLock_buttonlock = "ButtonLock.buttonlock";
 	
 	//holds information for all Players.
@@ -106,7 +106,7 @@ public class ButtonLock extends JavaPlugin {
 		try {
 			this.getCommand("setpassword").setExecutor(new SetPasswordCommandExecuter());
 			this.getCommand("password").setExecutor(new PasswordCommandExecuter());
-			this.getCommand("singleusepassword").setExecutor(new SingleUsePasswordCommandExecuter());
+			this.getCommand("singleusepassword").setExecutor(new OneTimePasswordsCommandExecuter());
 			this.getCommand("buttonlock").setExecutor(new ButtonLockCommandExecutor());
 			
 		} catch (Exception e) {

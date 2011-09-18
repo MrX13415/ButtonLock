@@ -3,7 +3,7 @@
 =================
     
 Title:        ButtonLock
-Version:      0.8.1 r22
+Version:      0.8.2 r23
 
 Description:  Locking able Buttons an Levers in Minecraft for Bukkit
 
@@ -22,6 +22,11 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 Changelog:
+Version: 0.8.2
+    FIX: Nullpointer after using '/bl g add'
+    FIX: Singel-use-password command changed to 'one-time password'
+    ADD: Short-form for the '/bl g add' command
+	
 Version: 0.8.1
     * FIX: Protectable are add able to a group too now
     * FIX: Groups are locked now after using the commands '/bl group add/remove/forcePW/costs'

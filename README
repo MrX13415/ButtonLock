@@ -3,9 +3,10 @@
 =================
     
 Title:        ButtonLock
-Version:      0.8.2 r24
+Version:      0.9 r42
 
 Description:  Locking able Buttons an Levers in Minecraft for Bukkit
+website:      http://dev.bukkit.org/server-mods/buttonlock/
 
 Copyright (C) 2011 MrX13415
 
@@ -22,6 +23,17 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 Changelog:
+Version: 0.9
+    ADD: Lockable states: door open and close etc ...
+    FIX: Bugs
+    ADD: Improved iConomy support
+    ADD: Owners at public chest
+    FIX: Config does not updates itself all the time
+    FIX: Better name handling at the command '/Bl g o <add|remove>'
+    FIX: Better protectionmode-name handling at '/setpw <pw> private/public/password'
+    ADD: Permission-node for '/buttonlock group' commands
+    ADD: Doublechests are automatically locked when they are converted from locked singlechests
+
 Version: 0.8.2
     FIX: Nullpointer after using '/bl g add'
     FIX: Singel-use-password command changed to 'one-time password'

@@ -1,17 +1,20 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 0.8.2 (MC 1.8.1)
-description: Lock Buttons, Levers and Blocks
+version: 0.9 (MC 1.8.1)
+description: >
+             Lock buttons, levers and blocks
 author: MrX13415
+website: http://dev.bukkit.org/server-mods/buttonlock/
 
 commands:
   setpassword:
     aliases: setpw
     description: Set, changes or removes a password
     usage: |
-           <command> <password>   Set/changes a password
-           <command>              Removes a password 
+           <command> <password>                Set/changes a password
+           <command> <password> <protection>   Set/changes a password and the protection mode
+           <command>                           Removes a password 
   password:
     aliases: pw
     description: Enter a password
@@ -24,9 +27,45 @@ commands:
            <command> <add|remove> <password>  add/removes a one-time password
   buttonlock:
     aliases: bl
-    description: Managed Buttonlock and locked groups
+    description: Manages Buttonlock and locked groups
     usage: |
            <command> <save|reload|reset>  reload/save/reset all config-files from Buttonlock
+           <command> protectableBlocks <add|remove> [blocktype]  makes the given block protectable or not ... 
            <command> group forcePassword <true|false>  enforces a password every time or not ... 
-           <command> group costs <costs>  change the costs of a locked group ... 
-           <command> group <add|remove>  adds or removes a Block to or from a locked group ... 
+           <command> group costs [costs]       change the costs of a locked group ... 
+           <command> group <add|remove>        adds or removes a Block ...
+           <command> group owner <add|remove> <owr1> [ow2] [...] adds or removes a owner ...
+           <command> group setLockedState <open|close|on|off|both>  set/changes the locked state ...
+
+permissions:
+  buttonLock.*:
+    description: Gives all permissions for ButtonLock
+    default: op
+    children:
+      buttonLock.use:
+        description: Allows the player to use ButtonLock
+        default: true;
+        
+      buttonLock.bypass:
+        description: Allows the player to bypass the password query
+        default: op
+        
+      buttonLock.iconomy.bypass:
+        description: Allows the player to bypass iConomy
+        default: op
+        
+      buttonLock.setpw:
+        description: Allows the player to set/change any password
+        default: op
+        
+      buttonLock.onetimecode:
+        description: Allows the player to set any One-time password
+        default: op
+        
+      buttonLock.buttonlock:
+        description: Allows the player to change any locked group 
+        default: op
+        children:
+          buttonLock.buttonlock.op:
+            description: Allows the player to save/reload all configs and reset ButtonLock
+            default: op

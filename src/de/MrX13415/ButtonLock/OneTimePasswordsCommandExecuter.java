@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+
 public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {		
@@ -36,13 +38,15 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 						LockedBlockGroup group = ButtonLock.getLockedGroup(tmpVars.getCurrentClickedBlock());
 						
 						if (group != null) {
-							if (group.isUnlocked() && args.length >= 2) {
+							if (args.length >= 2  && ((group.isUnlocked() && group.getProtectionMode() == PROTECTION_MODE.PASSWORD)
+								    || (group.getProtectionMode() == PROTECTION_MODE.PRIVATE && group.isOwner(player.getName()))
+								    || (group.getProtectionMode() == PROTECTION_MODE.PUBLIC && group.isOwner(player.getName())))) {
 								
 								if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
 									for (int index = 1; index < args.length; index++) {
 										group.addSingleUseCode(args[index].hashCode());
 									}
-									tmpVars.getPlayer().sendMessage(Language.TEXT_ONE_TIME_CODE_ADDED);
+									tmpVars.getPlayer().sendMessage(Language.ONE_TIME_CODE_ADDED);
 									return true;
 								}
 								
@@ -50,20 +54,24 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 									for (int index = 1; index < args.length; index++) {
 										group.addSingleUseCode(args[index].hashCode());
 									}
-									tmpVars.getPlayer().sendMessage(Language.TEXT_ONE_TIME_CODE_REMOVED);
+									tmpVars.getPlayer().sendMessage(Language.ONE_TIME_CODE_REMOVED);
 									return true;
 								}
 					
 							}else{
-								tmpVars.getPlayer().sendMessage(Language.TEXT_ENTER_CODE_FIRST);
+								tmpVars.getPlayer().sendMessage(Language.DENIED);
+								tmpVars.getPlayer().sendMessage(Language.ENTER_CODE_FIRST);
+					        	return true;
 							}
 							
 						}else{
-							tmpVars.getPlayer().sendMessage(Language.TEXT_WHICH_BLOCK);
+							tmpVars.getPlayer().sendMessage(Language.WHICH_BLOCK);
+				        	return true;
 						}
 		        	}
 				}else{
-					tmpVars.getPlayer().sendMessage(Language.TEXT_WHICH_BLOCK);
+					tmpVars.getPlayer().sendMessage(Language.WHICH_BLOCK);
+		        	return true;
 				}
 			}
 		}

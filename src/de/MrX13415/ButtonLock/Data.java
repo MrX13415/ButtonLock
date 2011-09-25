@@ -6,8 +6,11 @@ import org.bukkit.block.Block;
 public class Data {
 
 	//bits
-	static final int DOOR_TOP = 3;
-	static final int BED_HEAD = 3;
+	static final int DOOR_TOP = 3;//1 == TOP
+	static final int BED_HEAD = 3; //1 == HEAD
+	
+	static final int DOOR_OPEN = 2;		//1 == open | doors; trap-doors; fence-gates
+	static final int LEVER_ON = 3;		//1 == ON
 	
 	//bed
 	static final int BED_DIGITS = 2;
@@ -39,7 +42,7 @@ public class Data {
 	static final String OBJECT_GROUP_4_FACING_SOUTH = "10";
 	static final String OBJECT_GROUP_4_FACING_NORTH = "11";
 	
-	/** returns the date with a give digit lenght
+	/** returns the data with a give digit lenght
 	 * 
 	 * @param block
 	 * @param digits
@@ -111,6 +114,12 @@ public class Data {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @param bit
+	 * @return true == 1 / false == 0
+	 */
 	public static boolean bitTest(int value, int bit){
 		String binary = Integer.toBinaryString(value);
 		String requestedBit = "0";

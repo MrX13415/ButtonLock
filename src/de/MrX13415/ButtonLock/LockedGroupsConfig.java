@@ -9,12 +9,16 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+
 public class LockedGroupsConfig {
 	
 	private String configFileName = "LockedGroups.yml";
 	private String configFilePath = "plugins" + File.separator + ButtonLock.pluginName + File.separator;
 
 	private static final String keyGroupNr = "LockedGroup#: ";
+	private static final String keyOwnerList = "OwnerList";
+	private static final String keyProtection = "Protection";
 	private static final String keyGroupPW = "GroupPW";
 	private static final String keyForcePW = "ForcePW";
 	private static final String keyCosts = "Costs";
@@ -32,8 +36,10 @@ public class LockedGroupsConfig {
 	private static final String fileFormat_Sub_Section = fileFormat_Sub + fileFormat_Sub_Section_start + "%s" + fileFormat_Sub_Section_end; 
 	private static final String fileFormat_valueseperator = ":";
 	private static final String fileFormat_keys = "  %s" + fileFormat_valueseperator + " %s"; 
-
-		
+	private static final String fileFormat_list_start = "["; 
+	private static final String fileFormat_list_end  = "]"; 
+	private static final String fileFormat_list_seperate  = ","; 
+	
 	public void read() {
 		LineNumberReader reader;
 		
@@ -44,10 +50,19 @@ public class LockedGroupsConfig {
 		LockedBlockGroup currentGroup = null;
 		int groupPW = 0;
 		boolean forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
-		double costs = ButtonLock.configFile.iConomyCosts;
+		
+		double costs = 0;
+		if (ButtonLock.configFile.iConomyIsFreeAsDefault){
+			costs = 0.00;
+		}else{
+			costs = ButtonLock.configFile.iConomyCosts;
+		}
+		
 		boolean changedSetting_fpet = false;
 		boolean changedSetting_c = false;
 		boolean pwIsSet = false;
+		String[] list = null;
+		PROTECTION_MODE protection = PROTECTION_MODE.PASSWORD;
 		
 //		String blockWorld;
 		int blockPosX = 0;
@@ -86,7 +101,11 @@ public class LockedGroupsConfig {
 									errorsORwarinings = true;
 									groupPW = 49; //hash 49 = char "1" 
 								}
-								
+
+								for (String owner : list) {
+									currentGroup.addOwner(owner);	
+								}
+								currentGroup.setProtectionMode(protection);
 								currentGroup.setPassword(groupPW);
 								currentGroup.setForceEnterPasswordEveryTime(forcePW);
 								currentGroup.costs = costs;
@@ -99,7 +118,12 @@ public class LockedGroupsConfig {
 								
 								//reset settings to default ...
 								forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
-								costs = ButtonLock.configFile.iConomyCosts;
+								if (ButtonLock.configFile.iConomyIsFreeAsDefault){
+									costs = 0;
+								}else{
+									costs = ButtonLock.configFile.iConomyCosts;
+								}
+								
 							}
 						
 							currentGroup = new LockedBlockGroup();
@@ -160,6 +184,11 @@ public class LockedGroupsConfig {
 //							if (line[0].equalsIgnoreCase(keyBlockWorld)) {
 //								blockWorld = line[1];
 //							}
+							
+							if (line[0].equalsIgnoreCase(keyOwnerList)) {
+								list = line[1].replace(fileFormat_list_start, "").replace(fileFormat_list_end, "").split(fileFormat_list_seperate);
+							}
+							
 							if (line[0].equalsIgnoreCase(keyGroupPW)) {
 								pwIsSet = true;
 								groupPW = Integer.valueOf(line[1]);
@@ -174,12 +203,20 @@ public class LockedGroupsConfig {
 								changedSetting_c = true;
 								costs = Double.valueOf(line[1]);
 							}
+							
+							if (line[0].equalsIgnoreCase(keyProtection)) {
+								protection = PROTECTION_MODE.valueOf(line[1]);
+							}
 						}
 					}
 
 					//add last Group
 					if (currentGroup != null && groupNr > -1) {
 						if (pwIsSet) {
+							for (String owner : list) {
+								currentGroup.addOwner(owner);	
+							}
+							currentGroup.setProtectionMode(protection);
 							currentGroup.setPassword(groupPW);
 							currentGroup.setForceEnterPasswordEveryTime(forcePW);
 							currentGroup.costs = costs;
@@ -207,7 +244,7 @@ public class LockedGroupsConfig {
 		}
 		
 		if (errorsORwarinings) {
-			ButtonLock.server.broadcastMessage(Language.TEXT_ERROR_LOADING);
+			ButtonLock.server.broadcastMessage(Language.ERROR_LOADING);
 		}
 		
 	}
@@ -242,6 +279,15 @@ public class LockedGroupsConfig {
 						if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
 
 							writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
+							
+							String ownerList = fileFormat_list_start;
+							for (int index = 0; index < group.getOwnerListSize(); index++) {
+								ownerList += group.getOwner(index) + fileFormat_list_seperate;
+							}
+							ownerList = ownerList.substring(0, ownerList.length() - 1) + fileFormat_list_end; 
+									
+							writer.write(String.format(fileFormat_keys, keyOwnerList, ownerList) + "\n");
+							writer.write(String.format(fileFormat_keys, keyProtection, group.getProtectionMode()) + "\n");
 							writer.write(String.format(fileFormat_keys, keyGroupPW, group.getPassword()) + "\n");
 							
 							if (group.changedSetting_forceEnterPasswordEveryTime) 

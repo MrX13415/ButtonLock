@@ -13,17 +13,18 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.iConomy.*;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.iConomy.*;
 
 /** ButtonLock for Bukkit
  * 
  * @author Oliver Daus
- * @version 0.8.2 r24
+ * @version 0.9 r42
  */
 public class ButtonLock extends JavaPlugin {
 	
+	static PluginDescriptionFile pdfFile = null;
 	static Server server = null;
 	static Logger log = null;
 	static String pluginName = null;
@@ -42,6 +43,7 @@ public class ButtonLock extends JavaPlugin {
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
 	static final String PERMISSION_NODE_ButtonLock_onetimeCods = "ButtonLock.onetimecode";
 	static final String PERMISSION_NODE_ButtonLock_buttonlock = "ButtonLock.buttonlock";
+	static final String PERMISSION_NODE_ButtonLock_buttonlock_op = "ButtonLock.buttonlock.op";
 	
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
@@ -51,7 +53,6 @@ public class ButtonLock extends JavaPlugin {
 	private final ButtonLockPlayerListener pListener = new ButtonLockPlayerListener();
 	private final ButtonLockBlockListener bListener = new ButtonLockBlockListener();
 //	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-	
 	
 	@Override
 	public void onDisable() {
@@ -65,7 +66,7 @@ public class ButtonLock extends JavaPlugin {
 		server = this.getServer();
 		log = server.getLogger();
 		
-		PluginDescriptionFile pdfFile = this.getDescription();
+		pdfFile = this.getDescription();
 		pluginName = pdfFile.getName();
 		consoleOutputHeader = "[" + pluginName + "]";
 
@@ -74,6 +75,12 @@ public class ButtonLock extends JavaPlugin {
         //load config ...
         configFile = new Config();
         configFile.read();
+        
+        if (! configFile.configFileVersion.equalsIgnoreCase(pdfFile.getVersion())){
+        	configFile.updateVersion();
+        	log.info(consoleOutputHeader + " Config file updated ...");
+        	configFile.write();
+        }
         
         //load locked Buttons ...
         lockedGroupsFile = new LockedGroupsConfig();
@@ -263,6 +270,11 @@ public class ButtonLock extends JavaPlugin {
 			  	}
 			}
 		}
+		return false;
+	}
+	
+	public static boolean hasPermission(Player player, String permissionNode) {
+		if (permissionHandler.permission(player, permissionNode)) return true;
 		return false;
 	}
 }

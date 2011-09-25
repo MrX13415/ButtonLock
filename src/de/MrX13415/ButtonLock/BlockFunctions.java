@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
+
 
 public class BlockFunctions {
 
@@ -147,4 +149,36 @@ public class BlockFunctions {
 		return false;
 	}
 	
+	
+	public static LOCKED_STATE getBlockState(Block block) {
+		//doors, fence-gates and trap-doors ..
+		if (isaDoorAsStateType(block)) {
+			if (Data.bitTest(block.getData(), Data.DOOR_OPEN)) {
+				return LOCKED_STATE.OPEN;
+			}else{
+				return LOCKED_STATE.CLOSE;
+			}
+		}
+		
+		//levers ...
+		if (isaLeverAsStateType(block)) {
+			if (Data.bitTest(block.getData(), Data.LEVER_ON)) {
+				return LOCKED_STATE.ON;
+			}else{
+				return LOCKED_STATE.OFF;
+			}
+		}
+		return LOCKED_STATE.BOTH;
+	}
+		
+	public static boolean isaDoorAsStateType(Block block) {
+		if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ||
+				block.getType().equals(Material.TRAP_DOOR) || block.getType().equals(Material.FENCE_GATE)) return true;
+		return false;
+	}
+	
+	public static boolean isaLeverAsStateType(Block block) {
+		if (block.getType().equals(Material.LEVER)) return true;
+		return false;
+	}
 }

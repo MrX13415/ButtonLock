@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+
 /**
 * Handler for the 'SetPassword' command.
 * @author MrX13415
@@ -34,6 +36,7 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 	        if (currentPlayerVars != null) {
 
 				if (ButtonLock.isProtectable(currentPlayerVars.getCurrentClickedBlock())) {
+					
 					//find Button in the locked-button-list ...
 					LockedBlockGroup group = ButtonLock.getLockedGroup(currentPlayerVars.getCurrentClickedBlock());
 					boolean isAnewButton = false;
@@ -47,10 +50,11 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 					
 					if(ButtonLock.byPass(player)) group.setUnlock(true);
 					
-					if (group.isUnlocked()) {
-						if (args.length == 1) {
-							group.addBlock(currentPlayerVars.getCurrentClickedBlock());
-
+					if (group.hasAccess(player)) {
+						
+						if (args.length >= 1 && args.length <= 2) {
+							if (! group.containsBlock(currentPlayerVars.getCurrentClickedBlock())) group.addBlock(currentPlayerVars.getCurrentClickedBlock());
+							
 							Block partBlock = BlockFunctions.getPartBlock(currentPlayerVars.getCurrentClickedBlock());
 							if (partBlock != null) {
 								group.addBlock(partBlock);								
@@ -61,6 +65,7 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 								group.addBlock(attachedBlock);								
 							}
 							
+							if (! group.isOwner(((Player) sender).getName())) group.addOwner(((Player) sender).getName());
 							group.setPassword(args[0].hashCode());
 							group.setUnlock(false);
 							
@@ -68,27 +73,61 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 								ButtonLock.addLockedGroup(group);
 							}
 							
-							player.sendMessage(Language.TEXT_PW_CHANGED);
+							if (args.length == 2) {
+								String protectionMode = args[1].toLowerCase();
+								
+								if (protectionMode.startsWith("pa")) protectionMode = PROTECTION_MODE.PASSWORD.toString();
+								if (protectionMode.startsWith("pr")) protectionMode = PROTECTION_MODE.PRIVATE.toString();
+								if (protectionMode.startsWith("pu")) protectionMode = PROTECTION_MODE.PUBLIC.toString();
+								
+								if (protectionMode.equalsIgnoreCase(PROTECTION_MODE.PASSWORD.toString()) || protectionMode.equalsIgnoreCase(PROTECTION_MODE.PRIVATE.toString()) ||protectionMode.equalsIgnoreCase(PROTECTION_MODE.PUBLIC.toString())){
+									PROTECTION_MODE setting = PROTECTION_MODE.valueOf(protectionMode.toUpperCase());
+									
+									PROTECTION_MODE settingBefore = group.getProtectionMode();
+									
+									if (setting != settingBefore){
+										group.setProtectionMode(setting);
+									}
+									
+								}else{
+									
+								}
+							}
+							
+							if (group.getProtectionMode() == PROTECTION_MODE.PASSWORD) {
+								sender.sendMessage(Language.GROUP_PROTECTION_PASSWORD);
+								
+							}else if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
+								sender.sendMessage(Language.GROUP_PROTECTION_PRIVATE);
+								sender.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+								
+							}else if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) {
+								sender.sendMessage(Language.GROUP_PROTECTION_PUBLIC);
+								sender.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+								
+							}
+							
+							player.sendMessage(Language.PW_CHANGED);
 							return true;	
 						}else if (args.length == 0){
 							ButtonLock.removeLockedBlock(group);
-							player.sendMessage(Language.TEXT_PW_REMOVED);
+							player.sendMessage(Language.PW_REMOVED);
 							return true;
 						}
 					}else{
-						player.sendMessage(Language.TEXT_DENIED);
+						player.sendMessage(Language.DENIED);
 						if (args.length == 0){
-							player.sendMessage(Language.TEXT_ENTER_CODE_FIRST);
+							player.sendMessage(Language.ENTER_CODE_FIRST);
 						}
 						return true;
 					}
 				}else{
-					player.sendMessage(Language.TEXT_WHICH_BLOCK);
+					player.sendMessage(Language.NOT_PROTECTABLE);
 					return true;
 					
 				}
 			}else if(args.length == 0){
-				player.sendMessage(Language.TEXT_WHICH_BLOCK);
+				player.sendMessage(Language.WHICH_BLOCK);
 				return true;
 			}
 		}

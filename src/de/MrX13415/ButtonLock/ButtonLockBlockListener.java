@@ -1,8 +1,11 @@
 package de.MrX13415.ButtonLock;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.*;
+
+import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
 
 
 public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListener {
@@ -10,7 +13,36 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
+					
+		LockedBlockGroup group = null;
+		BlockFace[] faces = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
+		for (BlockFace face : faces) {
+			Block relativeblock = block.getRelative(face);
+			if (ButtonLock.isProtected(relativeblock)){
+				group = ButtonLock.getLockedGroup(relativeblock);
+				
+				if (group != null) {
+					if (group.hasAccess(player)) {
+						Block partBlock = BlockFunctions.getPartBlock(relativeblock);
+						if (partBlock != null){
+							group.addBlock(partBlock);								
+						}
+						
+						Block attachedBlock = BlockFunctions.getAttachedBlock(relativeblock);
+						if (attachedBlock != null){
+							group.addBlock(attachedBlock);
+						}
+						
+					}else{
+						player.sendMessage(Language.DENIED);
+						event.setCancelled(true);
+					}
+				}
+				break;
+			}
+		}
+		
 		// find PlayerVars
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 
@@ -39,7 +71,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isUnlocked()|| group.getProtectionMode() == PROTECTION_MODE.PUBLIC || group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}else{
 				group.setUnlock(false);
@@ -146,7 +178,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isUnlocked()|| group.getProtectionMode() == PROTECTION_MODE.PUBLIC || group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -161,7 +193,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isUnlocked()|| group.getProtectionMode() == PROTECTION_MODE.PUBLIC || group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -251,7 +283,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isUnlocked()|| group.getProtectionMode() == PROTECTION_MODE.PUBLIC || group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}

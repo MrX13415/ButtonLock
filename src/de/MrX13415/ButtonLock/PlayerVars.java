@@ -34,7 +34,7 @@ public class PlayerVars{
 		return currentClickedLockedButton;
 	}
 	
-	public void setCurrentClickedLockedButton(LockedBlockGroup button) {
+	public void setCurrentClickedLockedGroup(LockedBlockGroup button) {
 		currentClickedLockedButton = button;
 	}
 	

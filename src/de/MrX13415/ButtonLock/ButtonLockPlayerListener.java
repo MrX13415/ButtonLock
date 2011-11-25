@@ -25,13 +25,14 @@ public class ButtonLockPlayerListener extends PlayerListener {
 //			System.out.println("MATERIAL: " + event.getClickedBlock().getType());
 //		} catch (Exception e) {
 //		}
-
+		ButtonLock.debugEvent(event);
+		
     	if ((event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
     		Player player = event.getPlayer();
     		Block block = event.getClickedBlock();
     	
 			//clicked block is a protectable block ...
-			if (ButtonLock.isProtectable(block)) {
+			if (ButtonLock.isProtectable(block) || ButtonLock.isProtected(block)) {
 				//find PlayerVars
 				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 				addBlockToLastGroup(currentPlayerVars, block);
@@ -57,6 +58,9 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				//find PlayerVars
 				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 				addBlockToLastGroup(currentPlayerVars, block);
+				currentPlayerVars.setCurrentClickedBlock(block);
+				currentPlayerVars.setCurrentClickedLockedGroup(null);
+				
 				
 			}
     	}
@@ -67,14 +71,14 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		if (currentPlayerVars != null) {
 
 			if (currentPlayerVars.addNextclickedBlock != null) {
-				currentPlayerVars.getPlayer().sendMessage(Language.GROUP_BLOCK_ADDED);
+				currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.GROUP_BLOCK_ADDED);
 				currentPlayerVars.addNextclickedBlock.addBlock(block);
 				currentPlayerVars.addNextclickedBlock.setUnlock(false);
 				currentPlayerVars.addNextclickedBlock = null;
 			}
 
 			if (currentPlayerVars.removeNextclickedBlock != null) {
-				currentPlayerVars.getPlayer().sendMessage(Language.GROUP_BLOCK_REMOVED);
+				currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.GROUP_BLOCK_REMOVED);
 				currentPlayerVars.removeNextclickedBlock.removeBlock(block);
 				currentPlayerVars.removeNextclickedBlock.setUnlock(false);
 				currentPlayerVars.removeNextclickedBlock = null;
@@ -97,6 +101,9 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		//button was founded ...
 		if (group != null) {
 			
+			currentPlayerVars.setCurrentClickedBlock(block);
+			currentPlayerVars.setCurrentClickedLockedGroup(group);
+			
 			Boolean atLockedState = true;			
 			if (group.getLockedState() != LOCKED_STATE.BOTH && group.getLockedState() != null) {
 				if(BlockFunctions.getBlockState(block) != group.getLockedState()){
@@ -106,34 +113,28 @@ public class ButtonLockPlayerListener extends PlayerListener {
 			}
 			
 			if(ButtonLock.byPass(player)){
-				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-				currentPlayerVars.setCurrentClickedBlock(block);
-				player.sendMessage(Language.PW_BYPASS);
+				player.sendMessage(ButtonLock.language.PW_BYPASS);
 				group.setUnlock(true);
 			}
 			
 			if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) {
 				if (atLockedState) {
 					group.setUnlock(true);
-					player.sendMessage(Language.SUCCEED);
-					player.sendMessage(Language.PROTECTION_MODE_IS + Language.PUBLIC);
-					player.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+					player.sendMessage(ButtonLock.language.SUCCEED);
+					player.sendMessage(String.format(ButtonLock.language.PROTECTION_MODE_IS, ButtonLock.language.PUBLIC));
+					player.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
 
 					//iconomy
 					iconomy(event);
 				}
-				
-				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-				currentPlayerVars.setCurrentClickedBlock(block);
-
 
 			}else if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
 				if (group.isOwner(player.getName())) {
 					if (atLockedState) {
 						group.setUnlock(true);
-						player.sendMessage(Language.SUCCEED);
-						player.sendMessage(Language.PROTECTION_MODE_IS + Language.PRIVATE);
-						player.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+						player.sendMessage(ButtonLock.language.SUCCEED);
+						player.sendMessage(String.format(ButtonLock.language.PROTECTION_MODE_IS, ButtonLock.language.PRIVATE));
+						player.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
 						
 						//iconomy
 						iconomy(event);
@@ -141,65 +142,56 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				}else{
 					if (atLockedState) {
 						group.setUnlock(false);
-						player.sendMessage(Language.DENIED);
-						player.sendMessage(Language.PROTECTION_MODE_IS + Language.PRIVATE);
-						player.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+						player.sendMessage(ButtonLock.language.DENIED);
+						player.sendMessage(String.format(ButtonLock.language.PROTECTION_MODE_IS, ButtonLock.language.PRIVATE));
+						player.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
 						event.setCancelled(true);
 					}
 				}
 				
-				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-				currentPlayerVars.setCurrentClickedBlock(block);
-				
 			}else if (group.getProtectionMode() == PROTECTION_MODE.PASSWORD) {
 				
 				if (currentPlayerVars.getEnteredPasswords() > 0 && group.isForceingEnterPasswordEveryTime() == false) {
-					currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-					currentPlayerVars.setCurrentClickedBlock(block);
+	
+					if (ButtonLock.passwordWasEntered(currentPlayerVars, group)) currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.SUCCEED);
 					
-					if (ButtonLock.passwordWasEntered(currentPlayerVars, group)) currentPlayerVars.getPlayer().sendMessage(Language.SUCCEED);
-					
-					if (! group.isUnlocked()) {
+					if (! group.hasAccess(player)) {
 						event.setCancelled(true);	
 					}
 				}
 					
 				if (currentPlayerVars.getLastPassword() != null) {
-					if (! group.isUnlocked()) {
-						currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-						currentPlayerVars.setCurrentClickedBlock(block);
+					if (! group.hasAccess(player)) {
+
+						player.sendMessage(String.format(ButtonLock.language.CODE, ButtonLock.language.getMaskedText(currentPlayerVars.getLastPassword())));
 						
-						player.sendMessage(Language.CODE + Language.getMaskedText(currentPlayerVars.getLastPassword()));
+						group.checkPasswordAndPrintResault(currentPlayerVars, currentPlayerVars.getLastPassword().hashCode());
 						
-						LockedBlockGroup.checkPasswordAndPrintResault(currentPlayerVars, currentPlayerVars.getLastPassword().hashCode());
-						
-	//					if (group.isUnlocked()) currentPlayerVars.addPasssword(currentPlayerVars.getLastPassword().hashCode());
+	//					if (group.hasAccess(player)) currentPlayerVars.addPasssword(currentPlayerVars.getLastPassword().hashCode());
 						
 						currentPlayerVars.setLastPassword(null);
 					}
 					
-					if (! group.isUnlocked()) event.setCancelled(true);	
+					if (! group.hasAccess(player)) event.setCancelled(true);	
 				}else {
 					//button is locked
-					if (! group.isUnlocked()) {
+					if (! group.hasAccess(player)) {
 						//inform player to enter a code ...
-						player.sendMessage(Language.DENIED);
+						player.sendMessage(ButtonLock.language.DENIED);
 						
 						if (ButtonLock.configFile.useChatforPasswordInput) {
-							player.sendMessage(Language.ENTER_CODE_CHAT);
+							player.sendMessage(String.format(ButtonLock.language.ENTER_CODE_CHAT, (double) ((double) ButtonLock.configFile.timeforEnteringPassword/(double) 1000)) );
 						}else{
-							player.sendMessage(Language.ENTER_CODE_COMMAND);
+							player.sendMessage(ButtonLock.language.ENTER_CODE_COMMAND);
 						}
 						
 						currentPlayerVars.setEnteringCode(true);					//go into entering password mode
-						currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
-						currentPlayerVars.setCurrentClickedBlock(block);
 						
 						event.setCancelled(true);						//cancel event because the button is locked ...
 					}	
 				}
 				
-				if (group.isUnlocked()) {
+				if (group.hasAccess(player)) {
 					
 					//iconomy
 					iconomy(event);
@@ -220,6 +212,8 @@ public class ButtonLockPlayerListener extends PlayerListener {
 	}   
 
     public void onPlayerChat(PlayerChatEvent event){
+    	ButtonLock.debugEvent(event);
+		
 		Player player = event.getPlayer();
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 		
@@ -235,10 +229,11 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				event.setCancelled(true);
 				
 				//display the password to the Player...
-				player.sendMessage(Language.CODE + Language.getMaskedText(enteredCode));
+				player.sendMessage(String.format(ButtonLock.language.CODE, ButtonLock.language.getMaskedText(enteredCode)));
 				
 				//check if the password was correct ...
-				LockedBlockGroup.checkPasswordAndPrintResault(currentPlayerVars, enteredCode.hashCode());
+				LockedBlockGroup group = currentPlayerVars.getCurrentClickedLockedGroup();
+				if (group != null) group.checkPasswordAndPrintResault(currentPlayerVars, enteredCode.hashCode());
 				
 				//leave password entering mode.
 				currentPlayerVars.setEnteringCode(false);	
@@ -247,6 +242,8 @@ public class ButtonLockPlayerListener extends PlayerListener {
     } 
     
     public void onPlayerQuit(PlayerQuitEvent event) {
+    	ButtonLock.debugEvent(event);
+		
     	ButtonLock.removePlayer(event.getPlayer());
 	}
 
@@ -266,9 +263,9 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		if (ButtonLock.configFile.useIConomy && ! event.isCancelled()) {
 			
 			if (ButtonLock.iConomyByPass(player)) {
-				currentPlayerVars.setCurrentClickedLockedButton(group);	//set current button 
+				currentPlayerVars.setCurrentClickedLockedGroup(group);	//set current button 
 				currentPlayerVars.setCurrentClickedBlock(block);
-				player.sendMessage(Language.ICONOMY_BYPASS);
+				player.sendMessage(ButtonLock.language.ICONOMY_BYPASS);
 				
 			}else{
 				if (iConomy.hasAccount(player.getName())){
@@ -283,26 +280,26 @@ public class ButtonLockPlayerListener extends PlayerListener {
 						if (balance.hasEnough(costs)) {
 							balance.subtract(costs);
 							if (costs > 0) {
-								player.sendMessage(Language.ICONOMY_MONY_SUBTRACTED + costs);
+								player.sendMessage(String.format(ButtonLock.language.ICONOMY_MONY_SUBTRACTED, costs));
 							}else if (! ButtonLock.configFile.iConomyIsFreeAsDefault) {
-								player.sendMessage(Language.ICONOMY_MONY_SUBTRACTED_FREE);
+								player.sendMessage(ButtonLock.language.ICONOMY_MONY_SUBTRACTED_FREE);
 							}
 						}else {
 							//not enough mony ...
-							player.sendMessage(Language.DENIED);
-							player.sendMessage(Language.ICONOMY_LESS_MONY + costs);
+							player.sendMessage(ButtonLock.language.DENIED);
+							player.sendMessage(String.format(ButtonLock.language.ICONOMY_LESS_MONY, costs));
 							event.setCancelled(true);
 						}
 					}else{
 						//acc is not valid ...
-						player.sendMessage(Language.DENIED);
-						player.sendMessage(Language.ICONOMY_NOT_VALID_ACC);
+						player.sendMessage(ButtonLock.language.DENIED);
+						player.sendMessage(ButtonLock.language.ICONOMY_NOT_VALID_ACC);
 						event.setCancelled(true);
 					}
 				}else{
 					//no acc ...
-					player.sendMessage(Language.DENIED);
-					player.sendMessage(Language.ICONOMY_NO_ACC);
+					player.sendMessage(ButtonLock.language.DENIED);
+					player.sendMessage(ButtonLock.language.ICONOMY_NO_ACC);
 					event.setCancelled(true);
 				}
 			}

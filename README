@@ -3,9 +3,9 @@
 =================
     
 Title:        ButtonLock
-Version:      0.9 r42
+Version:      1.0 r51
 
-Description:  Locking able Buttons an Levers in Minecraft for Bukkit
+Description:  Lockable Buttons and Levers in Minecraft for Bukkit
 website:      http://dev.bukkit.org/server-mods/buttonlock/
 
 Copyright (C) 2011 MrX13415
@@ -21,23 +21,36 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program;
 if not, see <http://www.gnu.org/licenses/>.
 
-
 Changelog:
+Version: 1.0
+    * FIX: '/bl' command permission
+    * ADD: '/bl version' command
+    * ADD: '/bl remove' command
+    * ADD: '/bl info' command
+    * FIX: Better '/bl reset' command
+    * ADD: Costum language support (see under "plugins/ButtonLock/languages")
+    * ADD: Lava and water protection
+    * ADD: Creeper protection
+    * ADD: Enderman protection
+    * FIX: Improved and fixed block protection
+    * ADD: One-time Password generator (/otpw gen <player1> [<player2>] [<...>])
+    * FIX: Improved and fixed /otpw command
+
 Version: 0.9
-    ADD: Lockable states: door open and close etc ...
-    FIX: Bugs
-    ADD: Improved iConomy support
-    ADD: Owners at public chest
-    FIX: Config does not updates itself all the time
-    FIX: Better name handling at the command '/Bl g o <add|remove>'
-    FIX: Better protectionmode-name handling at '/setpw <pw> private/public/password'
-    ADD: Permission-node for '/buttonlock group' commands
-    ADD: Doublechests are automatically locked when they are converted from locked singlechests
+    * ADD: Lockable states: door open and close etc ...
+    * FIX: Bugs
+    * ADD: Improved iConomy support
+    * ADD: Owners at public chest
+    * FIX: Config does not updates itself all the time
+    * FIX: Better name handling at the command '/Bl g o <add|remove>'
+    * FIX: Better protectionmode-name handling at '/setpw <pw> private/public/password'
+    * ADD: Permission-node for '/buttonlock group' commands
+    * ADD: Doublechests are automatically locked when they are converted from locked singlechests
 
 Version: 0.8.2
-    FIX: Nullpointer after using '/bl g add'
-    FIX: Singel-use-password command changed to 'one-time password'
-    ADD: Short-form for the '/bl g add' command
+    * FIX: Nullpointer after using '/bl g add'
+    * FIX: Singel-use-password command changed to 'one-time password'
+    * ADD: Short-form for the '/bl g add' command
 	
 Version: 0.8.1
     * FIX: Protectable are add able to a group too now

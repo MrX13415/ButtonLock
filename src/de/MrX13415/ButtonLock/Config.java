@@ -15,9 +15,11 @@ public class Config {
 	private String configFileName = "config.yml";
 	private String configFilePath = "plugins/" + ButtonLock.pluginName + "/";
 	
+	private static final String keyLanguage = "Language";
+	private static final String keyOfflinePlayersAreAddable = "OfflinePlayersAreAddable";
 	private static final String keyDefaultLockedStatesForDoors = "DefaultLockedStatesForDoors";
 	private static final String keyDefaultLockedStatesForLevers = "DefaultLockedStatesForLevers";
-	private static final String keyConfigFileVersion = "ConfigFileVersion";
+	private static final String keyVersion = "Version";
 	private static final String keyUseChatforPasswordInput = "UseChatforPasswordInput";
 	private static final String keyEnablePasswordByPass = "EnablePasswordByPass";
 	private static final String keyForcePasswordEveryTimeByDefault = "ForcePasswordEveryTimeByDefault";
@@ -30,11 +32,13 @@ public class Config {
 	private static final String keyTimeforEnteringPassword = "TimeforEnteringPassword";
 	private static final String listLockableBlocks = "LockableBlocksList:";
 	private static final String fileFormat_keys = "%s: %s"; 
+	private static String fileFormat_keys_key_value_seperator = ":";
 	private static final String fileFormat_lists_start = "  - "; 
 	private static final String fileFormat_lists = fileFormat_lists_start + "%s";
 	private static final String fileFormat_Comments_prefix = "#";
 		
 	//-- file content --
+	public String language = ButtonLock.language.languageName;
 	public LOCKED_STATE defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
 	public LOCKED_STATE defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
 	public String configFileVersion = "----";
@@ -45,6 +49,7 @@ public class Config {
 	public boolean enableIConomyByPass = false;
 	public boolean enablePasswordByPass = false;
 	public boolean forcePasswordEveryTimeByDefault = false;
+	public boolean offlinePlayersAreAddable = false;
 	public boolean iConomyIsFreeAsDefault = true;
 	public double iConomyCosts = 0.50;
 	public long timeforEnteringPassword = 10000;  //millis
@@ -52,17 +57,48 @@ public class Config {
 	public String currentlist;	
 	
 	public Config() {
-		//nothing
+		setDefaults();
 	}
 	
-	public Config(boolean setVersion) {
-		super();
-		updateVersion();
+	public void setDefaults() {
+		language = ButtonLock.language.languageName;
+		defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
+		defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
+		configFileVersion = "----";
+		useChatforPasswordInput = true;
+		usePermissions = true;
+		oPOnly = false;
+		useIConomy = false;
+		enableIConomyByPass = false;
+		enablePasswordByPass = false;
+		forcePasswordEveryTimeByDefault = false;
+		offlinePlayersAreAddable = false;
+		iConomyIsFreeAsDefault = true;
+		iConomyCosts = 0.50;
+		timeforEnteringPassword = 10000;  //millis
 	}
 	
-	public void updateVersion(){
-		configFileVersion = ButtonLock.pdfFile.getVersion().toString();
+	public boolean isUptoDate(){
+		if (this.configFileVersion.equalsIgnoreCase(ButtonLock.pdfFile.getVersion())){
+			return true;
+		}
+		return false;
 	}
+
+	public boolean update(){
+		return update(false);
+	}
+	
+	public boolean update(boolean force){
+		boolean returnStatus = false;
+		if (! isUptoDate() || force) {
+			setDefaults();
+			configFileVersion = ButtonLock.pdfFile.getVersion().toString();
+		    returnStatus = write();
+		}
+		return returnStatus;
+	}
+	
 	
 	public void read() {
 		LineNumberReader reader;
@@ -86,8 +122,13 @@ public class Config {
 							}
 						}
 						
-						
-						String[] keyLine = line.replaceAll(": ", ":").split(":");
+						String[] keyLine = new String[2];
+						keyLine[0] = line;
+						keyLine[1] = "";
+						if (line.contains(fileFormat_keys_key_value_seperator)) {
+							keyLine[0] = line.substring(0, line.indexOf(fileFormat_keys_key_value_seperator)).trim();
+							keyLine[1] = line.substring(line.indexOf(fileFormat_keys_key_value_seperator) + fileFormat_keys_key_value_seperator.length()).trim();
+						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyUseChatforPasswordInput)) {
 							useChatforPasswordInput = Boolean.valueOf(keyLine[1]);
@@ -129,8 +170,26 @@ public class Config {
 							forcePasswordEveryTimeByDefault = Boolean.valueOf(keyLine[1]);
 						}
 						
-						if (keyLine[0].equalsIgnoreCase(keyConfigFileVersion)) {
+						if (keyLine[0].equalsIgnoreCase(keyVersion)) {
 							configFileVersion = keyLine[1];
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyLanguage)) {
+							
+							String newLanguage = keyLine[1];
+							if (ButtonLock.language.langExists(newLanguage)){
+								
+								String oldLanguage = language;
+								if (! oldLanguage.equalsIgnoreCase(newLanguage)) {
+									language = newLanguage;
+									//load lang...
+									ButtonLock.language = ButtonLock.getLanguageDefaults(language);
+									ButtonLock.language.load(language);
+									ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Language set to: \"" + language + "\"");
+								}
+							}else{
+								ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Language not found: \"" + newLanguage + "\"");
+							}		
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyDefaultLockedStatesForDoors)) {
@@ -140,6 +199,10 @@ public class Config {
 						
 						if (keyLine[0].equalsIgnoreCase(keyDefaultLockedStatesForLevers)) {
 							defaultLockedStatesForLevers = LOCKED_STATE.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyOfflinePlayersAreAddable)) {
+							offlinePlayersAreAddable = Boolean.valueOf(keyLine[1]);
 						}
 					}
 				}				
@@ -167,15 +230,17 @@ public class Config {
 		try {
 			File directory = new File(configFilePath);
 			if (! directory.exists()) directory.mkdir();
-			
+	
 			writer = new FileWriter(configFilePath + configFileName);
 			
-			writer.write("#" + ButtonLock.pdfFile.getFullName() + "  by: " + ButtonLock.pdfFile.getAuthors() + "\n");
-			writer.write(String.format(fileFormat_keys, keyConfigFileVersion, configFileVersion) + "\n");
+			writer.write("#" + ButtonLock.pdfFile.getName() + " by: " + ButtonLock.pdfFile.getAuthors() + "\n");
+			writer.write(String.format(fileFormat_keys, keyVersion, configFileVersion) + "\n");
+			writer.write(String.format(fileFormat_keys, keyLanguage, language) + "\n");
 			writer.write("\n");
 			writer.write(String.format(fileFormat_keys, keyUseChatforPasswordInput, useChatforPasswordInput) + "\n");
 			writer.write(String.format(fileFormat_keys, keyEnablePasswordByPass, enablePasswordByPass) + "\n");
 			writer.write(String.format(fileFormat_keys, keyForcePasswordEveryTimeByDefault, forcePasswordEveryTimeByDefault) + "\n");
+			writer.write(String.format(fileFormat_keys, keyOfflinePlayersAreAddable, offlinePlayersAreAddable) + "\n");
 			writer.write(String.format(fileFormat_keys, keyDefaultLockedStatesForDoors, defaultLockedStatesForDoors) + "\n");
 			writer.write(String.format(fileFormat_keys, keyDefaultLockedStatesForLevers, defaultLockedStatesForLevers) + "\n");
 			writer.write("\n");

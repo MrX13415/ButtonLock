@@ -39,10 +39,10 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 					
 					//find Button in the locked-button-list ...
 					LockedBlockGroup group = ButtonLock.getLockedGroup(currentPlayerVars.getCurrentClickedBlock());
-					boolean isAnewButton = false;
+					boolean isAnewGroup = false;
 					if (group == null) {
 						group = new LockedBlockGroup();
-						isAnewButton = true;
+						isAnewGroup = true;
 					}
 					
 					//unlock if the password was entered once
@@ -69,7 +69,7 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 							group.setPassword(args[0].hashCode());
 							group.setUnlock(false);
 							
-							if (isAnewButton){
+							if (isAnewGroup){
 								ButtonLock.addLockedGroup(group);
 							}
 							
@@ -95,39 +95,41 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 							}
 							
 							if (group.getProtectionMode() == PROTECTION_MODE.PASSWORD) {
-								sender.sendMessage(Language.GROUP_PROTECTION_PASSWORD);
+								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PASSWORD));
 								
 							}else if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
-								sender.sendMessage(Language.GROUP_PROTECTION_PRIVATE);
-								sender.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PRIVATE));
+								sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
 								
 							}else if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) {
-								sender.sendMessage(Language.GROUP_PROTECTION_PUBLIC);
-								sender.sendMessage(Language.PROTECTION_OWNER_LIST + Language.getList(group.getOwnerList()));
+								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PUBLIC));
+								sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
 								
 							}
 							
-							player.sendMessage(Language.PW_CHANGED);
+							player.sendMessage(ButtonLock.language.PW_CHANGED);
 							return true;	
 						}else if (args.length == 0){
-							ButtonLock.removeLockedBlock(group);
-							player.sendMessage(Language.PW_REMOVED);
-							return true;
+							if (! isAnewGroup){
+								ButtonLock.removeLockedBlock(group);
+								player.sendMessage(ButtonLock.language.PROTECTION_REMOVED);
+								return true;
+							}
 						}
 					}else{
-						player.sendMessage(Language.DENIED);
+						player.sendMessage(ButtonLock.language.DENIED);
 						if (args.length == 0){
-							player.sendMessage(Language.ENTER_CODE_FIRST);
+							player.sendMessage(ButtonLock.language.ENTER_CODE_FIRST);
 						}
 						return true;
 					}
 				}else{
-					player.sendMessage(Language.NOT_PROTECTABLE);
+					player.sendMessage(ButtonLock.language.NOT_PROTECTABLE);
 					return true;
 					
 				}
 			}else if(args.length == 0){
-				player.sendMessage(Language.WHICH_BLOCK);
+				player.sendMessage(ButtonLock.language.WHICH_BLOCK);
 				return true;
 			}
 		}

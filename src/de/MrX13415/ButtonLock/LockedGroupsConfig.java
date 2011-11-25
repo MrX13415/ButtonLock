@@ -144,8 +144,11 @@ public class LockedGroupsConfig {
 								lineNr += 1;
 								
 								if (currentline.contains(fileFormat_valueseperator)) {
-									String[] line = currentline.replace(" ", "").split(fileFormat_valueseperator);
 									
+									String[] line = new String[2];
+									line[0] = currentline.substring(0, currentline.indexOf(fileFormat_valueseperator)).trim();
+									line[1] = currentline.substring(currentline.indexOf(fileFormat_valueseperator) + fileFormat_valueseperator.length()).trim();
+								
 									if (line[0].equalsIgnoreCase(keyBlockPosX)) {
 										posXSet = true;
 										blockPosX = Integer.valueOf(line[1]);
@@ -244,7 +247,7 @@ public class LockedGroupsConfig {
 		}
 		
 		if (errorsORwarinings) {
-			ButtonLock.server.broadcastMessage(Language.ERROR_LOADING);
+			ButtonLock.server.broadcastMessage(String.format(ButtonLock.language.ERROR_LOADING, ButtonLock.consoleOutputHeader));
 		}
 		
 	}

@@ -1,7 +1,7 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 0.9 (MC 1.8.1)
+version: 1.0
 description: >
              Lock buttons, levers and blocks
 author: MrX13415
@@ -29,8 +29,12 @@ commands:
     aliases: bl
     description: Manages Buttonlock and locked groups
     usage: |
-           <command> <save|reload|reset>  reload/save/reset all config-files from Buttonlock
+           <command> <save|reload>  reload/save all config-files from Buttonlock
+           <command> version  Installed version of Buttonlock
+           <command> remove  removes a locked Group ... (without a password)
+           <command> reset <all|langs|config|groups>  resets Buttonlock
            <command> protectableBlocks <add|remove> [blocktype]  makes the given block protectable or not ... 
+           <command> info  prints protection informations ...
            <command> group forcePassword <true|false>  enforces a password every time or not ... 
            <command> group costs [costs]       change the costs of a locked group ... 
            <command> group <add|remove>        adds or removes a Block ...

@@ -3,6 +3,7 @@ package de.MrX13415.ButtonLock;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -20,7 +21,7 @@ public class LockedBlockGroup{
 	private ArrayList<Block> lockedBlocks = new ArrayList<Block>();
 	
 	private int password = 0;	//contains only the Hash of the password ...
-	private ArrayList<Integer> singleUseCods = new ArrayList<Integer>();
+	private ArrayList<Integer> oneTimePassword = new ArrayList<Integer>();
 	
 	private boolean unlocked = true;
 	private LOCKED_STATE lockedState = null;	//default set in constructor...
@@ -56,39 +57,36 @@ public class LockedBlockGroup{
 		lockedState = state;
 	}
 	
-	public static boolean checkPassword(PlayerVars tmpVars, int passwordHashCode){
+	public boolean checkPassword(PlayerVars tmpVars, int passwordHashCode){
 		boolean returnvar = false;
 		//check if the password was correct ...
-		LockedBlockGroup group = tmpVars.getCurrentClickedLockedGroup();
-		if (group != null) {
-			Boolean isSingleUseCode = group.checkSingleUseCode(passwordHashCode);
+		Boolean isOneTimePassword = this.checkOneTimePassword(passwordHashCode);
+		
+		if (passwordHashCode == this.getPassword() || isOneTimePassword) {
+			this.setUnlock(true);
+			returnvar = true;
 			
-			if (passwordHashCode == group.getPassword() || isSingleUseCode) {
-//				tmpVars.getPlayer().sendMessage(Language.SUCCEED);
-				tmpVars.getCurrentClickedLockedGroup().setUnlock(true);
-				returnvar = true;
-				
-				if (isSingleUseCode) {
-					group.singleUseCods.remove((Object) passwordHashCode);
-					tmpVars.getPlayer().sendMessage(Language.SINGEL_USE_CODE_UESED);
-				}else{
-					tmpVars.addPassword(passwordHashCode);
-				}
+			if (isOneTimePassword) {
+				this.oneTimePassword.remove((Object) passwordHashCode);
+				tmpVars.getPlayer().sendMessage(ButtonLock.language.ONE_TIME_CODE_UESED);
 			}else{
-				tmpVars.removePassword(passwordHashCode);
-//				tmpVars.getPlayer().sendMessage(Language.DENIED);
-				tmpVars.getCurrentClickedLockedGroup().setUnlock(false);
+				tmpVars.addPassword(passwordHashCode);
 			}
+		}else{
+			tmpVars.removePassword(passwordHashCode);
+//				tmpVars.getPlayer().sendMessage(ButtonLock.language.DENIED);
+			this.setUnlock(false);
 		}
+
 		return returnvar;
 	}
 	
-	public static void checkPasswordAndPrintResault(PlayerVars tmpVars, int passwordHashCode){
+	public void checkPasswordAndPrintResault(PlayerVars tmpVars, int passwordHashCode){
 		boolean resault = checkPassword(tmpVars, passwordHashCode);
 		if (resault) {
-			tmpVars.getPlayer().sendMessage(Language.SUCCEED);
+			tmpVars.getPlayer().sendMessage(ButtonLock.language.SUCCEED);
 		}else{
-			tmpVars.getPlayer().sendMessage(Language.DENIED);
+			tmpVars.getPlayer().sendMessage(ButtonLock.language.DENIED);
 		}
 	}
 	
@@ -105,25 +103,38 @@ public class LockedBlockGroup{
 		    (getProtectionMode() == PROTECTION_MODE.PUBLIC && isOwner(player.getName())) ||
 			(getProtectionMode() == PROTECTION_MODE.PRIVATE && isOwner(player.getName())) ||
 			(ButtonLock.passwordWasEntered(ButtonLock.getPlayerVars(player), this))){
+			this.setUnlock(true);
 			return true;
 		}
 		return false;
 	}
 	
-	public void addSingleUseCode(int code){
-		singleUseCods.add(code);
+	public void addOneTimePassword(int code){
+		oneTimePassword.add(code);
 	}
 	
-	public void removeSingelUseCode(int code){
-		singleUseCods.remove(code);
+	public boolean removeOneTimePassword(int code){
+		if (oneTimePassword.contains((Object) code)) {
+			oneTimePassword.remove((Object) code);
+			return true;
+		}
+		return false;
 	}
 	
-	public int getSinglUseCode(int index) {
-		return singleUseCods.get(index);
+	public void clearOneTimePasswords(){
+		oneTimePassword.clear();
 	}
 	
-	private boolean checkSingleUseCode(int code) {
-		for (int currentCode : singleUseCods) {
+	public int getOneTimePassword(int index) {
+		return oneTimePassword.get(index);
+	}
+	
+	public int getOneTimePasswords() {
+		return oneTimePassword.size();
+	}
+	
+	private boolean checkOneTimePassword(int code) {
+		for (int currentCode : oneTimePassword) {
 			if (currentCode == code) return true;
 		}
 		return false;
@@ -199,6 +210,17 @@ public class LockedBlockGroup{
 				}
 			}
 		}
+		
+		if (ButtonLock.configFile.offlinePlayersAreAddable) {
+			OfflinePlayer offlinePlayer = ButtonLock.server.getOfflinePlayer(player);
+			if (offlinePlayer != null){
+				if (! ownerList.contains(offlinePlayer.getName())){
+					ownerList.add(offlinePlayer.getName());
+					return offlinePlayer.getName();
+				}
+			}
+		}
+		
 		return "";
 	}
 	
@@ -225,6 +247,17 @@ public class LockedBlockGroup{
 				}
 			}
 		}
+
+		if (ButtonLock.configFile.offlinePlayersAreAddable) {
+			OfflinePlayer offlinePlayer = ButtonLock.server.getOfflinePlayer(player);
+			if (offlinePlayer != null){
+				if (! ownerList.contains(offlinePlayer.getName())){
+					ownerList.remove(offlinePlayer.getName());
+					return offlinePlayer.getName();
+				}
+			}
+		}
+		
 		return "";
 	}
 

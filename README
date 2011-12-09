@@ -3,7 +3,7 @@
 =================
     
 Title:        ButtonLock
-Version:      1.0 r51
+Version:      1.1 r53
 
 Description:  Lockable Buttons and Levers in Minecraft for Bukkit
 website:      http://dev.bukkit.org/server-mods/buttonlock/
@@ -22,6 +22,12 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 
 Changelog:
+Version: 1.1
+    * FIX: IConomy 6 bug
+    * ADD: PermissionBukkit supoort
+    * FiX: Permissions
+    * FiX: '/setPw' helptext
+    
 Version: 1.0
     * FIX: '/bl' command permission
     * ADD: '/bl version' command

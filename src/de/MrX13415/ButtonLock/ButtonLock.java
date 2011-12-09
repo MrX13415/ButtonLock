@@ -19,24 +19,24 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.iConomy.*;
+import com.iCo6.*;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.0 r51
+ * @version 1.0 r53
  */
 public class ButtonLock extends JavaPlugin {
 	
-	static PluginDescriptionFile pdfFile = null;
-	static Server server = null;
-	static Logger log = null;
-	static String pluginName = null;
-	static String consoleOutputHeader = null;
-	static Config configFile = null;
-	static Language language = null;
+	private static PluginDescriptionFile pdfFile = null;
+	private static Server server = null;
+	private static Logger log = null;
+	private static String pluginName = null;
+	private static String consoleOutputHeader = null;
+	private static Config configFile = null;
+	private static Language language = null;
 	
 	static LockedGroupsConfig lockedGroupsFile = null;
 	
@@ -53,13 +53,15 @@ public class ButtonLock extends JavaPlugin {
 	static final String COMMAND_BUTTONLOCK = "buttonlock";
 
 	//permissions
-	static PermissionHandler permissionHandler;
+	private static PermissionHandler permissionHandler;
+	private static boolean defaultPermission;
+	
 	static final String PERMISSION_NODE_ButtonLock_bypass = "ButtonLock.bypass";
 	static final String PERMISSION_NODE_ButtonLock_iconcomy_bypass = "ButtonLock.iconomy.bypass";
 	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
 	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
 	static final String PERMISSION_NODE_ButtonLock_onetimeCods = "ButtonLock.onetimecode";
-	static final String PERMISSION_NODE_ButtonLock_buttonlock = "ButtonLock.buttonlock";
+	static final String PERMISSION_NODE_ButtonLock_buttonlock_normal = "ButtonLock.buttonlock.normal";
 	static final String PERMISSION_NODE_ButtonLock_buttonlock_op = "ButtonLock.buttonlock.op";
 	
 	//holds information for all Players.
@@ -180,7 +182,43 @@ public class ButtonLock extends JavaPlugin {
 //    public void setDebugging(final Player player, final boolean value) {
 //        debugees.put(player, value);
 //    }
-    
+    	
+	public static Server getCurrentServer(){
+		return server;
+	}
+	
+	public static String getPluginName(){
+		return pluginName;
+	}
+	
+	public static String getConsoleOutputHeader(){
+		return consoleOutputHeader;
+	}
+	
+	public static PluginDescriptionFile getPluginDescriptionFile(){
+		return pdfFile;
+	}
+	
+	public static Logger getLogger(){
+		return log;
+	}
+	
+	public static Config getButtonLockConfig(){
+		return configFile;
+	}
+	
+	public static void setButtonLockConfig(Config config){
+		configFile = config;
+	}
+	
+	public static Language getCurrentLanguage(){
+		return language;
+	}
+	
+	public static void setCurrentLanguage(Language lang){
+		language = lang;
+	}
+	
 	public static Language getLanguageDefaults(String language) {
 		if(new Language().languageName.equalsIgnoreCase(language)) return new Language();
 		if(new Language_German().languageName.equalsIgnoreCase(language)) return new Language_German();
@@ -227,6 +265,28 @@ public class ButtonLock extends JavaPlugin {
 		return false;
 	}
 	
+	public static boolean permissions(){
+		if ((ButtonLock.permissionHandler != null || defaultPermission) && ButtonLock.getButtonLockConfig().usePermissions){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean hasPermission(Player player, String permission){
+		
+		if (ButtonLock.permissionHandler != null){
+			if (ButtonLock.permissionHandler.permission(player, permission)){
+				return true;
+			}
+		}
+		
+		if (player.hasPermission(permission)){
+			return true;
+		}
+		
+		return false;
+	}
+	
     private void setupPermissions() {
 	      Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
 
@@ -234,6 +294,9 @@ public class ButtonLock extends JavaPlugin {
 	          if (permissionsPlugin != null) {
 	        	  ButtonLock.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
 	        	  log.info(consoleOutputHeader + " Permission system detected: " + permissionsPlugin.getDescription().getFullName());
+	          } else if (ButtonLock.getButtonLockConfig().usePermissions){
+	        	  defaultPermission = true;
+	        	  log.info(consoleOutputHeader + " Permission system detected: Default");
 	          } else {
 	        	  log.warning(consoleOutputHeader + " Permission system NOT detected! (everyone will have permissions to use it.)");
 	          }
@@ -330,11 +393,6 @@ public class ButtonLock extends JavaPlugin {
 			  	}
 			}
 		}
-		return false;
-	}
-	
-	public static boolean hasPermission(Player player, String permissionNode) {
-		if (permissionHandler.permission(player, permissionNode)) return true;
 		return false;
 	}
 	

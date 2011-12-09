@@ -26,17 +26,17 @@ public class LockedBlockGroup{
 	private boolean unlocked = true;
 	private LOCKED_STATE lockedState = null;	//default set in constructor...
 
-	private boolean forceEnterPasswordEveryTime = ButtonLock.configFile.forcePasswordEveryTimeByDefault; 
+	private boolean forceEnterPasswordEveryTime = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault; 
 	
 	private PROTECTION_MODE protectionMode = PROTECTION_MODE.PASSWORD;
 	private ArrayList<String> ownerList = new ArrayList<String>();
 	
-	public double costs = ButtonLock.configFile.iConomyCosts;;	//Free :D
+	public double costs = ButtonLock.getButtonLockConfig().iConomyCosts;;	//Free :D
 	public boolean changedSetting_forceEnterPasswordEveryTime = false;
 	public boolean ChangedSetting_costs = false;
 
 	public LockedBlockGroup() {
-		if (ButtonLock.configFile.iConomyIsFreeAsDefault) {
+		if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault) {
 			costs = 0;
 		}
 	}
@@ -68,13 +68,13 @@ public class LockedBlockGroup{
 			
 			if (isOneTimePassword) {
 				this.oneTimePassword.remove((Object) passwordHashCode);
-				tmpVars.getPlayer().sendMessage(ButtonLock.language.ONE_TIME_CODE_UESED);
+				tmpVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_UESED);
 			}else{
 				tmpVars.addPassword(passwordHashCode);
 			}
 		}else{
 			tmpVars.removePassword(passwordHashCode);
-//				tmpVars.getPlayer().sendMessage(ButtonLock.language.DENIED);
+//				tmpVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 			this.setUnlock(false);
 		}
 
@@ -84,9 +84,9 @@ public class LockedBlockGroup{
 	public void checkPasswordAndPrintResault(PlayerVars tmpVars, int passwordHashCode){
 		boolean resault = checkPassword(tmpVars, passwordHashCode);
 		if (resault) {
-			tmpVars.getPlayer().sendMessage(ButtonLock.language.SUCCEED);
+			tmpVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().SUCCEED);
 		}else{
-			tmpVars.getPlayer().sendMessage(ButtonLock.language.DENIED);
+			tmpVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 		}
 	}
 	
@@ -148,17 +148,17 @@ public class LockedBlockGroup{
 			
 			//doors and trap doors ...
 			if (firstBlock.getType().equals(Material.WOODEN_DOOR) || firstBlock.getType().equals(Material.IRON_DOOR_BLOCK) || firstBlock.getType().equals(Material.TRAP_DOOR)) {
-				lockedState = ButtonLock.configFile.defaultLockedStatesForDoors;
+				lockedState = ButtonLock.getButtonLockConfig().defaultLockedStatesForDoors;
 			}
 			
 			//fence gate ...
 			if (firstBlock.getType().equals(Material.FENCE_GATE)) {
-				lockedState = ButtonLock.configFile.defaultLockedStatesForDoors;
+				lockedState = ButtonLock.getButtonLockConfig().defaultLockedStatesForDoors;
 			}
 			
 			//levers ...
 			if (firstBlock.getType().equals(Material.LEVER)) {
-				lockedState = ButtonLock.configFile.defaultLockedStatesForLevers;
+				lockedState = ButtonLock.getButtonLockConfig().defaultLockedStatesForLevers;
 			}
 		}
 	}
@@ -200,7 +200,7 @@ public class LockedBlockGroup{
 	}
 	
 	public String addOwner(String player) {
-		for (Player onlinePlayer : ButtonLock.server.getOnlinePlayers()) {
+		for (Player onlinePlayer : ButtonLock.getCurrentServer().getOnlinePlayers()) {
 			String onlinePlayerName = onlinePlayer.getName().toLowerCase();
 			
 			if (onlinePlayerName.startsWith(player.toLowerCase())){
@@ -211,8 +211,8 @@ public class LockedBlockGroup{
 			}
 		}
 		
-		if (ButtonLock.configFile.offlinePlayersAreAddable) {
-			OfflinePlayer offlinePlayer = ButtonLock.server.getOfflinePlayer(player);
+		if (ButtonLock.getButtonLockConfig().offlinePlayersAreAddable) {
+			OfflinePlayer offlinePlayer = ButtonLock.getCurrentServer().getOfflinePlayer(player);
 			if (offlinePlayer != null){
 				if (! ownerList.contains(offlinePlayer.getName())){
 					ownerList.add(offlinePlayer.getName());
@@ -237,7 +237,7 @@ public class LockedBlockGroup{
 	}
 	
 	public String removeOwner(String player) {
-		for (Player onlinePlayer : ButtonLock.server.getOnlinePlayers()) {
+		for (Player onlinePlayer : ButtonLock.getCurrentServer().getOnlinePlayers()) {
 			String onlinePlayerName = onlinePlayer.getName().toLowerCase();
 			
 			if (onlinePlayerName.startsWith(player.toLowerCase())){
@@ -248,8 +248,8 @@ public class LockedBlockGroup{
 			}
 		}
 
-		if (ButtonLock.configFile.offlinePlayersAreAddable) {
-			OfflinePlayer offlinePlayer = ButtonLock.server.getOfflinePlayer(player);
+		if (ButtonLock.getButtonLockConfig().offlinePlayersAreAddable) {
+			OfflinePlayer offlinePlayer = ButtonLock.getCurrentServer().getOfflinePlayer(player);
 			if (offlinePlayer != null){
 				if (! ownerList.contains(offlinePlayer.getName())){
 					ownerList.remove(offlinePlayer.getName());

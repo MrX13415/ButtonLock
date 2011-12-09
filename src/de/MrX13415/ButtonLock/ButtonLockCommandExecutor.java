@@ -15,6 +15,17 @@ import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
 
 public class ButtonLockCommandExecutor implements CommandExecutor {
 
+	
+	private boolean printErrorPermissionButtonLockNormal(CommandSender sender){
+		sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PERMISSIONS_NOT,  ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock_normal));
+		return true;
+	}
+	
+	private boolean printErrorPermissionButtonLockOP(CommandSender sender){
+		sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PERMISSIONS_NOT,  ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock_op));
+		return true;
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		boolean permissionButtonlock = false;
@@ -22,28 +33,26 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 		
 		if (sender instanceof Player) {
 			
-			if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+			if (ButtonLock.permissions()) {
 				// use Permission
-				if (ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock)){
+				if (ButtonLock.hasPermission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock_normal)){
 					permissionButtonlock = true;
-				}else{
-					return false;
 				}
 				
-				if (ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock_op)){
+				if (ButtonLock.hasPermission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_buttonlock_op)){
 					permissionButtonlock = true;
 					permissionButtonlockOp = true;
-				}else{
-					return false;
 				}
 			
 				if (! permissionButtonlock && ! permissionButtonlockOp){
-					sender.sendMessage(ButtonLock.language.DENIED);
+					printErrorPermissionButtonLockNormal(sender);	
+					printErrorPermissionButtonLockOP(sender);	
 				}
 			} else {
 				// no Permission installed ! (op only)
-				if (!sender.isOp()) {
-					return false;
+				if (! sender.isOp() && ButtonLock.getButtonLockConfig().oPOnly) {
+					sender.sendMessage(ButtonLock.getCurrentLanguage().COMMAND_OP_ONLY);
+					return true;
 				}else{
 					permissionButtonlock = true;
 					permissionButtonlockOp = true;
@@ -58,9 +67,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 			// version ...
 			if (args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("ver") || args[0].equalsIgnoreCase("v")) {
 				
-				String msg = ButtonLock.pdfFile.getName() + " " + ButtonLock.pdfFile.getVersion() + " " + ButtonLock.pdfFile.getAuthors();
+				String msg = ButtonLock.getPluginDescriptionFile().getName() + " " + ButtonLock.getPluginDescriptionFile().getVersion() + " " + ButtonLock.getPluginDescriptionFile().getAuthors();
 				if (sender instanceof Player) {
-					msg = ChatColor.RED + ButtonLock.pdfFile.getName() + " " + ChatColor.GRAY + ButtonLock.pdfFile.getVersion() + " " + ChatColor.GOLD + ButtonLock.pdfFile.getAuthors();
+					msg = ChatColor.RED + ButtonLock.getPluginDescriptionFile().getName() + " " + ChatColor.GRAY + ButtonLock.getPluginDescriptionFile().getVersion() + " " + ChatColor.GOLD + ButtonLock.getPluginDescriptionFile().getAuthors();
 				}
 				
 				sender.sendMessage(msg);
@@ -77,40 +86,40 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 				
 				if (ButtonLock.debugmode == true) {
 					if (sender instanceof Player)
-						sender.sendMessage(ChatColor.GOLD + ButtonLock.consoleOutputHeader + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " enabled");
-					ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Debug mode enabled");
+						sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " enabled");
+					ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode enabled");
 				}else{
 					if (sender instanceof Player)
-						sender.sendMessage(ChatColor.GOLD + ButtonLock.consoleOutputHeader + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " disabled");
-					ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Debug mode disabled");	
+						sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " disabled");
+					ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode disabled");	
 				}
 				return true;
 			}
 			
 			// save all ...
 			if (args[0].equalsIgnoreCase("save") || args[0].endsWith("s")) {
-				ButtonLock.configFile.write();
+				ButtonLock.getButtonLockConfig().write();
 				ButtonLock.lockedGroupsFile.write();
 
 				String msg = "All config-files saved ... ";
 				if (sender instanceof Player)
 					sender.sendMessage(ChatColor.GRAY + msg);
-				ButtonLock.log.info(ButtonLock.consoleOutputHeader + " " + msg);
+				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
 				return true;
 			}
 
 			// reload all ...
 			if (args[0].equalsIgnoreCase("reload") || args[0].endsWith("rl")) {
-				ButtonLock.configFile = new Config();
+				ButtonLock.setButtonLockConfig(new Config());
 				ButtonLock.grouplist = new ArrayList<LockedBlockGroup>();
 
-				ButtonLock.configFile.read();
+				ButtonLock.getButtonLockConfig().read();
 				ButtonLock.lockedGroupsFile.read();
 
 				String msg = "All config-files reloaded ... ";
 				if (sender instanceof Player)
 					sender.sendMessage(ChatColor.GRAY + msg);
-				ButtonLock.log.info(ButtonLock.consoleOutputHeader + " " + msg);
+				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
 				return true;
 			}
 
@@ -124,18 +133,18 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 						
 						if (group != null) {
 							ButtonLock.removeLockedBlock(group);
-							sender.sendMessage(ButtonLock.language.PROTECTION_REMOVED);
+							sender.sendMessage(ButtonLock.getCurrentLanguage().PROTECTION_REMOVED);
 						}else{
-							sender.sendMessage(ButtonLock.language.WHICH_BLOCK);
+							sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 						}
 					}
 				}else{
-					sender.sendMessage(String.format(ButtonLock.language.COMMAND_INGAME_ONLY, ButtonLock.consoleOutputHeader));
+					sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().COMMAND_INGAME_ONLY, ButtonLock.getConsoleOutputHeader()));
 				}
 				return true;
 			}
 				
-		}	
+		}
 		
 		if (args.length == 2 && permissionButtonlockOp) {
 
@@ -156,20 +165,20 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					//reset language ...
 					ButtonLock.updateLanguages(true);
 					
-					String msg = ButtonLock.consoleOutputHeader + " Languages reseted ...";
+					String msg = ButtonLock.getConsoleOutputHeader() + " Languages reseted ...";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.log.info(msg);
+					ButtonLock.getLogger().info(msg);
 					
 				}
 			
 				if (config || all) {
 					//reset config ...
-					ButtonLock.configFile = new Config();
-					ButtonLock.configFile.update(true);
+					ButtonLock.setButtonLockConfig(new Config());
+					ButtonLock.getButtonLockConfig().update(true);
 					
-					String msg = ButtonLock.consoleOutputHeader + " Config reseted ... ";
+					String msg = ButtonLock.getConsoleOutputHeader() + " Config reseted ... ";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.log.info(msg);
+					ButtonLock.getLogger().info(msg);
 					
 				}
 				
@@ -178,9 +187,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					ButtonLock.grouplist = new ArrayList<LockedBlockGroup>();
 					ButtonLock.lockedGroupsFile.write();
 
-					String msg = ButtonLock.consoleOutputHeader + " Locked Groups reseted ... ";
+					String msg = ButtonLock.getConsoleOutputHeader() + " Locked Groups reseted ... ";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.log.info(msg);
+					ButtonLock.getLogger().info(msg);
 					
 				}
 				
@@ -245,9 +254,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					
 					if (materials.isEmpty()){
 						if (sender instanceof Player) {
-							sender.sendMessage(ButtonLock.language.WHICH_BLOCK);
+							sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 						}else{
-							sender.sendMessage(String.format(ButtonLock.language.CONSOLE_WHICH_MATERIAL, ButtonLock.consoleOutputHeader));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_WHICH_MATERIAL, ButtonLock.getConsoleOutputHeader()));
 						}
 						return true;
 					}
@@ -258,9 +267,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 						}
 						
 						if (sender instanceof Player) {
-							sender.sendMessage(String.format(ButtonLock.language.MATERIALS_ADDED, ButtonLock.language.getList(materials.toArray())));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_ADDED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
 						}else{
-							sender.sendMessage(String.format(ButtonLock.language.CONSOLE_MATERIALS_ADDED, ButtonLock.consoleOutputHeader, ButtonLock.language.getList(materials.toArray(), false)));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_ADDED, ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
 						}
 						return true;
 					}
@@ -270,14 +279,14 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 							if (ButtonLock.lockableBlocksList.contains(materials)) ButtonLock.lockableBlocksList.remove(material);
 						}
 						if (sender instanceof Player) {
-							sender.sendMessage(String.format(ButtonLock.language.MATERIALS_REMOVED, ButtonLock.language.getList(materials.toArray())));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_REMOVED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
 						}else{
-							sender.sendMessage(String.format(ButtonLock.language.CONSOLE_MATERIALS_REMOVED,ButtonLock.consoleOutputHeader, ButtonLock.language.getList(materials.toArray(), false)));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_REMOVED,ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
 						}
 						return true;
 					}
-				}
-		}
+				}	
+		}	
 
 		
 
@@ -292,26 +301,26 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 						LockedBlockGroup group = currentPlayerVars.getCurrentClickedLockedGroup();
 						Block block = currentPlayerVars.getCurrentClickedBlock();
 		
-						sender.sendMessage(ButtonLock.language.GROUP_INFO);
+						sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_INFO);
 		
 						ArrayList<Material> materials = new ArrayList<Material>();
 						
 						if (group != null) {
-							String status = ButtonLock.language.LOCKED;
-							String protectionMode = ButtonLock.language.PASSWORD;
-							String costs = String.format(ButtonLock.language.COSTS, group.costs);
+							String status = ButtonLock.getCurrentLanguage().LOCKED;
+							String protectionMode = ButtonLock.getCurrentLanguage().PASSWORD;
+							String costs = String.format(ButtonLock.getCurrentLanguage().COSTS, group.costs);
 							
-							if (group.costs == 0 && ButtonLock.configFile.iConomyIsFreeAsDefault == false) costs = ButtonLock.language.COSTS_FREE;
-							if (group.isUnlocked()) status = ButtonLock.language.UNLOCKED;
-							if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) protectionMode = ButtonLock.language.PRIVATE;
-							if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) protectionMode = ButtonLock.language.PUBLIC;
+							if (group.costs == 0 && ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault == false) costs = ButtonLock.getCurrentLanguage().COSTS_FREE;
+							if (group.isUnlocked()) status = ButtonLock.getCurrentLanguage().UNLOCKED;
+							if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) protectionMode = ButtonLock.getCurrentLanguage().PRIVATE;
+							if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) protectionMode = ButtonLock.getCurrentLanguage().PUBLIC;
 							
-							sender.sendMessage(String.format(ButtonLock.language.PROTECTION_MODE_IS, protectionMode));
-							sender.sendMessage(String.format(ButtonLock.language.STATUS, status));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_MODE_IS, protectionMode));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().STATUS, status));
 							sender.sendMessage(costs);
-							sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
-							sender.sendMessage(String.format(ButtonLock.language.ONE_TIME_PASSWORDS, group.getOneTimePasswords()));
-							sender.sendMessage(String.format(ButtonLock.language.GROUP_SIZE, "" + group.getGroupSize()));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_LIST, ButtonLock.getCurrentLanguage().getList(group.getOwnerList())));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_PASSWORDS, group.getOneTimePasswords()));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().GROUP_SIZE, "" + group.getGroupSize()));
 							
 							for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
 								materials.add(group.getBlock(blockIndex).getType());
@@ -319,14 +328,14 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 						}else if (block != null){
 							Boolean protectable = ButtonLock.isProtectable(block);
 							
-							sender.sendMessage(String.format(ButtonLock.language.PROTECTABLE, ButtonLock.language.getBoolean(protectable)));
+							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTABLE, ButtonLock.getCurrentLanguage().getBoolean(protectable)));
 							
 							materials.add(block.getType());
 						}
 
-						sender.sendMessage(String.format(ButtonLock.language.MATERIAL, ButtonLock.language.getList(materials.toArray())));
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIAL, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
 						
-						sender.sendMessage(ButtonLock.language.GROUP_INFO_ENDE);
+						sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_INFO_ENDE);
 						return true;
 					}
 				}
@@ -345,7 +354,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 						if (group != null) {
 							
 							if (! group.hasAccess((Player) sender)) {
-								sender.sendMessage(ButtonLock.language.DENIED);
+								sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 								return true;
 							}
 						
@@ -355,7 +364,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 										|| args[1].equalsIgnoreCase("c")) {
 									if (group.isUnlocked()) {
 										
-										double setting = ButtonLock.configFile.iConomyCosts;
+										double setting = ButtonLock.getButtonLockConfig().iConomyCosts;
 										
 										if (args.length == 3) {
 											setting = Double.valueOf(args[2]);
@@ -367,12 +376,12 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 										group.ChangedSetting_costs = true;
 		
 										if (setting == 0) {
-											sender.sendMessage(ButtonLock.language.GROUP_COSTS_CHANGED_FREE);
+											sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_COSTS_CHANGED_FREE);
 										} else {
-											sender.sendMessage(String.format(ButtonLock.language.GROUP_COSTS_CHANGED_COSTS, setting));
+											sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().GROUP_COSTS_CHANGED_COSTS, setting));
 										}
 									} else {
-										sender.sendMessage(ButtonLock.language.DENIED);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 									}
 									currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 									return true;
@@ -406,15 +415,15 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 												}
 												
 												group.setLockedState(setting);
-												sender.sendMessage(String.format(ButtonLock.language.STATE_CHANGED, setting.name().toLowerCase()));
+												sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().STATE_CHANGED, setting.name().toLowerCase()));
 											}
 										}else{
 											//invalid state ... 
-											sender.sendMessage(ButtonLock.language.INVALID_STATE);	
+											sender.sendMessage(ButtonLock.getCurrentLanguage().INVALID_STATE);	
 										}
 										
 									} else {
-										sender.sendMessage(ButtonLock.language.DENIED);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 									}
 									currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 									return true;
@@ -426,9 +435,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 									if (group.isUnlocked()) {
 										boolean setting = Boolean.parseBoolean(args[2]);
 
-										System.out.println(args[2] + " " + ButtonLock.language.TRUE + " " + args[2].equalsIgnoreCase(ButtonLock.language.TRUE));
-										if(args[2].equalsIgnoreCase(ButtonLock.language.FALSE)) setting = false;
-										if(args[2].equalsIgnoreCase(ButtonLock.language.TRUE)) setting = true;
+										System.out.println(args[2] + " " + ButtonLock.getCurrentLanguage().TRUE + " " + args[2].equalsIgnoreCase(ButtonLock.getCurrentLanguage().TRUE));
+										if(args[2].equalsIgnoreCase(ButtonLock.getCurrentLanguage().FALSE)) setting = false;
+										if(args[2].equalsIgnoreCase(ButtonLock.getCurrentLanguage().TRUE)) setting = true;
 										if(args[2].equalsIgnoreCase("0")) setting = false;
 										if(args[2].equalsIgnoreCase("1")) setting = true;
 										
@@ -439,12 +448,12 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 										group.setForceEnterPasswordEveryTime(setting);
 
 										if (setting) {
-											sender.sendMessage(ButtonLock.language.GROUP_FORCEPW);
+											sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_FORCEPW);
 										} else {
-											sender.sendMessage(ButtonLock.language.GROUP_NOT_FORCEPW);
+											sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_NOT_FORCEPW);
 										}
 									} else {
-										sender.sendMessage(ButtonLock.language.DENIED);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 									}
 									currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 									return true;
@@ -467,9 +476,9 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 											}
 											
 											if (addedOrRemovedPlayerNames.size() >= 1){
-												sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_ADDED, ButtonLock.language.getList(addedOrRemovedPlayerNames.toArray())));
+												sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_ADDED, ButtonLock.getCurrentLanguage().getList(addedOrRemovedPlayerNames.toArray())));
 											}else{
-												sender.sendMessage(ButtonLock.language.PLAYER_NOT_FOUND);
+												sender.sendMessage(ButtonLock.getCurrentLanguage().PLAYER_NOT_FOUND);
 											}
 																						
 										}else if (args[2].equalsIgnoreCase("remove") || args[2].equalsIgnoreCase("r")) {
@@ -480,14 +489,14 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 											}
 											
 											if (addedOrRemovedPlayerNames.size() >= 1){
-												sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_REMOVED, ButtonLock.language.getList(addedOrRemovedPlayerNames.toArray())));
+												sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_REMOVED, ButtonLock.getCurrentLanguage().getList(addedOrRemovedPlayerNames.toArray())));
 											}else{
-												sender.sendMessage(ButtonLock.language.PLAYER_NOT_FOUND);
+												sender.sendMessage(ButtonLock.getCurrentLanguage().PLAYER_NOT_FOUND);
 											}
 										}
 										
 									} else {
-										sender.sendMessage(ButtonLock.language.DENIED);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 									}
 
 									currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
@@ -500,7 +509,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 									if (args[1].equalsIgnoreCase("add")
 											|| args[1].equalsIgnoreCase("a")) {
 										currentPlayerVars.addNextclickedBlock = group;
-										sender.sendMessage(ButtonLock.language.GROUP_BLOCK_ADD);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_ADD);
 										currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 										return true;
 									}
@@ -508,35 +517,35 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 									if (args[1].equalsIgnoreCase("remove")
 											|| args[1].equalsIgnoreCase("r")) {
 										currentPlayerVars.removeNextclickedBlock = group;
-										sender.sendMessage(ButtonLock.language.GROUP_BLOCK_REMOVE);
+										sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_REMOVE);
 										currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 										return true;
 									}
 								} else {
-									sender.sendMessage(ButtonLock.language.DENIED);
+									sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 									currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 									return true;
 								}
 
 							} else {
-								sender.sendMessage(ButtonLock.language.WHICH_BLOCK);
+								sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 								currentPlayerVars
 										.getCurrentClickedLockedGroup()
 										.setUnlock(false);
 								return true;
 							}
 						}else{
-							sender.sendMessage(ButtonLock.language.WHICH_BLOCK);
+							sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 							return true;
 						}
 					} else {
-						sender.sendMessage(ButtonLock.language.WHICH_BLOCK);
+						sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 						return true;
 					}
 				}
 			}
 		}else{
-			sender.sendMessage(String.format(ButtonLock.language.COMMAND_INGAME_ONLY, ButtonLock.consoleOutputHeader));
+			sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().COMMAND_INGAME_ONLY, ButtonLock.getConsoleOutputHeader()));
 		}
 
 		return false;

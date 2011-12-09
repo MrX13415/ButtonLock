@@ -19,15 +19,17 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 		if (sender instanceof Player) {
 	        Player player = (Player) sender;
 
-	        if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+	        if (ButtonLock.permissions()) {
 				//use Permission
-				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_setpw)) {
-					return false;
+				if (! ButtonLock.hasPermission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_setpw)) {
+					sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PERMISSIONS_NOT, ButtonLock.PERMISSION_NODE_ButtonLock_setpw));
+					return true;
 				}
 			}else{
 				//no Permission installed ! (op only)
-				if (! sender.isOp()) {
-					return false;
+				if (! sender.isOp() && ButtonLock.getButtonLockConfig().oPOnly) {
+					sender.sendMessage(ButtonLock.getCurrentLanguage().COMMAND_OP_ONLY);
+					return true;
 				}
 			}
 	        
@@ -95,41 +97,41 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 							}
 							
 							if (group.getProtectionMode() == PROTECTION_MODE.PASSWORD) {
-								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PASSWORD));
+								sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().GROUP_PROTECTION, ButtonLock.getCurrentLanguage().PASSWORD));
 								
 							}else if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) {
-								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PRIVATE));
-								sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
+								sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().GROUP_PROTECTION, ButtonLock.getCurrentLanguage().PRIVATE));
+								sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_LIST, ButtonLock.getCurrentLanguage().getList(group.getOwnerList())));
 								
 							}else if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) {
-								sender.sendMessage(String.format(ButtonLock.language.GROUP_PROTECTION, ButtonLock.language.PUBLIC));
-								sender.sendMessage(String.format(ButtonLock.language.PROTECTION_OWNER_LIST, ButtonLock.language.getList(group.getOwnerList())));
+								sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().GROUP_PROTECTION, ButtonLock.getCurrentLanguage().PUBLIC));
+								sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_LIST, ButtonLock.getCurrentLanguage().getList(group.getOwnerList())));
 								
 							}
 							
-							player.sendMessage(ButtonLock.language.PW_CHANGED);
+							player.sendMessage(ButtonLock.getCurrentLanguage().PW_CHANGED);
 							return true;	
 						}else if (args.length == 0){
 							if (! isAnewGroup){
 								ButtonLock.removeLockedBlock(group);
-								player.sendMessage(ButtonLock.language.PROTECTION_REMOVED);
+								player.sendMessage(ButtonLock.getCurrentLanguage().PROTECTION_REMOVED);
 								return true;
 							}
 						}
 					}else{
-						player.sendMessage(ButtonLock.language.DENIED);
+						player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 						if (args.length == 0){
-							player.sendMessage(ButtonLock.language.ENTER_CODE_FIRST);
+							player.sendMessage(ButtonLock.getCurrentLanguage().ENTER_CODE_FIRST);
 						}
 						return true;
 					}
 				}else{
-					player.sendMessage(ButtonLock.language.NOT_PROTECTABLE);
+					player.sendMessage(ButtonLock.getCurrentLanguage().NOT_PROTECTABLE);
 					return true;
 					
 				}
 			}else if(args.length == 0){
-				player.sendMessage(ButtonLock.language.WHICH_BLOCK);
+				player.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 				return true;
 			}
 		}

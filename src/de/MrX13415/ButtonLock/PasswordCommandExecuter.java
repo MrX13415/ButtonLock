@@ -16,15 +16,17 @@ public class PasswordCommandExecuter implements CommandExecutor{
 	    if (sender instanceof Player) {
 	        Player player = (Player) sender;
 
-	        if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+	        if (ButtonLock.permissions()) {
 				//use Permission
-				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
-					return false;
+				if (! ButtonLock.hasPermission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_use)) {
+					sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PERMISSIONS_NOT, ButtonLock.PERMISSION_NODE_ButtonLock_use));
+					return true;
 				}
 			}else{
 				//no Permission installed ! (op only)
-				if (! sender.isOp()) {
-					return false;
+				if (! sender.isOp() && ButtonLock.getButtonLockConfig().oPOnly) {
+					sender.sendMessage(ButtonLock.getCurrentLanguage().COMMAND_OP_ONLY);
+					return true;
 				}
 			}
 	        
@@ -36,7 +38,7 @@ public class PasswordCommandExecuter implements CommandExecutor{
 					currentPlayerVars.setLastPassword(tmpPassword);
 					
 					if (currentPlayerVars.isEnteringCode()) {
-						player.sendMessage(String.format(ButtonLock.language.CODE, ButtonLock.language.getMaskedText(tmpPassword)));
+						player.sendMessage(String.format(ButtonLock.getCurrentLanguage().CODE, ButtonLock.getCurrentLanguage().getMaskedText(tmpPassword)));
 						
 						LockedBlockGroup group = currentPlayerVars.getCurrentClickedLockedGroup();
 						if (group != null) group.checkPasswordAndPrintResault(currentPlayerVars, tmpPassword.hashCode());					
@@ -45,7 +47,7 @@ public class PasswordCommandExecuter implements CommandExecutor{
 						return true;
 						
 					}else if(currentPlayerVars.getLastPassword() != null){
-						player.sendMessage(ButtonLock.language.UNLOCK_BLOCK);
+						player.sendMessage(ButtonLock.getCurrentLanguage().UNLOCK_BLOCK);
 						return true;
 					}
 				}

@@ -75,6 +75,8 @@ public class Language_German extends Language{
 		COMMAND_INGAME_ONLY = "%s Dieser Befehl ist nur im Spiel verfügbar";
 		CANT_REMOVE_LOCKED_GROUPS = ChatColor.RED + "Geschützten Blöcke können nicht entfernen werden. Entfernen Sie zuerst den Shutz";
 		GROUP_SIZE = ChatColor.GRAY + "Gruppen größe: " + ChatColor.GOLD + "%s";
+		COMMAND_OP_ONLY = ChatColor.RED + "Du must OP sein, um diesen Befehl benutzen zu können";
+		PERMISSIONS_NOT = ChatColor.RED + "Du hast nicht die benötigte Berechtigung ... (" + ChatColor.GOLD + "%s" + ChatColor.RED + ")"; 
 		TRUE = "Ja";
 		FALSE = "Nein";
 		MASK_CHR = ChatColor.GRAY + "*";

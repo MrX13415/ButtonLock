@@ -15,15 +15,17 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 		if (sender instanceof Player) {
 	        Player player = (Player) sender;
 	        
-	        if (ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions) {
+	        if (ButtonLock.permissions()) {
 				//use Permission
-				if (! ButtonLock.permissionHandler.permission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_onetimeCods)) {
-					return false;
+				if (! ButtonLock.hasPermission((Player) sender, ButtonLock.PERMISSION_NODE_ButtonLock_onetimeCods)) {
+					sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().PERMISSIONS_NOT, ButtonLock.PERMISSION_NODE_ButtonLock_onetimeCods));
+					return true;
 				}
 			}else{
 				//no Permission installed ! (op only)
-				if (! sender.isOp()) {
-					return false;
+				if (! sender.isOp() && ButtonLock.getButtonLockConfig().oPOnly) {
+					sender.sendMessage(ButtonLock.getCurrentLanguage().COMMAND_OP_ONLY);
+					return true;
 				}
 			}
 	        
@@ -41,7 +43,7 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 						if (group != null) {
 							
 							if (! group.hasAccess((Player) sender)) {
-								sender.sendMessage(ButtonLock.language.DENIED);
+								sender.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 								return true;
 							}
 							
@@ -53,7 +55,7 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 										oneTimePasswords.add(args[index]);
 										group.addOneTimePassword(args[index].hashCode());
 									}
-									currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.language.ONE_TIME_CODE_ADDED, ButtonLock.language.getList(oneTimePasswords.toArray())));
+									currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_ADDED, ButtonLock.getCurrentLanguage().getList(oneTimePasswords.toArray())));
 									return true;
 								}
 								
@@ -65,7 +67,7 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 											oneTimePasswords.add(args[index]);
 										}
 									}
-									currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.language.ONE_TIME_CODE_REMOVED, ButtonLock.language.getList(oneTimePasswords.toArray())));
+									currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_REMOVED, ButtonLock.getCurrentLanguage().getList(oneTimePasswords.toArray())));
 									return true;
 								}
 								
@@ -75,7 +77,7 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 									
 									for (int playerIndex = 1; playerIndex < args.length; playerIndex++) {
 										
-										for (Player onlinePlayer : ButtonLock.server.getOnlinePlayers()) {
+										for (Player onlinePlayer : ButtonLock.getCurrentServer().getOnlinePlayers()) {
 											String onlinePlayerName = onlinePlayer.getName().toLowerCase();
 											
 											if (onlinePlayerName.startsWith(args[playerIndex].toLowerCase())){
@@ -86,17 +88,17 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 												
 												group.addOneTimePassword(password.hashCode());
 												
-												onlinePlayer.sendMessage(String.format(ButtonLock.language.ONE_TIME_CODE_RECEIVED, sender.getName()));
-												onlinePlayer.sendMessage(String.format(ButtonLock.language.ONE_TIME_CODE, password));
+												onlinePlayer.sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_RECEIVED, sender.getName()));
+												onlinePlayer.sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_CODE, password));
 											}
 										}
 									}
 									
 									if (! oneTimePasswords.isEmpty()) {
-										currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.language.ONE_TIME_CODE_ADDED, ButtonLock.language.getList(oneTimePasswords.toArray())));
-										currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.language.FOR_PLAYERS, ButtonLock.language.getList(players.toArray())));
+										currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_ADDED, ButtonLock.getCurrentLanguage().getList(oneTimePasswords.toArray())));
+										currentPlayerVars.getPlayer().sendMessage(String.format(ButtonLock.getCurrentLanguage().FOR_PLAYERS, ButtonLock.getCurrentLanguage().getList(players.toArray())));
 									}else{
-										currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.PLAYER_NOT_FOUND);
+										currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().PLAYER_NOT_FOUND);
 									}
 									return true;
 								}
@@ -105,17 +107,17 @@ public class OneTimePasswordsCommandExecuter implements CommandExecutor{
 							if (args.length == 1) {
 								if (args[0].equalsIgnoreCase("removeAll") || args[0].equalsIgnoreCase("ra")) {
 									group.clearOneTimePasswords();
-									currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.ONE_TIME_CODE_CLEAR);
+									currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().ONE_TIME_CODE_CLEAR);
 									return true;
 								}
 							}
 						}else{
-							currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.WHICH_BLOCK);
+							currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 				        	return true;
 						}
 		        	}
 				}else{
-					currentPlayerVars.getPlayer().sendMessage(ButtonLock.language.WHICH_BLOCK);
+					currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 		        	return true;
 				}
 			}

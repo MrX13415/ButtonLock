@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 public class Language {
 
 	private static String languageFileExtention = ".lang";
-	private static String languageFilePath = "plugins/" + ButtonLock.pluginName + "/languages/";
+	private static String languageFilePath = "plugins/" + ButtonLock.getPluginName() + "/languages/";
 	
 	private static final String keyVersion = "Version";
 	
@@ -84,6 +84,7 @@ public class Language {
 	public String COMMAND_INGAME_ONLY;
 	public String CANT_REMOVE_LOCKED_GROUPS;
 	public String GROUP_SIZE;
+	public String PERMISSIONS_NOT;
 	
 	public String TRUE;
 	public String FALSE;
@@ -98,6 +99,7 @@ public class Language {
 	public String COMMAND_ONETIMEPASSWORD_DESCRIPTION;
 	public String COMMAND_BUTTONLOCK_USAGE;
 	public String COMMAND_BUTTONLOCK_DESCRIPTION;
+	public String COMMAND_OP_ONLY;
 	
 	public Language() {
 		setDefaults();
@@ -170,6 +172,8 @@ public class Language {
 		COMMAND_INGAME_ONLY = "%s This Command is only ingame available";
 		CANT_REMOVE_LOCKED_GROUPS = ChatColor.RED + "You can't remove a locked group. Remove the password first.";
 		GROUP_SIZE = ChatColor.GRAY + "Group size: " + ChatColor.GOLD + " %s";
+		COMMAND_OP_ONLY = ChatColor.RED + "You must be OP to use this command ...";
+		PERMISSIONS_NOT = ChatColor.RED + "You don't have the required Permission (" + ChatColor.GOLD + "%s" + ChatColor.RED + ")"; 
 		TRUE = "true";
 		FALSE = "false";
 		MASK_CHR = ChatColor.GRAY + "*";
@@ -177,12 +181,12 @@ public class Language {
 
 		COMMAND_SETPASSWORD_USAGE = ChatColor.GREEN + "Command: " + ChatColor.RED + "/setpassword" + ChatColor.GREEN + " or " + ChatColor.RED + "/setpw " +
 				 					ChatColor.GREEN + "(see also: " + ChatColor.GOLD + "http://dev.bukkit.org/server-mods/buttonlock/pages/commands-list" + ChatColor.GREEN + "):\n" +
-				 					ChatColor.RED + "/pw "			+ ChatColor.GOLD + "<password> "				+ ChatColor.GRAY + "Set/changes a password" + "\n" +
-				 					ChatColor.RED + "/pw "	+ ChatColor.GOLD + "<password> <protection> "	+ ChatColor.GRAY + "Set/changes a password and the protection mode" + "\n" +
-				 					ChatColor.RED + "/pw "	+ ChatColor.GOLD + "<password> PASSWORD "		+ ChatColor.GRAY + "~ sets protection mode to PASSWORD (default)" + "\n" +
-				 					ChatColor.RED + "/pw "	+ ChatColor.GOLD + "<password> PUBLIC "			+ ChatColor.GRAY + "~ sets protection mode to PUBLIC" + "\n" +
-				 					ChatColor.RED + "/pw "	+ ChatColor.GOLD + "<password> PRIVATE "		+ ChatColor.GRAY + "~ sets protection mode to PRIVATE" + "\n" +
-				 					ChatColor.RED + "/pw " 	+ ChatColor.GOLD + ""							+ ChatColor.GRAY + "Removes a password";
+				 					ChatColor.RED + "/setpw "			+ ChatColor.GOLD + "<password> "				+ ChatColor.GRAY + "Set/changes a password" + "\n" +
+				 					ChatColor.RED + "/setpw "	+ ChatColor.GOLD + "<password> <protection> "	+ ChatColor.GRAY + "Set/changes a password and the protection mode" + "\n" +
+				 					ChatColor.RED + "/setpw "	+ ChatColor.GOLD + "<password> PASSWORD "		+ ChatColor.GRAY + "~ sets protection mode to PASSWORD (default)" + "\n" +
+				 					ChatColor.RED + "/setpw "	+ ChatColor.GOLD + "<password> PUBLIC "			+ ChatColor.GRAY + "~ sets protection mode to PUBLIC" + "\n" +
+				 					ChatColor.RED + "/setpw "	+ ChatColor.GOLD + "<password> PRIVATE "		+ ChatColor.GRAY + "~ sets protection mode to PRIVATE" + "\n" +
+				 					ChatColor.RED + "/setpw " 	+ ChatColor.GOLD + ""							+ ChatColor.GRAY + "Removes a password";
 		COMMAND_SETPASSWORD_DESCRIPTION = "Set, changes or removes a password";
 		
 		COMMAND_PASSWORD_USAGE = ChatColor.GREEN + "Command: " + ChatColor.RED + "/password" + ChatColor.GREEN + " or " + ChatColor.RED + "/pw " +
@@ -219,7 +223,7 @@ public class Language {
 	}
 	
 	public boolean isUptoDate(){
-		if (this.version.equalsIgnoreCase(ButtonLock.pdfFile.getVersion())){
+		if (this.version.equalsIgnoreCase(ButtonLock.getPluginDescriptionFile().getVersion())){
 			return true;
 		}
 		return false;
@@ -233,7 +237,7 @@ public class Language {
 		boolean returnStatus = false;
 		if (! isUptoDate() || force) {
 			setDefaults();
-			version = ButtonLock.pdfFile.getVersion().toString();
+			version = ButtonLock.getPluginDescriptionFile().getVersion().toString();
 		    returnStatus = write();
 		}
 		return returnStatus;
@@ -401,18 +405,20 @@ public class Language {
 						if (keyLine[0].equalsIgnoreCase("COMMAND_ONETIMEPASSWORD_DESCRIPTION")) {COMMAND_ONETIMEPASSWORD_DESCRIPTION = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("COMMAND_BUTTONLOCK_USAGE")) {COMMAND_BUTTONLOCK_USAGE = keyLine[1].replace("\\n", "\n");}
 						if (keyLine[0].equalsIgnoreCase("COMMAND_BUTTONLOCK_DESCRIPTION")) {COMMAND_BUTTONLOCK_DESCRIPTION = keyLine[1];}
-	
+						if (keyLine[0].equalsIgnoreCase("COMMAND_OP_ONLY")) {COMMAND_OP_ONLY = keyLine[1];}
+						if (keyLine[0].equalsIgnoreCase("PERMISSIONS_NOT")) {PERMISSIONS_NOT = keyLine[1];}
+						
 					}
 				}	
 				
 			} catch (Exception e) {
-				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while loading the language file.");
+				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading the language file.");
 				e.printStackTrace();
 				
 			}
 
 		} catch (FileNotFoundException e) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: language not found: " + languageName);
+			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: language not found: " + languageName);
 		}
 	}
 	
@@ -424,8 +430,8 @@ public class Language {
 			
 			writer = new FileWriter(languageFilePath + languageName + languageFileExtention);
 
-			writer.write("#" + ButtonLock.pdfFile.getName() + " by " + ButtonLock.pdfFile.getAuthors() + "\n");
-			writer.write("#Language: " + languageName + "  Autor: " + ButtonLock.pdfFile.getAuthors() + "\n");
+			writer.write("#" + ButtonLock.getPluginDescriptionFile().getName() + " by " + ButtonLock.getPluginDescriptionFile().getAuthors() + "\n");
+			writer.write("#Language: " + languageName + "  Autor: " + ButtonLock.getPluginDescriptionFile().getAuthors() + "\n");
 			writer.write("#\n");
 			writer.write("# Colors: \n");
 			writer.write("# \n");
@@ -525,11 +531,13 @@ public class Language {
 			writer.write(String.format(fileFormat_keys, "COMMAND_ONETIMEPASSWORD_DESCRIPTION", COMMAND_ONETIMEPASSWORD_DESCRIPTION) + "\n");
 			writer.write(String.format(fileFormat_keys, "COMMAND_BUTTONLOCK_USAGE", COMMAND_BUTTONLOCK_USAGE.replace("\n", "\\n")) + "\n");
 			writer.write(String.format(fileFormat_keys, "COMMAND_BUTTONLOCK_DESCRIPTION", COMMAND_BUTTONLOCK_DESCRIPTION) + "\n");
+			writer.write(String.format(fileFormat_keys, "COMMAND_OP_ONLY", COMMAND_OP_ONLY) + "\n");
+			writer.write(String.format(fileFormat_keys, "PERMISSIONS_NOT", PERMISSIONS_NOT) + "\n");
 			writer.close();
 			
 			return true;
 		} catch (Exception e1) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: can't create default language file.");		
+			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create default language file.");		
 		}
 		return false;
 	}

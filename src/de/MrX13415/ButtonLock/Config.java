@@ -13,7 +13,7 @@ import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
 public class Config {
 	
 	private String configFileName = "config.yml";
-	private String configFilePath = "plugins/" + ButtonLock.pluginName + "/";
+	private String configFilePath = "plugins/" + ButtonLock.getPluginName() + "/";
 	
 	private static final String keyLanguage = "Language";
 	private static final String keyOfflinePlayersAreAddable = "OfflinePlayersAreAddable";
@@ -38,7 +38,7 @@ public class Config {
 	private static final String fileFormat_Comments_prefix = "#";
 		
 	//-- file content --
-	public String language = ButtonLock.language.languageName;
+	public String language = ButtonLock.getCurrentLanguage().languageName;
 	public LOCKED_STATE defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
 	public LOCKED_STATE defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
 	public String configFileVersion = "----";
@@ -61,7 +61,7 @@ public class Config {
 	}
 	
 	public void setDefaults() {
-		language = ButtonLock.language.languageName;
+		language = ButtonLock.getCurrentLanguage().languageName;
 		defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
 		defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
 		configFileVersion = "----";
@@ -79,7 +79,7 @@ public class Config {
 	}
 	
 	public boolean isUptoDate(){
-		if (this.configFileVersion.equalsIgnoreCase(ButtonLock.pdfFile.getVersion())){
+		if (this.configFileVersion.equalsIgnoreCase(ButtonLock.getPluginDescriptionFile().getVersion())){
 			return true;
 		}
 		return false;
@@ -93,7 +93,7 @@ public class Config {
 		boolean returnStatus = false;
 		if (! isUptoDate() || force) {
 			setDefaults();
-			configFileVersion = ButtonLock.pdfFile.getVersion().toString();
+			configFileVersion = ButtonLock.getPluginDescriptionFile().getVersion().toString();
 		    returnStatus = write();
 		}
 		return returnStatus;
@@ -177,18 +177,18 @@ public class Config {
 						if (keyLine[0].equalsIgnoreCase(keyLanguage)) {
 							
 							String newLanguage = keyLine[1];
-							if (ButtonLock.language.langExists(newLanguage)){
+							if (ButtonLock.getCurrentLanguage().langExists(newLanguage)){
 								
 								String oldLanguage = language;
 								if (! oldLanguage.equalsIgnoreCase(newLanguage)) {
 									language = newLanguage;
 									//load lang...
-									ButtonLock.language = ButtonLock.getLanguageDefaults(language);
-									ButtonLock.language.load(language);
-									ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Language set to: \"" + language + "\"");
+									ButtonLock.setCurrentLanguage(ButtonLock.getLanguageDefaults(language));
+									ButtonLock.getCurrentLanguage().load(language);
+									ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Language set to: \"" + language + "\"");
 								}
 							}else{
-								ButtonLock.log.info(ButtonLock.consoleOutputHeader + " Language not found: \"" + newLanguage + "\"");
+								ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Language not found: \"" + newLanguage + "\"");
 							}		
 						}
 						
@@ -207,11 +207,11 @@ public class Config {
 					}
 				}				
 			} catch (Exception e) {
-				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while reading.");
+				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while reading.");
 			}
 
 		} catch (FileNotFoundException e) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: config file not found.");
+			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: config file not found.");
 			
 			ButtonLock.lockableBlocksList.add(Material.STONE_BUTTON);
 			ButtonLock.lockableBlocksList.add(Material.LEVER);
@@ -220,7 +220,7 @@ public class Config {
 			ButtonLock.lockableBlocksList.add(Material.IRON_DOOR_BLOCK);
 			ButtonLock.lockableBlocksList.add(Material.TRAP_DOOR);
 			if (write()) { //create new File
-				ButtonLock.log.info(ButtonLock.consoleOutputHeader + " New Config file created. (" + ButtonLock.pluginName + "/config.yml)");
+				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " New Config file created. (" + ButtonLock.getPluginName() + "/config.yml)");
 			}
 		}
 	}
@@ -233,7 +233,7 @@ public class Config {
 	
 			writer = new FileWriter(configFilePath + configFileName);
 			
-			writer.write("#" + ButtonLock.pdfFile.getName() + " by: " + ButtonLock.pdfFile.getAuthors() + "\n");
+			writer.write("#" + ButtonLock.getPluginDescriptionFile().getName() + " by: " + ButtonLock.getPluginDescriptionFile().getAuthors() + "\n");
 			writer.write(String.format(fileFormat_keys, keyVersion, configFileVersion) + "\n");
 			writer.write(String.format(fileFormat_keys, keyLanguage, language) + "\n");
 			writer.write("\n");
@@ -275,7 +275,7 @@ public class Config {
 		
 			return true;
 		} catch (Exception e1) {
-			ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: can't create new config file.");		
+			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create new config file.");		
 		}
 		return false;
 	}

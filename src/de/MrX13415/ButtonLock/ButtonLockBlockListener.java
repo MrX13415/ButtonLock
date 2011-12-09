@@ -37,7 +37,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 						}
 						
 					}else {
-						player.sendMessage(ButtonLock.language.DENIED);
+						player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 						event.setCancelled(true);
 					}
 				}
@@ -111,10 +111,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 //						}
 						
 					}else if (group.containsBlock(block)){
-						player.sendMessage(ButtonLock.language.CANT_REMOVE_LOCKED_GROUPS);
+						player.sendMessage(ButtonLock.getCurrentLanguage().CANT_REMOVE_LOCKED_GROUPS);
 						event.setCancelled(true);
 					}else {
-						player.sendMessage(ButtonLock.language.DENIED);
+						player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 						event.setCancelled(true);
 					}
 				}

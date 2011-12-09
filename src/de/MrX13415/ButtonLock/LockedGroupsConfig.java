@@ -14,7 +14,7 @@ import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
 public class LockedGroupsConfig {
 	
 	private String configFileName = "LockedGroups.yml";
-	private String configFilePath = "plugins" + File.separator + ButtonLock.pluginName + File.separator;
+	private String configFilePath = "plugins" + File.separator + ButtonLock.getPluginName() + File.separator;
 
 	private static final String keyGroupNr = "LockedGroup#: ";
 	private static final String keyOwnerList = "OwnerList";
@@ -49,13 +49,13 @@ public class LockedGroupsConfig {
 		int blockNr = -1;
 		LockedBlockGroup currentGroup = null;
 		int groupPW = 0;
-		boolean forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
+		boolean forcePW = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault;
 		
 		double costs = 0;
-		if (ButtonLock.configFile.iConomyIsFreeAsDefault){
+		if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault){
 			costs = 0.00;
 		}else{
-			costs = ButtonLock.configFile.iConomyCosts;
+			costs = ButtonLock.getButtonLockConfig().iConomyCosts;
 		}
 		
 		boolean changedSetting_fpet = false;
@@ -70,7 +70,7 @@ public class LockedGroupsConfig {
 		int blockPosZ = 0;
 		
 		//get current Server ...
-		Server server = ButtonLock.server;
+		Server server = ButtonLock.getCurrentServer();
 		
 		//clear all current locked groups before loading ...
 		ButtonLock.grouplist.clear();
@@ -97,7 +97,7 @@ public class LockedGroupsConfig {
 						
 							if (currentGroup != null && groupNr > -1) {
 								if (! pwIsSet) {
-									ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+									ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
 									errorsORwarinings = true;
 									groupPW = 49; //hash 49 = char "1" 
 								}
@@ -117,11 +117,11 @@ public class LockedGroupsConfig {
 								currentGroup = null;
 								
 								//reset settings to default ...
-								forcePW = ButtonLock.configFile.forcePasswordEveryTimeByDefault;
-								if (ButtonLock.configFile.iConomyIsFreeAsDefault){
+								forcePW = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault;
+								if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault){
 									costs = 0;
 								}else{
-									costs = ButtonLock.configFile.iConomyCosts;
+									costs = ButtonLock.getButtonLockConfig().iConomyCosts;
 								}
 								
 							}
@@ -175,7 +175,7 @@ public class LockedGroupsConfig {
 									Block block = currentworld.getBlockAt(blockPosX, blockPosY, blockPosZ);
 									currentGroup.addBlock(block);
 								}else{
-									ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
+									ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
 									errorsORwarinings = true;
 								}
 							}
@@ -230,16 +230,16 @@ public class LockedGroupsConfig {
 							ButtonLock.addLockedGroup(currentGroup);	//add group
 							currentGroup = null;
 						}else{
-							ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+							ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
 							errorsORwarinings = true;
 						}
 					}
 				} catch (Exception e) {
-					ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
+					ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
 					errorsORwarinings = true;
 				}
 			} catch (FileNotFoundException e) {
-				ButtonLock.log.warning(ButtonLock.consoleOutputHeader + " Error: Save files not found.");
+				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Save files not found.");
 				errorsORwarinings = true;
 			}
 			//-------------------
@@ -247,7 +247,7 @@ public class LockedGroupsConfig {
 		}
 		
 		if (errorsORwarinings) {
-			ButtonLock.server.broadcastMessage(String.format(ButtonLock.language.ERROR_LOADING, ButtonLock.consoleOutputHeader));
+			ButtonLock.getCurrentServer().broadcastMessage(String.format(ButtonLock.getCurrentLanguage().ERROR_LOADING, ButtonLock.getConsoleOutputHeader()));
 		}
 		
 	}
@@ -256,7 +256,7 @@ public class LockedGroupsConfig {
 		FileWriter writer;
 		
 		//get current Server ...
-		Server server = ButtonLock.server;
+		Server server = ButtonLock.getCurrentServer();
 		
 		try {
 			//write file for each World ...
@@ -321,7 +321,7 @@ public class LockedGroupsConfig {
 			
 			return true;
 		} catch (Exception e1) {
-			System.err.println(ButtonLock.consoleOutputHeader + " Error: An error occurred while saveing all locked groups");
+			System.err.println(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while saveing all locked groups");
 			e1.printStackTrace();
 		}
 		

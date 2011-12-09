@@ -1,7 +1,7 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 1.0
+version: 1.1
 description: >
              Lock buttons, levers and blocks
 author: MrX13415
@@ -66,7 +66,7 @@ permissions:
         description: Allows the player to set any One-time password
         default: op
         
-      buttonLock.buttonlock:
+      buttonLock.buttonlock.normal:
         description: Allows the player to change any locked group 
         default: op
         children:

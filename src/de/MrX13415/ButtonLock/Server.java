@@ -4,7 +4,6 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
-import com.iCo6.*;
 
 public class Server extends ServerListener {
 	 private ButtonLock plugin;
@@ -16,24 +15,38 @@ public class Server extends ServerListener {
 	    
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
-        if (ButtonLock.iConomy != null) {
+        if (ButtonLock.iConomy) {
             if (event.getPlugin().getDescription().getName().equals("iConomy")) {
-            	ButtonLock.iConomy = null;
-                System.out.println(ButtonLock.getConsoleOutputHeader() + " un-hooked from iConomy.");
+            	ButtonLock.iConomy = false;
+                System.out.println(ButtonLock.getConsoleOutputHeader() + " un-hooked from iConomy");
             }
         }
+        
+        if (ButtonLock.essetials) {
+            if (event.getPlugin().getDescription().getName().equals("Essentials")) {
+            	ButtonLock.essetials = false;
+                System.out.println(ButtonLock.getConsoleOutputHeader() + " un-hooked from Essentials");
+            }
+        }
+
     }
 
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        if (ButtonLock.iConomy == null) {
-            Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
-
-            if (iConomy != null) {
-                if (iConomy.isEnabled() && iConomy.getClass().getName().equals("com.iCo6.iConomy")) {
-                    ButtonLock.iConomy = (iConomy)iConomy;
-                    System.out.println(ButtonLock.getConsoleOutputHeader() + " hooked into iConomy.");
-                }
+        Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
+        Plugin essentials = plugin.getServer().getPluginManager().getPlugin("Essentials");
+        
+        if (iConomy != null && ButtonLock.iConomy == false) {
+            if (iConomy.isEnabled() && iConomy.getClass().getName().equals("com.iCo6.iConomy")) {
+            	ButtonLock.iConomy = true;
+                System.out.println(ButtonLock.getConsoleOutputHeader() + " hooked into iConomy");
+            }
+        }
+        
+        if(essentials != null && ButtonLock.essetials == false){
+        	if (essentials.isEnabled()) {
+            	ButtonLock.essetials = true;
+                System.out.println(ButtonLock.getConsoleOutputHeader() + " hooked into EssetialsEco");
             }
         }
     }

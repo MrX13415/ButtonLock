@@ -57,7 +57,7 @@ public class Language_German extends Language{
 		GROUP_BLOCK_ADDED = ChatColor.GRAY + "Block hinzugefügt ...";
 		GROUP_BLOCK_REMOVED = ChatColor.GRAY + "Block entfernt ...";
 		PW_BYPASS = ChatColor.GRAY + "Passwort umgangen: Zugriff " + ChatColor.GREEN + "ERLAUBT";
-		ICONOMY_BYPASS = ChatColor.GRAY + "IConomy umgangen: Zugriff " + ChatColor.GREEN + "ERLAUBT";
+		ECONOMY_BYPASS = ChatColor.GRAY + "IConomy umgangen: Zugriff " + ChatColor.GREEN + "ERLAUBT";
 		GROUP_COSTS_CHANGED_COSTS = ChatColor.GRAY + "Kosten für diese Gruppe geändert. Neue Kosten: " + ChatColor.GOLD + "$%s";
 		GROUP_COSTS_CHANGED_FREE = ChatColor.GRAY + "Kosten für diese Gruppe geändert. Neue Kosten: " + ChatColor.GOLD + "kostenlos";
 		GROUP_PROTECTION = ChatColor.GRAY + "Schutz geändert zu: " + ChatColor.GOLD + "%s";

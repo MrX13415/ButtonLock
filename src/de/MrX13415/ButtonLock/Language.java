@@ -66,7 +66,7 @@ public class Language {
 	public String GROUP_BLOCK_ADDED;
 	public String GROUP_BLOCK_REMOVED;
 	public String PW_BYPASS;
-	public String ICONOMY_BYPASS;
+	public String ECONOMY_BYPASS;
 	public String GROUP_COSTS_CHANGED_COSTS;
 	public String GROUP_COSTS_CHANGED_FREE;
 	public String GROUP_PROTECTION;
@@ -154,7 +154,7 @@ public class Language {
 		GROUP_BLOCK_ADDED = ChatColor.GRAY + "Block added ...";
 		GROUP_BLOCK_REMOVED = ChatColor.GRAY + "Block removed ...";
 		PW_BYPASS = ChatColor.GRAY + "You by-passed the Password: Access " + ChatColor.GREEN + "SUCCEED";
-		ICONOMY_BYPASS = ChatColor.GRAY + "You by-passed IConomy: Access " + ChatColor.GREEN + "SUCCEED";
+		ECONOMY_BYPASS = ChatColor.GRAY + "You by-passed IConomy: Access " + ChatColor.GREEN + "SUCCEED";
 		GROUP_COSTS_CHANGED_COSTS = ChatColor.GRAY + "Costs changed for this group. New costs: " + ChatColor.GOLD + "$%s";
 		GROUP_COSTS_CHANGED_FREE = ChatColor.GRAY + "Costs changed for this group. New costs: " + ChatColor.GOLD + "FREE";
 		GROUP_PROTECTION = ChatColor.GRAY + "Protection mode changed to: " + ChatColor.GOLD + "%s";
@@ -374,7 +374,7 @@ public class Language {
 						if (keyLine[0].equalsIgnoreCase("GROUP_BLOCK_ADDED")) {GROUP_BLOCK_ADDED = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("GROUP_BLOCK_REMOVED")) {GROUP_BLOCK_REMOVED = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("PW_BYPASS")) {PW_BYPASS = keyLine[1];}
-						if (keyLine[0].equalsIgnoreCase("ICONOMY_BYPASS")) {ICONOMY_BYPASS = keyLine[1];}
+						if (keyLine[0].equalsIgnoreCase("ICONOMY_BYPASS")) {ECONOMY_BYPASS = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("GROUP_COSTS_CHANGED_COSTS")) {GROUP_COSTS_CHANGED_COSTS = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("GROUP_COSTS_CHANGED_FREE")) {GROUP_COSTS_CHANGED_FREE = keyLine[1];}
 						if (keyLine[0].equalsIgnoreCase("GROUP_PROTECTION_PASSWORD")) {GROUP_PROTECTION = keyLine[1];}
@@ -499,7 +499,7 @@ public class Language {
 			writer.write(String.format(fileFormat_keys, "GROUP_BLOCK_ADDED", GROUP_BLOCK_ADDED) + "\n");
 			writer.write(String.format(fileFormat_keys, "GROUP_BLOCK_REMOVED", GROUP_BLOCK_REMOVED) + "\n");
 			writer.write(String.format(fileFormat_keys, "PW_BYPASS", PW_BYPASS) + "\n");
-			writer.write(String.format(fileFormat_keys, "ICONOMY_BYPASS", ICONOMY_BYPASS) + "\n");
+			writer.write(String.format(fileFormat_keys, "ICONOMY_BYPASS", ECONOMY_BYPASS) + "\n");
 			writer.write(String.format(fileFormat_keys, "GROUP_COSTS_CHANGED_COSTS", GROUP_COSTS_CHANGED_COSTS) + "\n");
 			writer.write(String.format(fileFormat_keys, "GROUP_COSTS_CHANGED_FREE", GROUP_COSTS_CHANGED_FREE) + "\n");
 			writer.write(String.format(fileFormat_keys, "GROUP_PROTECTION_PASSWORD", GROUP_PROTECTION) + "\n");

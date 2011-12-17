@@ -19,14 +19,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.iCo6.*;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.0 r53
+ * @version 1.2 r54
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -44,7 +43,8 @@ public class ButtonLock extends JavaPlugin {
 	static boolean debugmode = false;
 	
 	//iconomy
-	public static iConomy iConomy = null;
+	public static boolean iConomy = false;
+	public static boolean essetials = false;
 	
 	//Commands
 	static final String COMMAND_SETPASSWORD = "setpassword";
@@ -289,6 +289,7 @@ public class ButtonLock extends JavaPlugin {
 	
     private void setupPermissions() {
 	      Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+	      Plugin permissionsBukkitPlugin = this.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 
 	      if (ButtonLock.permissionHandler == null) {
 	          if (permissionsPlugin != null) {
@@ -296,7 +297,14 @@ public class ButtonLock extends JavaPlugin {
 	        	  log.info(consoleOutputHeader + " Permission system detected: " + permissionsPlugin.getDescription().getFullName());
 	          } else if (ButtonLock.getButtonLockConfig().usePermissions){
 	        	  defaultPermission = true;
-	        	  log.info(consoleOutputHeader + " Permission system detected: Default");
+	        	  
+	        	  String pluginName = "";
+	        	  
+	        	  if (permissionsBukkitPlugin != null){
+	        		  pluginName = ": " + permissionsBukkitPlugin.getDescription().getFullName();
+	        	  }
+	        	  
+	        	  log.info(consoleOutputHeader + " Permission system detected" + pluginName);
 	          } else {
 	        	  log.warning(consoleOutputHeader + " Permission system NOT detected! (everyone will have permissions to use it.)");
 	          }
@@ -378,7 +386,7 @@ public class ButtonLock extends JavaPlugin {
 	
 	public static boolean iConomyByPass(Player player) {
 		if(ButtonLock.permissionHandler != null && ButtonLock.configFile.usePermissions &&
-		   ButtonLock.permissionHandler.has(player, ButtonLock.PERMISSION_NODE_ButtonLock_iconcomy_bypass) && configFile.enableIConomyByPass){
+		   ButtonLock.permissionHandler.has(player, ButtonLock.PERMISSION_NODE_ButtonLock_iconcomy_bypass) && configFile.enableEonomyByPass){
 			return true;
 		}
 		return false;

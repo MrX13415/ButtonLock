@@ -27,8 +27,9 @@ public class Config {
 	private static final String keyUsePermissions = "UsePermsissions";
 	private static final String keyOPOnly = "IfNoPermissionsOPOnly";
 	private static final String keyUseIConomy = "UseIConomy";
-	private static final String keyIConomyIsFreeAsDefault = "IsFreeAsDefault";
-	private static final String keyIConomyCosts = "DefaultPriceIfNotFree";
+	private static final String keyUseEssentialsEco = "UseEssetialsEco";
+	private static final String keyEconomyIsFreeAsDefault = "IsFreeAsDefault";
+	private static final String keyEconomyCosts = "DefaultPriceIfNotFree";
 	private static final String keyTimeforEnteringPassword = "TimeforEnteringPassword";
 	private static final String listLockableBlocks = "LockableBlocksList:";
 	private static final String fileFormat_keys = "%s: %s"; 
@@ -45,13 +46,14 @@ public class Config {
 	public boolean useChatforPasswordInput = true;
 	public boolean usePermissions = true;
 	public boolean oPOnly = false;
-	public boolean useIConomy = false;
-	public boolean enableIConomyByPass = false;
+	public boolean useiConomy = false;
+	public boolean useEssentialsEco = false;
+	public boolean enableEonomyByPass = false;
 	public boolean enablePasswordByPass = false;
 	public boolean forcePasswordEveryTimeByDefault = false;
 	public boolean offlinePlayersAreAddable = false;
-	public boolean iConomyIsFreeAsDefault = true;
-	public double iConomyCosts = 0.50;
+	public boolean economyIsFreeAsDefault = true;
+	public double economyCosts = 0.50;
 	public long timeforEnteringPassword = 10000;  //millis
 	//------------------
 	public String currentlist;	
@@ -68,13 +70,13 @@ public class Config {
 		useChatforPasswordInput = true;
 		usePermissions = true;
 		oPOnly = false;
-		useIConomy = false;
-		enableIConomyByPass = false;
+		useiConomy = false;
+		enableEonomyByPass = false;
 		enablePasswordByPass = false;
 		forcePasswordEveryTimeByDefault = false;
 		offlinePlayersAreAddable = false;
-		iConomyIsFreeAsDefault = true;
-		iConomyCosts = 0.50;
+		economyIsFreeAsDefault = true;
+		economyCosts = 0.50;
 		timeforEnteringPassword = 10000;  //millis
 	}
 	
@@ -143,15 +145,19 @@ public class Config {
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyUseIConomy)) {
-							useIConomy = Boolean.valueOf(keyLine[1]);
+							useiConomy = Boolean.valueOf(keyLine[1]);
 						}
 						
-						if (keyLine[0].equalsIgnoreCase(keyIConomyIsFreeAsDefault)) {
-							iConomyIsFreeAsDefault = Boolean.valueOf(keyLine[1]);
+						if (keyLine[0].equalsIgnoreCase(keyUseEssentialsEco)) {
+							useEssentialsEco = Boolean.valueOf(keyLine[1]);
 						}
 						
-						if (keyLine[0].equalsIgnoreCase(keyIConomyCosts)) {
-							iConomyCosts = Double.valueOf(keyLine[1]);
+						if (keyLine[0].equalsIgnoreCase(keyEconomyIsFreeAsDefault)) {
+							economyIsFreeAsDefault = Boolean.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyEconomyCosts)) {
+							economyCosts = Double.valueOf(keyLine[1]);
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyTimeforEnteringPassword)) {
@@ -159,7 +165,7 @@ public class Config {
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyEnableIConomyByPass)) {
-							enableIConomyByPass = Boolean.valueOf(keyLine[1]);
+							enableEonomyByPass = Boolean.valueOf(keyLine[1]);
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyEnablePasswordByPass)) {
@@ -250,11 +256,13 @@ public class Config {
 			writer.write(String.format(fileFormat_keys, keyUsePermissions, usePermissions) + "\n");
 			writer.write(String.format(fileFormat_keys, keyOPOnly, oPOnly) + "\n");
 			writer.write("\n");
-			writer.write(fileFormat_Comments_prefix + " IConomy\n");
-			writer.write(String.format(fileFormat_keys, keyUseIConomy, useIConomy) + "\n");
-			writer.write(String.format(fileFormat_keys, keyEnableIConomyByPass, enableIConomyByPass) + "\n");
-			writer.write(String.format(fileFormat_keys, keyIConomyIsFreeAsDefault , iConomyIsFreeAsDefault) + "\n");
-			writer.write(String.format(fileFormat_keys, keyIConomyCosts , iConomyCosts) + "\n");
+			writer.write(fileFormat_Comments_prefix + " economy\n");
+			writer.write(String.format(fileFormat_keys, keyUseIConomy, useiConomy) + "\n");
+			writer.write(String.format(fileFormat_keys, keyUseEssentialsEco, useEssentialsEco) + "\n");
+			writer.write("\n");
+			writer.write(String.format(fileFormat_keys, keyEnableIConomyByPass, enableEonomyByPass) + "\n");
+			writer.write(String.format(fileFormat_keys, keyEconomyIsFreeAsDefault , economyIsFreeAsDefault) + "\n");
+			writer.write(String.format(fileFormat_keys, keyEconomyCosts , economyCosts) + "\n");
 			writer.write("\n");
 			writer.write(listLockableBlocks + "\n");
 			

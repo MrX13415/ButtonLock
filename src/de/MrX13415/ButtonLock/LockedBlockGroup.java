@@ -31,12 +31,12 @@ public class LockedBlockGroup{
 	private PROTECTION_MODE protectionMode = PROTECTION_MODE.PASSWORD;
 	private ArrayList<String> ownerList = new ArrayList<String>();
 	
-	public double costs = ButtonLock.getButtonLockConfig().iConomyCosts;;	//Free :D
+	public double costs = ButtonLock.getButtonLockConfig().economyCosts;;	//Free :D
 	public boolean changedSetting_forceEnterPasswordEveryTime = false;
 	public boolean ChangedSetting_costs = false;
 
 	public LockedBlockGroup() {
-		if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault) {
+		if (ButtonLock.getButtonLockConfig().economyIsFreeAsDefault) {
 			costs = 0;
 		}
 	}

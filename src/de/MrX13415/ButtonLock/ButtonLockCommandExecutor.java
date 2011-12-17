@@ -310,7 +310,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 							String protectionMode = ButtonLock.getCurrentLanguage().PASSWORD;
 							String costs = String.format(ButtonLock.getCurrentLanguage().COSTS, group.costs);
 							
-							if (group.costs == 0 && ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault == false) costs = ButtonLock.getCurrentLanguage().COSTS_FREE;
+							if (group.costs == 0 && ButtonLock.getButtonLockConfig().economyIsFreeAsDefault == false) costs = ButtonLock.getCurrentLanguage().COSTS_FREE;
 							if (group.isUnlocked()) status = ButtonLock.getCurrentLanguage().UNLOCKED;
 							if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) protectionMode = ButtonLock.getCurrentLanguage().PRIVATE;
 							if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) protectionMode = ButtonLock.getCurrentLanguage().PUBLIC;
@@ -364,7 +364,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 										|| args[1].equalsIgnoreCase("c")) {
 									if (group.isUnlocked()) {
 										
-										double setting = ButtonLock.getButtonLockConfig().iConomyCosts;
+										double setting = ButtonLock.getButtonLockConfig().economyCosts;
 										
 										if (args.length == 3) {
 											setting = Double.valueOf(args[2]);

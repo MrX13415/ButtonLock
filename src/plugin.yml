@@ -1,7 +1,7 @@
 main: de.MrX13415.ButtonLock.ButtonLock
 
 name: ButtonLock
-version: 1.1
+version: 1.2
 description: >
              Lock buttons, levers and blocks
 author: MrX13415
@@ -55,7 +55,7 @@ permissions:
         default: op
         
       buttonLock.iconomy.bypass:
-        description: Allows the player to bypass iConomy
+        description: Allows the player to bypass Economy
         default: op
         
       buttonLock.setpw:

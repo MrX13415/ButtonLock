@@ -52,10 +52,10 @@ public class LockedGroupsConfig {
 		boolean forcePW = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault;
 		
 		double costs = 0;
-		if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault){
+		if (ButtonLock.getButtonLockConfig().economyIsFreeAsDefault){
 			costs = 0.00;
 		}else{
-			costs = ButtonLock.getButtonLockConfig().iConomyCosts;
+			costs = ButtonLock.getButtonLockConfig().economyCosts;
 		}
 		
 		boolean changedSetting_fpet = false;
@@ -118,10 +118,10 @@ public class LockedGroupsConfig {
 								
 								//reset settings to default ...
 								forcePW = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault;
-								if (ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault){
+								if (ButtonLock.getButtonLockConfig().economyIsFreeAsDefault){
 									costs = 0;
 								}else{
-									costs = ButtonLock.getButtonLockConfig().iConomyCosts;
+									costs = ButtonLock.getButtonLockConfig().economyCosts;
 								}
 								
 							}

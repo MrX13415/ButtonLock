@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import com.earth2me.essentials.api.*;
 import com.iCo6.system.*;
 import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
 import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
@@ -192,8 +193,10 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				
 				if (group.hasAccess(player)) {
 					
-					//iconomy
-					iconomy(event);
+					//economy
+					if (ButtonLock.iConomy) iconomy(event);
+					if (ButtonLock.essetials) essentialsEco(event);
+					
 		
 					//----------------------------------------------------
 					//button, etc. was successful pressed or similar ...
@@ -259,14 +262,14 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		LockedBlockGroup group = ButtonLock.getLockedGroup(block);
 		
     	//iconom
-		if (ButtonLock.getButtonLockConfig().useIConomy && ! event.isCancelled()) {
+		if (ButtonLock.getButtonLockConfig().useiConomy && ! event.isCancelled()) {
 			
 			Accounts accounts = new Accounts();
-			
+
 			if (ButtonLock.iConomyByPass(player)) {
 				currentPlayerVars.setCurrentClickedLockedGroup(group);	//set current button 
 				currentPlayerVars.setCurrentClickedBlock(block);
-				player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_BYPASS);
+				player.sendMessage(ButtonLock.getCurrentLanguage().ECONOMY_BYPASS);
 				
 			}else{
 				if (accounts.exists(player.getName())){
@@ -282,7 +285,7 @@ public class ButtonLockPlayerListener extends PlayerListener {
 							balance.subtract(costs);
 							if (costs > 0) {
 								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, costs));
-							}else if (! ButtonLock.getButtonLockConfig().iConomyIsFreeAsDefault) {
+							}else if (! ButtonLock.getButtonLockConfig().economyIsFreeAsDefault) {
 								player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED_FREE);
 							}
 						}else {
@@ -306,6 +309,62 @@ public class ButtonLockPlayerListener extends PlayerListener {
 			}
 		}
 	}
+    
+    public void essentialsEco(PlayerInteractEvent event) {
+    	//get event-infos ...
+		Player player = event.getPlayer();
+		Block block = event.getClickedBlock();
+
+		//find PlayerVars
+		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
+
+		//find Button in the locked-button-list ...
+		LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+		
+    	//iconom
+		if (ButtonLock.getButtonLockConfig().useEssentialsEco && ! event.isCancelled()) {
+		
+			if (ButtonLock.iConomyByPass(player)) {
+				currentPlayerVars.setCurrentClickedLockedGroup(group);	//set current button 
+				currentPlayerVars.setCurrentClickedBlock(block);
+				player.sendMessage(ButtonLock.getCurrentLanguage().ECONOMY_BYPASS);
+				
+			}else{
+				
+				String name = player.getName();
+				
+				if (Economy.playerExists(name)){
+					
+					try{
+						double costs = group.costs;
+						
+						if (Economy.hasEnough(name, costs)) {
+							Economy.subtract(name, costs);
+							
+							if (costs > 0) {
+								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, costs));
+							}else if (! ButtonLock.getButtonLockConfig().economyIsFreeAsDefault) {
+								player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED_FREE);
+							}	
+						}else {
+							//not enough money ...
+							player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
+							player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_LESS_MONY, costs));
+							event.setCancelled(true);
+						}
+					}catch (Exception e){	
+					}
+				}else{
+					//no acc ...
+					player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
+					player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_NO_ACC);
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+    
+
 }
 
 

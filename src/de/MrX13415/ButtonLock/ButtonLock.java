@@ -26,6 +26,9 @@ import com.nijikokun.bukkit.Permissions.Permissions;
  * 
  * @author MrX13415
  * @version 1.2 r54
+ *
+ * @license CC BY-NC-SA 3.0
+ * see README
  */
 public class ButtonLock extends JavaPlugin {
 	

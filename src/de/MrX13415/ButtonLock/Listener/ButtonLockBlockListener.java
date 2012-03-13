@@ -1,18 +1,25 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Listener;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Block.BlockFunctions;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
 
-public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListener {
+public class ButtonLockBlockListener implements Listener {
 
 //	org.bukkit.event.block.BlockListener ebb; 
 	
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		ButtonLock.debugEvent(event);
-		
+			
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
@@ -53,6 +60,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 			currentPlayerVars.setCurrentClickedBlock(block);
 	}
 	
+	@EventHandler
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		ButtonLock.debugEvent(event);
 		
@@ -68,6 +76,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		ButtonLock.debugEvent(event);
 //		
@@ -123,6 +132,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 
+	@EventHandler
 	public void onBlockBurn(BlockBurnEvent event) {
 		ButtonLock.debugEvent(event);
 			
@@ -140,7 +150,7 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	@Override
+	@EventHandler
 	public void onBlockCanBuild(BlockCanBuildEvent event) {
 //
 //		if (ButtonLock.debugmode) {
@@ -163,11 +173,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 //		}
 	}
 	
-	@Override
+	@EventHandler
 	public void onBlockFade(BlockFadeEvent event) {
 		ButtonLock.debugEvent(event);
 			
-		super.onBlockFade(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -179,13 +188,11 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 			}
 		}
 	}
-	
-	
-	@Override
+		
+	@EventHandler
 	public void onBlockForm(BlockFormEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockForm(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -197,13 +204,11 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 			}
 		}
 	}
-	
-	
-	@Override
+
+	@EventHandler
 	public void onBlockFromTo(BlockFromToEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockFromTo(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 		Block toBlock = event.getToBlock();
@@ -218,13 +223,11 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 			event.setCancelled(true); // cancel event because the button is locked ...
 		}
 	}
-	
-	
-	@Override
+		
+	@EventHandler
 	public void onBlockSpread(BlockSpreadEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockSpread(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -237,12 +240,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockIgnite(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -255,12 +256,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onSignChange(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -273,12 +272,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onLeavesDecay(LeavesDecayEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onLeavesDecay(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -291,29 +288,26 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	@Override
+	@EventHandler
 	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
-		ButtonLock.debugEvent(event);
-		
-		super.onBlockRedstoneChange(event);
-		// get event-infos ...
-		Block block = event.getBlock();
-
-		// button is unlocked
-		if (ButtonLock.isProtected(block)) {
-			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
-				event.setNewCurrent(event.getOldCurrent()); // cancel event because the button is locked ...
-			}
-		}
+//		ButtonLock.debugEvent(event);
+//		
+//		// get event-infos ...
+//		Block block = event.getBlock();
+//
+//		// button is unlocked
+//		if (ButtonLock.isProtected(block)) {
+//			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
+//			if (! group.isUnlocked()) {
+//				event.setNewCurrent(event.getOldCurrent()); // cancel event because the button is locked ...
+//			}
+//		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockPistonExtend(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -326,12 +320,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockPistonRetract(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -343,13 +335,12 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 			}
 		}
 	}
-	
-	
-	@Override
+		
+	@EventHandler
 	public void onBlockDispense(BlockDispenseEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockDispense(event);
+
 		// get event-infos ...
 		Block block = event.getBlock();
 
@@ -362,12 +353,10 @@ public class ButtonLockBlockListener extends org.bukkit.event.block.BlockListene
 		}
 	}
 	
-	
-	@Override
+	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event) {
 		ButtonLock.debugEvent(event);
 		
-		super.onBlockDamage(event);
 		// get event-infos ...
 		Block block = event.getBlock();
 

@@ -1,6 +1,7 @@
 package de.MrX13415.ButtonLock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 //import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -11,24 +12,34 @@ import org.bukkit.block.Block;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
+import de.MrX13415.ButtonLock.CommandExecuter.ButtonLockCommandExecutor;
+import de.MrX13415.ButtonLock.CommandExecuter.OneTimePasswordsCommandExecuter;
+import de.MrX13415.ButtonLock.CommandExecuter.PasswordCommandExecuter;
+import de.MrX13415.ButtonLock.CommandExecuter.SetPasswordCommandExecuter;
+import de.MrX13415.ButtonLock.Config.Config;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.LockedGroupsConfig;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
+import de.MrX13415.ButtonLock.Languages.German;
+import de.MrX13415.ButtonLock.Languages.Language;
+import de.MrX13415.ButtonLock.Listener.ButtonLockBlockListener;
+import de.MrX13415.ButtonLock.Listener.ButtonLockEntityListener;
+import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
+
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.2 r54
- *
- * @license CC BY-NC-SA 3.0
- * see README
+ * @version 1.3 r56
  */
 public class ButtonLock extends JavaPlugin {
 	
@@ -40,32 +51,33 @@ public class ButtonLock extends JavaPlugin {
 	private static Config configFile = null;
 	private static Language language = null;
 	
-	static LockedGroupsConfig lockedGroupsFile = null;
+	public static LockedGroupsConfig lockedGroupsFile = null;
 	
 	//debug output
-	static boolean debugmode = false;
+	public static boolean debugmode = false;
+	public static ArrayList<String> notDebugedEvents = new ArrayList<String>();
 	
 	//iconomy
 	public static boolean iConomy = false;
 	public static boolean essetials = false;
 	
 	//Commands
-	static final String COMMAND_SETPASSWORD = "setpassword";
-	static final String COMMAND_PASSWORD = "password";
-	static final String COMMAND_ONETIMEPASSWORD = "onetimepassword";
-	static final String COMMAND_BUTTONLOCK = "buttonlock";
+	public static final String COMMAND_SETPASSWORD = "setpassword";
+	public static final String COMMAND_PASSWORD = "password";
+	public static final String COMMAND_ONETIMEPASSWORD = "onetimepassword";
+	public static final String COMMAND_BUTTONLOCK = "buttonlock";
 
 	//permissions
 	private static PermissionHandler permissionHandler;
 	private static boolean defaultPermission;
 	
-	static final String PERMISSION_NODE_ButtonLock_bypass = "ButtonLock.bypass";
-	static final String PERMISSION_NODE_ButtonLock_iconcomy_bypass = "ButtonLock.iconomy.bypass";
-	static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
-	static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
-	static final String PERMISSION_NODE_ButtonLock_onetimeCods = "ButtonLock.onetimecode";
-	static final String PERMISSION_NODE_ButtonLock_buttonlock_normal = "ButtonLock.buttonlock.normal";
-	static final String PERMISSION_NODE_ButtonLock_buttonlock_op = "ButtonLock.buttonlock.op";
+	public static final String PERMISSION_NODE_ButtonLock_bypass = "ButtonLock.bypass";
+	public static final String PERMISSION_NODE_ButtonLock_iconcomy_bypass = "ButtonLock.iconomy.bypass";
+	public static final String PERMISSION_NODE_ButtonLock_use = "ButtonLock.use";
+	public static final String PERMISSION_NODE_ButtonLock_setpw = "ButtonLock.setpw";
+	public static final String PERMISSION_NODE_ButtonLock_onetimeCods = "ButtonLock.onetimecode";
+	public static final String PERMISSION_NODE_ButtonLock_buttonlock_normal = "ButtonLock.buttonlock.normal";
+	public static final String PERMISSION_NODE_ButtonLock_buttonlock_op = "ButtonLock.buttonlock.op";
 	
 	//holds information for all Players.
 	public static ArrayList<PlayerVars> playerlist = new ArrayList<PlayerVars>();
@@ -73,9 +85,9 @@ public class ButtonLock extends JavaPlugin {
 	public static ArrayList<LockedBlockGroup> grouplist = new ArrayList<LockedBlockGroup>();
 	public static ArrayList<Material> lockableBlocksList = new ArrayList<Material>();
 	
-	private final ButtonLockPlayerListener pListener = new ButtonLockPlayerListener();
-	private final ButtonLockBlockListener bListener = new ButtonLockBlockListener();
-	private final ButtonLockEntityListener eListener = new ButtonLockEntityListener();
+	private final Listener pListener = new ButtonLockPlayerListener();
+	private final Listener bListener = new ButtonLockBlockListener();
+	private final Listener eListener = new ButtonLockEntityListener();
 //	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	
 	@Override
@@ -94,7 +106,7 @@ public class ButtonLock extends JavaPlugin {
 		pluginName = pdfFile.getName();
 		consoleOutputHeader = "[" + pluginName + "]";
 
-        log.info(consoleOutputHeader + " v" + pdfFile.getVersion() + " " + pdfFile.getAuthors() + " is enabled.");
+        //log.info(consoleOutputHeader + " v" + pdfFile.getVersion() + " " + pdfFile.getAuthors() + " is enabled.");
   
         //init and update langs ...
         updateLanguages(false);
@@ -114,28 +126,32 @@ public class ButtonLock extends JavaPlugin {
         //---------------------
         
         //register events ...
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_PHYSICS, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_SPREAD, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_FADE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_FORM, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_FROMTO, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_DISPENSE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_CANBUILD, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_DAMAGE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, bListener, Priority.Normal, this);
-		
-		pm.registerEvent(Event.Type.ENTITY_EXPLODE, eListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENDERMAN_PICKUP, eListener, Priority.Normal, this);
-		
-		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
-		
+        getServer().getPluginManager().registerEvents(pListener, this);
+        getServer().getPluginManager().registerEvents(bListener, this);
+        getServer().getPluginManager().registerEvents(eListener, this);
+        
+//		PluginManager pm = getServer().getPluginManager();
+//		pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_BURN, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_PHYSICS, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_SPREAD, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_FADE, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_FORM, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_FROMTO, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_DISPENSE, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_CANBUILD, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_DAMAGE, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_IGNITE, bListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, bListener, Priority.Normal, this);
+//		
+//		pm.registerEvent(Event.Type.ENTITY_EXPLODE, eListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.ENDERMAN_PICKUP, eListener, Priority.Normal, this);
+//		
+//		pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
+//		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
+	
 		//register commands ...
 		try {
 			PluginCommand setpw;
@@ -167,9 +183,10 @@ public class ButtonLock extends JavaPlugin {
 		}
 
 		//iconomy
-		getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_ENABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
-	    getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_DISABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
-	   
+//		getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_ENABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
+//	    getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_DISABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
+	    getServer().getPluginManager().registerEvents(new de.MrX13415.ButtonLock.Listener.Server(this), this);
+	    
 		//permission
 		setupPermissions();
 	}
@@ -202,7 +219,7 @@ public class ButtonLock extends JavaPlugin {
 		return pdfFile;
 	}
 	
-	public static Logger getLogger(){
+	public static Logger getButtonlockLogger(){
 		return log;
 	}
 	
@@ -224,7 +241,7 @@ public class ButtonLock extends JavaPlugin {
 	
 	public static Language getLanguageDefaults(String language) {
 		if(new Language().languageName.equalsIgnoreCase(language)) return new Language();
-		if(new Language_German().languageName.equalsIgnoreCase(language)) return new Language_German();
+		if(new German().languageName.equalsIgnoreCase(language)) return new German();
 		return new Language();
 	}
 	
@@ -235,7 +252,7 @@ public class ButtonLock extends JavaPlugin {
         if (language.update(force)) log.info(consoleOutputHeader + " Default language file updated ...");   
 
         //german ...
-        Language language_ger = new Language_German();
+        Language language_ger = new German();
 		language_ger.load();  
         if (language_ger.update(force)) log.info(consoleOutputHeader + " German language file updated ...");        
         language_ger = null;
@@ -298,7 +315,7 @@ public class ButtonLock extends JavaPlugin {
 	          if (permissionsPlugin != null) {
 	        	  ButtonLock.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
 	        	  log.info(consoleOutputHeader + " Permission system detected: " + permissionsPlugin.getDescription().getFullName());
-	          } else if (ButtonLock.getButtonLockConfig().usePermissions){
+	          } else if (ButtonLock.getButtonLockConfig().usePermissions) {
 	        	  defaultPermission = true;
 	        	  
 	        	  String pluginName = "";
@@ -309,7 +326,7 @@ public class ButtonLock extends JavaPlugin {
 	        	  
 	        	  log.info(consoleOutputHeader + " Permission system detected" + pluginName);
 	          } else {
-	        	  log.warning(consoleOutputHeader + " Permission system NOT detected! (everyone will have permissions to use it.)");
+	        	  log.warning(consoleOutputHeader + " Permission system NOT detected OR disabled! (everyone will have permissions to use it.)");
 	          }
 	      }
 	  }
@@ -407,8 +424,16 @@ public class ButtonLock extends JavaPlugin {
 		return false;
 	}
 	
-	public static void debugEvent(Event event) {
+	public static boolean debugEvent(Event event) {
 		
+		if (!ButtonLock.debugmode) return false;
+		
+		for (String element : notDebugedEvents) {
+			if (event.getEventName().toLowerCase().contains(element.toLowerCase())){
+				return false;
+			}
+		}
+						
 		String msg = " Name: " + event.getEventName();
 		
 		try {
@@ -434,10 +459,10 @@ public class ButtonLock extends JavaPlugin {
 				    entityevent.getEntity().getLocation().getZ() + "}";
 		} catch (Exception e) {
 		}
-		
-		if (ButtonLock.debugmode) {
-			ButtonLock.server.broadcastMessage(ChatColor.GOLD + ButtonLock.consoleOutputHeader + ChatColor.GRAY + msg);
-			ButtonLock.log.info(ButtonLock.consoleOutputHeader + msg);
-		}	
+	
+		ButtonLock.server.broadcastMessage(ChatColor.GOLD + ButtonLock.consoleOutputHeader + ChatColor.GRAY + msg);
+		ButtonLock.log.info(ButtonLock.consoleOutputHeader + msg);
+
+		return true;
 	}
 }

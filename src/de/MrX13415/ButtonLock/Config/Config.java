@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +7,8 @@ import java.io.FileWriter;
 import java.io.LineNumberReader;
 import org.bukkit.Material;
 
-import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
 
 
 public class Config {
@@ -191,10 +192,10 @@ public class Config {
 									//load lang...
 									ButtonLock.setCurrentLanguage(ButtonLock.getLanguageDefaults(language));
 									ButtonLock.getCurrentLanguage().load(language);
-									ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Language set to: \"" + language + "\"");
+									ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Language set to: \"" + language + "\"");
 								}
 							}else{
-								ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Language not found: \"" + newLanguage + "\"");
+								ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Language not found: \"" + newLanguage + "\"");
 							}		
 						}
 						
@@ -213,11 +214,11 @@ public class Config {
 					}
 				}				
 			} catch (Exception e) {
-				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while reading.");
+				ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while reading.");
 			}
 
 		} catch (FileNotFoundException e) {
-			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: config file not found.");
+			ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: config file not found.");
 			
 			ButtonLock.lockableBlocksList.add(Material.STONE_BUTTON);
 			ButtonLock.lockableBlocksList.add(Material.LEVER);
@@ -226,7 +227,7 @@ public class Config {
 			ButtonLock.lockableBlocksList.add(Material.IRON_DOOR_BLOCK);
 			ButtonLock.lockableBlocksList.add(Material.TRAP_DOOR);
 			if (write()) { //create new File
-				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " New Config file created. (" + ButtonLock.getPluginName() + "/config.yml)");
+				ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " New Config file created. (" + ButtonLock.getPluginName() + "/config.yml)");
 			}
 		}
 	}
@@ -283,7 +284,7 @@ public class Config {
 		
 			return true;
 		} catch (Exception e1) {
-			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create new config file.");		
+			ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create new config file.");		
 		}
 		return false;
 	}

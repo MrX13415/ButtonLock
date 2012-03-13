@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.CommandExecuter;
 
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -6,7 +6,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Block.BlockFunctions;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.PROTECTION_MODE;
 
 /**
 * Handler for the 'SetPassword' command.
@@ -52,7 +56,7 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 					
 					if(ButtonLock.byPass(player)) group.setUnlock(true);
 					
-					if (group.hasAccess(player)) {
+					if (group.hasAccess(player) || isAnewGroup) {
 						
 						if (args.length >= 1 && args.length <= 2) {
 							if (! group.containsBlock(currentPlayerVars.getCurrentClickedBlock())) group.addBlock(currentPlayerVars.getCurrentClickedBlock());

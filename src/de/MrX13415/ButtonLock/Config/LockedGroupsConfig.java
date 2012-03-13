@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +9,8 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.PROTECTION_MODE;
 
 public class LockedGroupsConfig {
 	
@@ -97,7 +98,7 @@ public class LockedGroupsConfig {
 						
 							if (currentGroup != null && groupNr > -1) {
 								if (! pwIsSet) {
-									ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+									ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
 									errorsORwarinings = true;
 									groupPW = 49; //hash 49 = char "1" 
 								}
@@ -175,7 +176,7 @@ public class LockedGroupsConfig {
 									Block block = currentworld.getBlockAt(blockPosX, blockPosY, blockPosZ);
 									currentGroup.addBlock(block);
 								}else{
-									ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
+									ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
 									errorsORwarinings = true;
 								}
 							}
@@ -230,16 +231,16 @@ public class LockedGroupsConfig {
 							ButtonLock.addLockedGroup(currentGroup);	//add group
 							currentGroup = null;
 						}else{
-							ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
+							ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
 							errorsORwarinings = true;
 						}
 					}
 				} catch (Exception e) {
-					ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
+					ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
 					errorsORwarinings = true;
 				}
 			} catch (FileNotFoundException e) {
-				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Save files not found.");
+				ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Save files not found.");
 				errorsORwarinings = true;
 			}
 			//-------------------

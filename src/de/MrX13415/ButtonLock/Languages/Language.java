@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Languages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.LineNumberReader;
 import org.bukkit.ChatColor;
+
+import de.MrX13415.ButtonLock.ButtonLock;
+
 
 
 public class Language {
@@ -412,13 +415,13 @@ public class Language {
 				}	
 				
 			} catch (Exception e) {
-				ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading the language file.");
+				ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading the language file.");
 				e.printStackTrace();
 				
 			}
 
 		} catch (FileNotFoundException e) {
-			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: language not found: " + languageName);
+			ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: language not found: " + languageName);
 		}
 	}
 	
@@ -537,7 +540,7 @@ public class Language {
 			
 			return true;
 		} catch (Exception e1) {
-			ButtonLock.getLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create default language file.");		
+			ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: can't create default language file.");		
 		}
 		return false;
 	}

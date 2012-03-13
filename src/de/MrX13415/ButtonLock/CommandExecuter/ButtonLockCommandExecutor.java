@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.CommandExecuter;
 
 import java.util.ArrayList;
 import org.bukkit.ChatColor;
@@ -9,8 +9,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
-import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Block.BlockFunctions;
+import de.MrX13415.ButtonLock.Config.Config;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.PROTECTION_MODE;
 
 
 public class ButtonLockCommandExecutor implements CommandExecutor {
@@ -77,24 +82,48 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 			}
 		}
 		
-		if (args.length == 1 && permissionButtonlockOp) {
-
-			// save all ...
+		if (args.length >= 1 && permissionButtonlockOp) {
 			if (args[0].equalsIgnoreCase("debug")) {
 				
-				ButtonLock.debugmode = ! ButtonLock.debugmode;
-				
-				if (ButtonLock.debugmode == true) {
-					if (sender instanceof Player)
-						sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " enabled");
-					ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode enabled");
-				}else{
-					if (sender instanceof Player)
-						sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " disabled");
-					ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode disabled");	
+				if (args.length == 1){
+					ButtonLock.debugmode = ! ButtonLock.debugmode;
+					
+					if (ButtonLock.debugmode == true) {
+						if (sender instanceof Player)
+							sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " enabled");
+						ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode enabled");
+					}else{
+						if (sender instanceof Player)
+							sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Debug mode" + ChatColor.GOLD + " disabled");
+						ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Debug mode disabled");	
+					}
+				}else if(args.length == 3){
+					if (args[1].equalsIgnoreCase("deactivate") || args[1].equalsIgnoreCase("deactiv") || args[1].equalsIgnoreCase("da")){
+						ButtonLock.notDebugedEvents.add(args[2]);
+						if (sender instanceof Player)
+							sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Disabled debug for all events which contains '" + ChatColor.GOLD + args[2] + ChatColor.GRAY + "' in there name");
+						ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Disabled debug for all events which contains '" + args[2] + "' in there name");	
+					}
+					
+					if (args[1].equalsIgnoreCase("activate") || args[1].equalsIgnoreCase("activ") || args[1].equalsIgnoreCase("a")){
+						ButtonLock.notDebugedEvents.remove(args[2]);	
+						if (sender instanceof Player)
+							sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Enabled debug for all events which contains '" + ChatColor.GOLD + args[2] + ChatColor.GRAY + "' in there name");
+						ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Enabled debug for all events which contains '" + args[2] + "' in there name");
+					}
+					
+					if (args[1].equalsIgnoreCase("activate") || args[1].equalsIgnoreCase("activ") || args[1].equalsIgnoreCase("a") && args[2].equalsIgnoreCase("all")){
+						ButtonLock.notDebugedEvents.clear();
+						if (sender instanceof Player)
+							sender.sendMessage(ChatColor.GOLD + ButtonLock.getConsoleOutputHeader() + ChatColor.GRAY + " Enabled debug for " + ChatColor.GOLD + "all" + ChatColor.GRAY + " events");
+						ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Enabled debug for all events");
+					}
 				}
 				return true;
-			}
+			}	
+		}
+		
+		if (args.length == 1 && permissionButtonlockOp) {
 			
 			// save all ...
 			if (args[0].equalsIgnoreCase("save") || args[0].endsWith("s")) {
@@ -104,7 +133,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 				String msg = "All config-files saved ... ";
 				if (sender instanceof Player)
 					sender.sendMessage(ChatColor.GRAY + msg);
-				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
+				ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
 				return true;
 			}
 
@@ -119,7 +148,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 				String msg = "All config-files reloaded ... ";
 				if (sender instanceof Player)
 					sender.sendMessage(ChatColor.GRAY + msg);
-				ButtonLock.getLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
+				ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
 				return true;
 			}
 
@@ -167,7 +196,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					
 					String msg = ButtonLock.getConsoleOutputHeader() + " Languages reseted ...";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.getLogger().info(msg);
+					ButtonLock.getButtonlockLogger().info(msg);
 					
 				}
 			
@@ -178,7 +207,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					
 					String msg = ButtonLock.getConsoleOutputHeader() + " Config reseted ... ";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.getLogger().info(msg);
+					ButtonLock.getButtonlockLogger().info(msg);
 					
 				}
 				
@@ -189,7 +218,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 
 					String msg = ButtonLock.getConsoleOutputHeader() + " Locked Groups reseted ... ";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
-					ButtonLock.getLogger().info(msg);
+					ButtonLock.getButtonlockLogger().info(msg);
 					
 				}
 				
@@ -200,92 +229,92 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 			
 		if (args.length >= 2 && permissionButtonlockOp) {
 
-				if (args[0].equalsIgnoreCase("protectableBlocks") || args[0].equalsIgnoreCase("protectableBlock") || args[0].equalsIgnoreCase("pab")) {
+			if (args[0].equalsIgnoreCase("protectableBlocks") || args[0].equalsIgnoreCase("protectableBlock") || args[0].equalsIgnoreCase("pab")) {
+			
+				PlayerVars currentPlayerVars = null;
+				if (sender instanceof Player) currentPlayerVars = ButtonLock.getPlayerVars((Player) sender);
 				
-					PlayerVars currentPlayerVars = null;
-					if (sender instanceof Player) currentPlayerVars = ButtonLock.getPlayerVars((Player) sender);
-					
-					ArrayList<Material> materials = new ArrayList<Material>();
-					
-					if (currentPlayerVars !=  null && args.length == 2) {
-						if (currentPlayerVars.getCurrentClickedBlock() != null) {
-							materials.add(currentPlayerVars.getCurrentClickedBlock().getType());
-						}
+				ArrayList<Material> materials = new ArrayList<Material>();
+				
+				if (currentPlayerVars !=  null && args.length == 2) {
+					if (currentPlayerVars.getCurrentClickedBlock() != null) {
+						materials.add(currentPlayerVars.getCurrentClickedBlock().getType());
 					}
-					
-					if (materials.isEmpty() && args.length == 3){
-						for (Material currentMatrial : Material.values()) {
-							
-							String[] material = new String[2];
-							if(args[2].contains(":")){
-								material = args[2].split(":");
-							}else if(args[2].contains("-")){
-								material = args[2].split("-");
-							}else{
-								material[0] = args[2];
-								material[1] = "0";
-							}
-							
-							boolean argIsID = true;
-							
-							int id = 0;
-							
-							
-							@SuppressWarnings("unused")
-							int data = 0;
-							try {
-								id = Integer.valueOf(material[0]);
-								data = Integer.valueOf(material[1]);
-							} catch (Exception e) {
-								argIsID = false;
-							}
+				}
+				
+				if (materials.isEmpty() && args.length == 3){
+					for (Material currentMatrial : Material.values()) {
 						
-							if (argIsID) {
-								if (currentMatrial.getId() == id){
-									materials.add(currentMatrial);
-								}
-							}else{
-								if (currentMatrial.name().toLowerCase().startsWith(args[2].toLowerCase())){
-									materials.add(currentMatrial);
-								}
-							}
-						}
-					}
-					
-					if (materials.isEmpty()){
-						if (sender instanceof Player) {
-							sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
+						String[] material = new String[2];
+						if(args[2].contains(":")){
+							material = args[2].split(":");
+						}else if(args[2].contains("-")){
+							material = args[2].split("-");
 						}else{
-							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_WHICH_MATERIAL, ButtonLock.getConsoleOutputHeader()));
-						}
-						return true;
-					}
-					
-					if (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("a") ) {
-						for (Material material : materials) {
-							if (! ButtonLock.lockableBlocksList.contains(materials)) ButtonLock.lockableBlocksList.add(material);
+							material[0] = args[2];
+							material[1] = "0";
 						}
 						
-						if (sender instanceof Player) {
-							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_ADDED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
-						}else{
-							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_ADDED, ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
+						boolean argIsID = true;
+						
+						int id = 0;
+						
+						
+						@SuppressWarnings("unused")
+						int data = 0;
+						try {
+							id = Integer.valueOf(material[0]);
+							data = Integer.valueOf(material[1]);
+						} catch (Exception e) {
+							argIsID = false;
 						}
-						return true;
+					
+						if (argIsID) {
+							if (currentMatrial.getId() == id){
+								materials.add(currentMatrial);
+							}
+						}else{
+							if (currentMatrial.name().toLowerCase().startsWith(args[2].toLowerCase())){
+								materials.add(currentMatrial);
+							}
+						}
 					}
+				}
 				
-					if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r") ) {
-						for (Material material : materials) {
-							if (ButtonLock.lockableBlocksList.contains(materials)) ButtonLock.lockableBlocksList.remove(material);
-						}
-						if (sender instanceof Player) {
-							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_REMOVED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
-						}else{
-							sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_REMOVED,ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
-						}
-						return true;
+				if (materials.isEmpty()){
+					if (sender instanceof Player) {
+						sender.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
+					}else{
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_WHICH_MATERIAL, ButtonLock.getConsoleOutputHeader()));
 					}
-				}	
+					return true;
+				}
+				
+				if (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("a") ) {
+					for (Material material : materials) {
+						if (! ButtonLock.lockableBlocksList.contains(materials)) ButtonLock.lockableBlocksList.add(material);
+					}
+					
+					if (sender instanceof Player) {
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_ADDED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
+					}else{
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_ADDED, ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
+					}
+					return true;
+				}
+			
+				if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("r") ) {
+					for (Material material : materials) {
+						if (ButtonLock.lockableBlocksList.contains(materials)) ButtonLock.lockableBlocksList.remove(material);
+					}
+					if (sender instanceof Player) {
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIALS_REMOVED, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
+					}else{
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().CONSOLE_MATERIALS_REMOVED,ButtonLock.getConsoleOutputHeader(), ButtonLock.getCurrentLanguage().getList(materials.toArray(), false)));
+					}
+					return true;
+				}
+			}	
 		}	
 
 		

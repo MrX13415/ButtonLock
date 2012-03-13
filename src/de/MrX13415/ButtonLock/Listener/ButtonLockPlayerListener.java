@@ -1,16 +1,23 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Listener;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import com.earth2me.essentials.api.*;
 import com.iCo6.system.*;
-import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
-import de.MrX13415.ButtonLock.LockedBlockGroup.PROTECTION_MODE;
+
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Block.BlockFunctions;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.PROTECTION_MODE;
 
 
-public class ButtonLockPlayerListener extends PlayerListener {
+public class ButtonLockPlayerListener implements Listener {
 	
 	public String toBin(int bin){
 		String returnS = "00000000";
@@ -18,6 +25,7 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		return returnS.substring(0, 7 - (binS.length() - 1)) + binS;
 	}
 	
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
 //		try {
 //			System.out.println("DATA: " + toBin(event.getClickedBlock().getData()) );
@@ -62,10 +70,9 @@ public class ButtonLockPlayerListener extends PlayerListener {
 				currentPlayerVars.setCurrentClickedLockedGroup(null);
 				
 				
-			}
+			}	
     	}
     }	
-	
 	
 	private void addBlockToLastGroup(PlayerVars currentPlayerVars, Block block) {
 		if (currentPlayerVars != null) {
@@ -213,6 +220,7 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		}		
 	}   
 
+	@EventHandler
     public void onPlayerChat(PlayerChatEvent event){
     	ButtonLock.debugEvent(event);
 		
@@ -243,6 +251,7 @@ public class ButtonLockPlayerListener extends PlayerListener {
 		}
     } 
     
+	@EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
     	ButtonLock.debugEvent(event);
 		

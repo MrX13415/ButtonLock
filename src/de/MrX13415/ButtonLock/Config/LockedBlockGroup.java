@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Config;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import de.MrX13415.ButtonLock.ButtonLock;
 
 
 public class LockedBlockGroup{

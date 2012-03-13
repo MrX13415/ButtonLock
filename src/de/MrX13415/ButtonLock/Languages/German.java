@@ -1,10 +1,11 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Languages;
 
 import org.bukkit.ChatColor;
 
-public class Language_German extends Language{
 
-	public Language_German(){
+public class German extends Language{
+
+	public German(){
 		setDefaults();
 	}
 	

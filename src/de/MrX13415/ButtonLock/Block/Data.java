@@ -1,4 +1,4 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Block;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

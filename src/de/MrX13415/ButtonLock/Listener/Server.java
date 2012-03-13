@@ -1,19 +1,21 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Listener;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
 
-public class Server extends ServerListener {
+import de.MrX13415.ButtonLock.ButtonLock;
+
+public class Server implements Listener {
 	 private ButtonLock plugin;
 
     public Server(ButtonLock plugin) {
         this.plugin = plugin;
     }
 
-	    
-    @Override
+    @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
         if (ButtonLock.iConomy) {
             if (event.getPlugin().getDescription().getName().equals("iConomy")) {
@@ -31,7 +33,7 @@ public class Server extends ServerListener {
 
     }
 
-    @Override
+    @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
         Plugin iConomy = plugin.getServer().getPluginManager().getPlugin("iConomy");
         Plugin essentials = plugin.getServer().getPluginManager().getPlugin("Essentials");

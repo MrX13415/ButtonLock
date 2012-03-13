@@ -1,9 +1,13 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.CommandExecuter;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import de.MrX13415.ButtonLock.ButtonLock;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
+import de.MrX13415.ButtonLock.Config.PlayerVars;
 
 /**
 * Handler for the 'PassordCommand' command.

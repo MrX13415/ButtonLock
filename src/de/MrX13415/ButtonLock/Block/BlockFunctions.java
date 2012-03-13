@@ -1,10 +1,10 @@
-package de.MrX13415.ButtonLock;
+package de.MrX13415.ButtonLock.Block;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import de.MrX13415.ButtonLock.LockedBlockGroup.LOCKED_STATE;
+import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
 
 
 public class BlockFunctions {

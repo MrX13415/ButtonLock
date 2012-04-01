@@ -117,7 +117,7 @@ public class Language {
 		ONE_TIME_PASSWORDS = ChatColor.GRAY + "One-time passwords: " + ChatColor.GOLD + "%s";
 		COSTS = ChatColor.GRAY + "Costs: " + ChatColor.GOLD + "$%s";
 		COSTS_FREE = ChatColor.GRAY + "Costs: " + ChatColor.GOLD + "FREE";
-		MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s";
+		MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + " (ID: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + ")";
 		PROTECTABLE = ChatColor.GRAY + "Block is protectable: " + ChatColor.GOLD + "%s";
 		UNLOCKED = ChatColor.GREEN + "UNLOCKED";
 		LOCKED = ChatColor.RED + "LOCKED";

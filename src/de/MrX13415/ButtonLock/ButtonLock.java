@@ -1,8 +1,6 @@
 package de.MrX13415.ButtonLock;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-//import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -39,10 +37,10 @@ import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.3 r56
+ * @version 1.3.1 r57
  */
 public class ButtonLock extends JavaPlugin {
-	
+
 	private static PluginDescriptionFile pdfFile = null;
 	private static Server server = null;
 	private static Logger log = null;
@@ -95,21 +93,19 @@ public class ButtonLock extends JavaPlugin {
         lockedGroupsFile.write();
         log.info(consoleOutputHeader + " locked Groups saved");
 	}
-
+	
 	@Override
-	public void onEnable() {
+	public void onLoad() {
 		//set static vars ...
 		server = this.getServer();
-		log = server.getLogger();
+		 log = server.getLogger();
 		
 		pdfFile = this.getDescription();
 		pluginName = pdfFile.getName();
 		consoleOutputHeader = "[" + pluginName + "]";
-
-        //log.info(consoleOutputHeader + " v" + pdfFile.getVersion() + " " + pdfFile.getAuthors() + " is enabled.");
-  
-        //init and update langs ...
-        updateLanguages(false);
+		
+		//init and update langs ...
+		updateLanguages(false);
         
         //load config ...
         configFile = new Config();
@@ -122,9 +118,11 @@ public class ButtonLock extends JavaPlugin {
         //load locked Buttons ...
         lockedGroupsFile = new LockedGroupsConfig();
         lockedGroupsFile.read();
-		
-        //---------------------
-        
+	}
+	
+	
+	@Override
+	public void onEnable() {        
         //register events ...
         getServer().getPluginManager().registerEvents(pListener, this);
         getServer().getPluginManager().registerEvents(bListener, this);

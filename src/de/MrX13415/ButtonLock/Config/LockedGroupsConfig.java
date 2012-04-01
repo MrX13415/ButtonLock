@@ -90,7 +90,7 @@ public class LockedGroupsConfig {
 				int lineNr = 0;
 				try {				
 					while (reader.ready()) {
-						String currentline = reader.readLine();
+						String currentline = reader.readLine().trim();
 						lineNr += 1;
 						
 						if (currentline.contains(keyGroupNr) && currentline.startsWith(fileFormat_Section_start)) {
@@ -182,7 +182,9 @@ public class LockedGroupsConfig {
 							}
 						
 						}else if (currentline.contains(fileFormat_valueseperator)) {
-							String[] line = currentline.replace(" ", "").split(fileFormat_valueseperator);
+							String[] line = currentline.trim().split(fileFormat_valueseperator);
+							line[0] = line[0].trim();
+							line[1] = line[1].trim();
 							
 							//no need any more ...
 //							if (line[0].equalsIgnoreCase(keyBlockWorld)) {
@@ -284,11 +286,13 @@ public class LockedGroupsConfig {
 
 							writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
 							
-							String ownerList = fileFormat_list_start;
+							String ownerList = "";
 							for (int index = 0; index < group.getOwnerListSize(); index++) {
 								ownerList += group.getOwner(index) + fileFormat_list_seperate;
 							}
-							ownerList = ownerList.substring(0, ownerList.length() - 1) + fileFormat_list_end; 
+							
+							if (ownerList.endsWith(fileFormat_list_seperate)) ownerList.substring(0, ownerList.length() - 1);
+							ownerList = fileFormat_list_start + ownerList + fileFormat_list_end; 
 									
 							writer.write(String.format(fileFormat_keys, keyOwnerList, ownerList) + "\n");
 							writer.write(String.format(fileFormat_keys, keyProtection, group.getProtectionMode()) + "\n");

@@ -361,8 +361,10 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 							
 							materials.add(block.getType());
 						}
-
-						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIAL, ButtonLock.getCurrentLanguage().getList(materials.toArray())));
+						
+						String materialID = String.valueOf(block.getTypeId());
+						if (block.getData() > 0) materialID += ":" + Integer.valueOf(block.getData());
+						sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().MATERIAL, ButtonLock.getCurrentLanguage().getList(materials.toArray()), materialID));
 						
 						sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_INFO_ENDE);
 						return true;

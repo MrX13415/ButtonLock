@@ -18,7 +18,7 @@ public class German extends Language{
 		ONE_TIME_PASSWORDS = ChatColor.GRAY + "Einmal Passwörter: " + ChatColor.GOLD + "%s";
 		COSTS = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "%s Euro";
 		COSTS_FREE = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "kostenlos";
-		MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s";
+		MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + " (ID: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + ")";
 		PROTECTABLE = ChatColor.GRAY + "Block ist schützbar: " + ChatColor.GOLD + "%s";
 		UNLOCKED = ChatColor.GREEN + "OFFEN";
 		LOCKED = ChatColor.RED + "ABGESCHLOSSEN";

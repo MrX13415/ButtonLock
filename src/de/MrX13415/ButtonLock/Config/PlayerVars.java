@@ -17,8 +17,8 @@ public class PlayerVars{
 	private long timeSinceEnteringCode = 0;
 	private String lastPassword = null;
 	
-	public LockedBlockGroup addNextclickedBlock = null;
-	public LockedBlockGroup removeNextclickedBlock = null;
+	public LockedBlockGroup groupToAddBlocks = null;
+	public LockedBlockGroup groupToRemoveBlocks = null;
 	
 	private ArrayList<Integer> enteredPasswords = new ArrayList<Integer>();
 		
@@ -69,7 +69,7 @@ public class PlayerVars{
 	
 	
 	public void addPassword(int passwordHash) {
-		enteredPasswords.add(passwordHash);
+		if (!enteredPasswords.contains(passwordHash)) enteredPasswords.add(passwordHash);
 	}
 	
 	public void removePassword(int passwordHash) {
@@ -82,6 +82,10 @@ public class PlayerVars{
 	
 	public int getEnteredPasswords() {
 		return enteredPasswords.size();
+	}
+	
+	public void clearEnteredPasswords() {
+		enteredPasswords.clear();
 	}
 		
 }

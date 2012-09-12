@@ -16,6 +16,7 @@ import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
 import de.MrX13415.ButtonLock.Config.PlayerVars;
 import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
 import de.MrX13415.ButtonLock.Config.LockedBlockGroup.PROTECTION_MODE;
+import de.MrX13415.ButtonLock.Languages.LanguageLoader;
 
 
 public class ButtonLockCommandExecutor implements CommandExecutor {
@@ -78,6 +79,20 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 				}
 				
 				sender.sendMessage(msg);
+				return true;
+			}
+			
+			if (args[0].equalsIgnoreCase("clearpasswordlist") || args[0].equalsIgnoreCase("clearpwlist") || args[0].equalsIgnoreCase("clrpwl")) {
+				if (sender instanceof Player){
+					PlayerVars currentVars = ButtonLock.getPlayerVars((Player) sender);
+					
+					if (currentVars != null) {
+						currentVars.clearEnteredPasswords();
+						sender.sendMessage(ButtonLock.getCurrentLanguage().PASSWORDLIST_CLEAR);
+					}
+				}else{
+					sender.sendMessage(String.format(ButtonLock.getCurrentLanguage().COMMAND_INGAME_ONLY, ButtonLock.getConsoleOutputHeader()));
+				}
 				return true;
 			}
 		}
@@ -192,7 +207,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 				
 				if (langs || all) {
 					//reset language ...
-					ButtonLock.updateLanguages(true);
+					LanguageLoader.updateLanguages(true);
 					
 					String msg = ButtonLock.getConsoleOutputHeader() + " Languages reseted ...";
 					if (sender instanceof Player) sender.sendMessage(ChatColor.GRAY + msg);
@@ -539,7 +554,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 								if (group.isUnlocked()) {
 									if (args[1].equalsIgnoreCase("add")
 											|| args[1].equalsIgnoreCase("a")) {
-										currentPlayerVars.addNextclickedBlock = group;
+										currentPlayerVars.groupToAddBlocks = group;
 										sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_ADD);
 										currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 										return true;
@@ -547,7 +562,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 
 									if (args[1].equalsIgnoreCase("remove")
 											|| args[1].equalsIgnoreCase("r")) {
-										currentPlayerVars.removeNextclickedBlock = group;
+										currentPlayerVars.groupToRemoveBlocks = group;
 										sender.sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_REMOVE);
 										currentPlayerVars.getCurrentClickedLockedGroup().setUnlock(false);
 										return true;

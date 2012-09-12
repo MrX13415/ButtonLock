@@ -120,6 +120,8 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 								ButtonLock.removeLockedBlock(group);
 								player.sendMessage(ButtonLock.getCurrentLanguage().PROTECTION_REMOVED);
 								return true;
+							}else{
+								
 							}
 						}
 					}else{
@@ -138,7 +140,13 @@ public class SetPasswordCommandExecuter implements CommandExecutor{
 				player.sendMessage(ButtonLock.getCurrentLanguage().WHICH_BLOCK);
 				return true;
 			}
+	        
+	    	player.sendMessage(ButtonLock.getCurrentLanguage().COMMAND_SETPASSWORD_USAGE);
+			return true;
+			
 		}
+		
+	
 	    return false;
 	}
 }

@@ -70,7 +70,8 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -142,7 +143,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}else{
 				group.setUnlock(false);
@@ -183,7 +184,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -199,7 +200,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -234,7 +235,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -314,7 +315,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -330,7 +331,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}
@@ -347,7 +348,7 @@ public class ButtonLockBlockListener implements Listener {
 		// button is unlocked
 		if (ButtonLock.isProtected(block)) {
 			LockedBlockGroup group = ButtonLock.getLockedGroup(block);
-			if (! group.isUnlocked()) {
+			if (! group.isBlockEventsUnlocked()) {
 				event.setCancelled(true); // cancel event because the button is locked ...
 			}
 		}

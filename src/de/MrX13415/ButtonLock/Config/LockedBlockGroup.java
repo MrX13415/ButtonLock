@@ -21,11 +21,12 @@ public class LockedBlockGroup{
 	}
 	
 	private ArrayList<Block> lockedBlocks = new ArrayList<Block>();
-	
+
 	private int password = 0;	//contains only the Hash of the password ...
 	private ArrayList<Integer> oneTimePassword = new ArrayList<Integer>();
 	
 	private boolean unlocked = true;
+	private boolean blockEventsUnlocked = true;
 	private LOCKED_STATE lockedState = null;	//default set in constructor...
 
 	private boolean forceEnterPasswordEveryTime = ButtonLock.getButtonLockConfig().forcePasswordEveryTimeByDefault; 
@@ -75,8 +76,6 @@ public class LockedBlockGroup{
 				tmpVars.addPassword(passwordHashCode);
 			}
 		}else{
-			tmpVars.removePassword(passwordHashCode);
-//				tmpVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().DENIED);
 			this.setUnlock(false);
 		}
 
@@ -94,10 +93,40 @@ public class LockedBlockGroup{
 	
 	public void setUnlock(boolean unlock){
 		this.unlocked = unlock;
+		if (unlock) setBlockEventsUnlocked(true);
 	}
 	
 	public boolean isUnlocked(){
 		return unlocked;
+	}
+	
+	public boolean isBlockEventsUnlocked() {
+		return blockEventsUnlocked;
+	}
+
+	public void setBlockEventsUnlocked(boolean eventsUnlocked) {
+		this.blockEventsUnlocked = eventsUnlocked;
+	}
+
+	public void BlockEventsAutolock() {
+		BockEventAutoLock beal = new BockEventAutoLock();
+		beal.setGroup(this);
+		new Thread(beal).start();
+	}
+	
+	private static class BockEventAutoLock implements Runnable{
+		
+		private LockedBlockGroup group;
+		private long timeout = 1000; //ms
+		
+		public void run(){
+			try{Thread.sleep(timeout);}catch (Exception e) {}
+			group.setBlockEventsUnlocked(false);
+		}
+
+		public void setGroup(LockedBlockGroup group) {
+			this.group = group;
+		}
 	}
 	
 	public boolean hasAccess(Player player){
@@ -116,7 +145,7 @@ public class LockedBlockGroup{
 	}
 	
 	public boolean removeOneTimePassword(int code){
-		if (oneTimePassword.contains((Object) code)) {
+		if (oneTimePassword.contains(code)) {
 			oneTimePassword.remove((Object) code);
 			return true;
 		}

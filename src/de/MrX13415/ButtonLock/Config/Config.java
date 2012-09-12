@@ -9,6 +9,7 @@ import org.bukkit.Material;
 
 import de.MrX13415.ButtonLock.ButtonLock;
 import de.MrX13415.ButtonLock.Config.LockedBlockGroup.LOCKED_STATE;
+import de.MrX13415.ButtonLock.Languages.LanguageLoader;
 
 
 public class Config {
@@ -40,7 +41,7 @@ public class Config {
 	private static final String fileFormat_Comments_prefix = "#";
 		
 	//-- file content --
-	public String language = ButtonLock.getCurrentLanguage().languageName;
+	public String language = ButtonLock.getCurrentLanguage()._languageName;
 	public LOCKED_STATE defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
 	public LOCKED_STATE defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
 	public String configFileVersion = "----";
@@ -64,7 +65,7 @@ public class Config {
 	}
 	
 	public void setDefaults() {
-		language = ButtonLock.getCurrentLanguage().languageName;
+		language = ButtonLock.getCurrentLanguage()._languageName;
 		defaultLockedStatesForDoors = LOCKED_STATE.CLOSE;
 		defaultLockedStatesForLevers = LOCKED_STATE.BOTH;
 		configFileVersion = "----";
@@ -184,16 +185,17 @@ public class Config {
 						if (keyLine[0].equalsIgnoreCase(keyLanguage)) {
 							
 							String newLanguage = keyLine[1];
-							if (ButtonLock.getCurrentLanguage().langExists(newLanguage)){
-								
+							
+							if (newLanguage.isEmpty()) newLanguage = LanguageLoader.getDefaultLanguage()._languageName;							
+							
+							if (LanguageLoader.langExists(newLanguage)){
 								String oldLanguage = language;
 								if (! oldLanguage.equalsIgnoreCase(newLanguage)) {
 									language = newLanguage;
 									//load lang...
-									ButtonLock.setCurrentLanguage(ButtonLock.getLanguageDefaults(language));
-									ButtonLock.getCurrentLanguage().load(language);
+									ButtonLock.setCurrentLanguage(LanguageLoader.loadLanguage(language));
 									ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Language set to: \"" + language + "\"");
-								}
+								}	
 							}else{
 								ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Language not found: \"" + newLanguage + "\"");
 							}		
@@ -226,6 +228,9 @@ public class Config {
 			ButtonLock.lockableBlocksList.add(Material.WOODEN_DOOR);
 			ButtonLock.lockableBlocksList.add(Material.IRON_DOOR_BLOCK);
 			ButtonLock.lockableBlocksList.add(Material.TRAP_DOOR);
+			ButtonLock.lockableBlocksList.add(Material.ENCHANTMENT_TABLE);
+			ButtonLock.lockableBlocksList.add(Material.ENDER_CHEST);
+			  
 			if (write()) { //create new File
 				ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " New Config file created. (" + ButtonLock.getPluginName() + "/config.yml)");
 			}

@@ -23,8 +23,8 @@ public class BlockFunctions {
 			if (! isDoorTop(partBlock)) partBlock = null;
 		}
 		
-		//... fot Chests
-		if (blockType.equals(Material.CHEST)){ //test if the given Block is the top of a door
+		//... for Chests
+		if (blockType.equals(Material.CHEST)){ 
 			BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}; 
 			for (BlockFace currentface : faces) {
 				if (block.getRelative(currentface).getType().equals(Material.CHEST)) 	partBlock = block.getRelative(currentface);
@@ -34,7 +34,7 @@ public class BlockFunctions {
 		
 		//... for Beds
 		if (blockType.equals(Material.BED_BLOCK)) {
-			if (isBedHead(block)){ //test if the given Block is the top of a bed
+			if (isBedHead(block)){
 				
 				BlockFace direction = getBedDirection(block);
 				if (direction.equals(BlockFace.SOUTH)) {

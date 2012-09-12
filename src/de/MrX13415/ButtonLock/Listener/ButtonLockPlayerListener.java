@@ -42,7 +42,7 @@ public class ButtonLockPlayerListener implements Listener {
 			if (ButtonLock.isProtectable(block) || ButtonLock.isProtected(block)) {
 				//find PlayerVars
 				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
-				addBlockToLastGroup(currentPlayerVars, block);
+				addOrRemoveBlockToLastGroup(currentPlayerVars, block);
 				
 	    		if (ButtonLock.permissions()) {					
 	    			//use Permission
@@ -65,7 +65,7 @@ public class ButtonLockPlayerListener implements Listener {
 			}else{
 				//find PlayerVars
 				PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
-				addBlockToLastGroup(currentPlayerVars, block);
+				addOrRemoveBlockToLastGroup(currentPlayerVars, block);
 				currentPlayerVars.setCurrentClickedBlock(block);
 				currentPlayerVars.setCurrentClickedLockedGroup(null);
 				
@@ -74,21 +74,43 @@ public class ButtonLockPlayerListener implements Listener {
     	}
     }	
 	
-	private void addBlockToLastGroup(PlayerVars currentPlayerVars, Block block) {
+	private void addOrRemoveBlockToLastGroup(PlayerVars currentPlayerVars, Block block) {
 		if (currentPlayerVars != null) {
 
-			if (currentPlayerVars.addNextclickedBlock != null) {
+			if (currentPlayerVars.groupToAddBlocks != null) {
 				currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_ADDED);
-				currentPlayerVars.addNextclickedBlock.addBlock(block);
-				currentPlayerVars.addNextclickedBlock.setUnlock(false);
-				currentPlayerVars.addNextclickedBlock = null;
+				currentPlayerVars.groupToAddBlocks.addBlock(block);
+				
+				Block partBlock = BlockFunctions.getPartBlock(block);
+				if (partBlock != null) {
+					currentPlayerVars.groupToAddBlocks.addBlock(partBlock);
+				}
+				
+				Block attachedBlock = BlockFunctions.getAttachedBlock(block);
+				if (attachedBlock != null) {
+					currentPlayerVars.groupToAddBlocks.addBlock(attachedBlock);								
+				}
+								
+				currentPlayerVars.groupToAddBlocks.setUnlock(false);
+				currentPlayerVars.groupToAddBlocks = null;
 			}
 
-			if (currentPlayerVars.removeNextclickedBlock != null) {
+			if (currentPlayerVars.groupToRemoveBlocks != null) {
 				currentPlayerVars.getPlayer().sendMessage(ButtonLock.getCurrentLanguage().GROUP_BLOCK_REMOVED);
-				currentPlayerVars.removeNextclickedBlock.removeBlock(block);
-				currentPlayerVars.removeNextclickedBlock.setUnlock(false);
-				currentPlayerVars.removeNextclickedBlock = null;
+				currentPlayerVars.groupToRemoveBlocks.removeBlock(block);
+				
+				Block partBlock = BlockFunctions.getPartBlock(block);
+				if (partBlock != null) {
+					currentPlayerVars.groupToRemoveBlocks.removeBlock(partBlock);								
+				}
+				
+				Block attachedBlock = BlockFunctions.getAttachedBlock(block);
+				if (attachedBlock != null) {
+					currentPlayerVars.groupToRemoveBlocks.removeBlock(attachedBlock);								
+				}
+				
+				currentPlayerVars.groupToRemoveBlocks.setUnlock(false);
+				currentPlayerVars.groupToRemoveBlocks = null;
 			}
 			
 		}
@@ -107,6 +129,7 @@ public class ButtonLockPlayerListener implements Listener {
 		
 		//button was founded ...
 		if (group != null) {
+			if (!group.isUnlocked()) group.setBlockEventsUnlocked(false);
 			
 			currentPlayerVars.setCurrentClickedBlock(block);
 			currentPlayerVars.setCurrentClickedLockedGroup(group);
@@ -212,6 +235,7 @@ public class ButtonLockPlayerListener implements Listener {
 	//				currentPlayerVars.setCurrentClickedLockedButton(null);	//reset
 	//				currentPlayerVars.setCurrentClickedBlock(null);
 					group.setUnlock(false);
+					group.BlockEventsAutolock();
 				}
 			}
 		}else{
@@ -221,9 +245,9 @@ public class ButtonLockPlayerListener implements Listener {
 	}   
 
 	@EventHandler
-    public void onPlayerChat(PlayerChatEvent event){
+    public void onPlayerChat(AsyncPlayerChatEvent event){
     	ButtonLock.debugEvent(event);
-		
+    	    	
 		Player player = event.getPlayer();
 		PlayerVars currentPlayerVars = ButtonLock.getPlayerVars(player);
 		

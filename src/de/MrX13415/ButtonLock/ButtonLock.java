@@ -28,8 +28,8 @@ import de.MrX13415.ButtonLock.Config.Config;
 import de.MrX13415.ButtonLock.Config.LockedBlockGroup;
 import de.MrX13415.ButtonLock.Config.LockedGroupsConfig;
 import de.MrX13415.ButtonLock.Config.PlayerVars;
-import de.MrX13415.ButtonLock.Languages.German;
 import de.MrX13415.ButtonLock.Languages.Language;
+import de.MrX13415.ButtonLock.Languages.LanguageLoader;
 import de.MrX13415.ButtonLock.Listener.ButtonLockBlockListener;
 import de.MrX13415.ButtonLock.Listener.ButtonLockEntityListener;
 import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
@@ -37,7 +37,7 @@ import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.3.1 r57
+ * @version 1.3.1 r58
  */
 public class ButtonLock extends JavaPlugin {
 
@@ -90,8 +90,11 @@ public class ButtonLock extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-        lockedGroupsFile.write();
-        log.info(consoleOutputHeader + " locked Groups saved");
+		ButtonLock.getButtonLockConfig().write();
+		ButtonLock.lockedGroupsFile.write();
+		
+		String msg = "All config-files saved ... ";
+		ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " " + msg);
 	}
 	
 	@Override
@@ -104,8 +107,8 @@ public class ButtonLock extends JavaPlugin {
 		pluginName = pdfFile.getName();
 		consoleOutputHeader = "[" + pluginName + "]";
 		
-		//init and update langs ...
-		updateLanguages(false);
+		LanguageLoader.updateLanguages(false);
+		language = LanguageLoader.loadDefaultLanguage();
         
         //load config ...
         configFile = new Config();
@@ -113,6 +116,7 @@ public class ButtonLock extends JavaPlugin {
         if (configFile.update()) log.info(consoleOutputHeader + " Config file updated ...");
    
         //lang loaded from config ...
+        getButtonlockLogger().info(consoleOutputHeader + " Language set to: " + language._languageName);
         if (! language.isUptoDate()) log.warning(consoleOutputHeader + " Your current language is not up to date! (file: " + language.getLanguageFileName() + ")");   
    
         //load locked Buttons ...
@@ -236,26 +240,7 @@ public class ButtonLock extends JavaPlugin {
 	public static void setCurrentLanguage(Language lang){
 		language = lang;
 	}
-	
-	public static Language getLanguageDefaults(String language) {
-		if(new Language().languageName.equalsIgnoreCase(language)) return new Language();
-		if(new German().languageName.equalsIgnoreCase(language)) return new German();
-		return new Language();
-	}
-	
-	public static void updateLanguages(boolean force) {
-		 //init and update langs ...
-        language = new Language();
-        language.load();
-        if (language.update(force)) log.info(consoleOutputHeader + " Default language file updated ...");   
-
-        //german ...
-        Language language_ger = new German();
-		language_ger.load();  
-        if (language_ger.update(force)) log.info(consoleOutputHeader + " German language file updated ...");        
-        language_ger = null;
-	}
-	
+		
 	public static boolean isProtectable(Block block){
 		if (block != null) {
 
@@ -412,12 +397,15 @@ public class ButtonLock extends JavaPlugin {
 	
 	public static boolean passwordWasEntered(PlayerVars currentPlayerVars, LockedBlockGroup group) {
 		if (currentPlayerVars.getEnteredPasswords() > 0 && group.isForceingEnterPasswordEveryTime() == false) {
+			
 			for (int enteresPasswordHashIndex = 0; enteresPasswordHashIndex < currentPlayerVars.getEnteredPasswords(); enteresPasswordHashIndex++) {	
-			  	if (group.checkPassword(currentPlayerVars, currentPlayerVars.getPassword(enteresPasswordHashIndex))){
-//			  		currentPlayerVars.getPlayer().sendMessage(Language.TEXT_SUCCEED);
+			  
+				if (group.checkPassword(currentPlayerVars, currentPlayerVars.getPassword(enteresPasswordHashIndex))){
 			  		return true;
 			  	}
+				
 			}
+			
 		}
 		return false;
 	}
@@ -459,7 +447,7 @@ public class ButtonLock extends JavaPlugin {
 		}
 	
 		ButtonLock.server.broadcastMessage(ChatColor.GOLD + ButtonLock.consoleOutputHeader + ChatColor.GRAY + msg);
-		ButtonLock.log.info(ButtonLock.consoleOutputHeader + msg);
+		//ButtonLock.log.info(ButtonLock.consoleOutputHeader + msg);
 
 		return true;
 	}

@@ -3,7 +3,7 @@
 =================
     
 Title:        ButtonLock
-Version:      1.3.1 r57
+Version:      1.3.2 r58
 
 Description:  Lockable Buttons and Levers in Minecraft for Bukkit
 website:      http://dev.bukkit.org/server-mods/buttonlock/
@@ -22,6 +22,15 @@ License:
 
 Changelog:
 
+    Version: 1.3.2
+        * Add: /clearPasswordlist command
+        * Add: Ender-Chest is lockable by default
+        * Add: Enchartment-table is lockable by default
+        * FIX: When a door next to a Button or Lever is in the same group the Button, the door is openable now
+        * FIX: Doors or a chests or (...) will be added correct wehn adding to a group.
+        * FIX: All Passwords entered in the current session will be saved, not only one
+        * FIX: Bugs
+        
     Version: 1.3.1
         * FIX: Owners aren't set after restart
         * Add: Shows the Block ID in the block-info screen

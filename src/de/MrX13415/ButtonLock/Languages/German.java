@@ -6,12 +6,9 @@ import org.bukkit.ChatColor;
 public class German extends Language{
 
 	public German(){
-		setDefaults();
-	}
-	
-	public void setDefaults(){
-		languageName = "german";
-		version = "----";
+		_LastVersion = "1.5"; 
+		_languageName = "german";
+		_version = "1.5";
 		
 		GROUP_INFO = ChatColor.GRAY + "-- Gruppen Informationen ------";
 		GROUP_INFO_ENDE = ChatColor.GRAY + "-----------------------------";
@@ -78,6 +75,7 @@ public class German extends Language{
 		GROUP_SIZE = ChatColor.GRAY + "Gruppen größe: " + ChatColor.GOLD + "%s";
 		COMMAND_OP_ONLY = ChatColor.RED + "Du must OP sein, um diesen Befehl benutzen zu können";
 		PERMISSIONS_NOT = ChatColor.RED + "Du hast nicht die benötigte Berechtigung ... (" + ChatColor.GOLD + "%s" + ChatColor.RED + ")"; 
+		PASSWORDLIST_CLEAR = ChatColor.GRAY + "Gespeicherte Passwörter wurden gelöscht ..."; 
 		TRUE = "Ja";
 		FALSE = "Nein";
 		MASK_CHR = ChatColor.GRAY + "*";
@@ -113,12 +111,13 @@ public class German extends Language{
 					   ChatColor.RED + "/bl reset " 				+ ChatColor.GOLD + "<all|langs|config|groups> "	+ ChatColor.GRAY + "Setzt Buttonlock zurück ..." + "\n" +
 					   ChatColor.RED + "/bl protectableBlocks " 	+ ChatColor.GOLD + "<add|remove> [blocktype] "	+ ChatColor.GRAY + "Der gegebene Block ist schützbar" + "\n" +
 					   ChatColor.RED + "/bl info " 					+ ChatColor.GOLD + ""							+ ChatColor.GRAY + "Informationen über eine Gruppe" + "\n" +
+					   ChatColor.RED + "/bl clearPasswordlist " 	+ ChatColor.GOLD + ""							+ ChatColor.GRAY + "Löscht alle gespeicherten Passwörter" + "\n" +
 					   ChatColor.RED + "/bl group "					+ ChatColor.GOLD + "<add|remove> "				+ ChatColor.GRAY + "Ein Block zu/von einer Gruppe hinzufügen/entfernen" + "\n" +
 					   ChatColor.RED + "/bl group costs "			+ ChatColor.GOLD + "[costs] "					+ ChatColor.GRAY + "Ändert die Kosten einer geschützten Gruppe" + "\n" +
 					   ChatColor.RED + "/bl group forcePassword "	+ ChatColor.GOLD + "<true|false> "				+ ChatColor.GRAY + "Erzwingt die Passwort eingabe wenn true" + "\n" +
 					   ChatColor.RED + "/bl group owner "			+ ChatColor.GOLD + "<add|remove> <o1> [...] "	+ ChatColor.GRAY + "Ein Besitzer zu/von einer Gruppe hinzufügen/entfernen" + "\n" +
 					   ChatColor.RED + "/bl group setLockedState "	+ ChatColor.GOLD + "<open|close|on|off|both> "	+ ChatColor.GRAY + "Setzt/Ändert den geschützten status";
 		COMMAND_BUTTONLOCK_DESCRIPTION = "Verwaltet Buttonlock und geschützte Gruppen";
-
+	
 	}
 }

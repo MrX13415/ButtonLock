@@ -37,7 +37,7 @@ import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.3.1 r58
+ * @version 1.3.3 r59
  */
 public class ButtonLock extends JavaPlugin {
 
@@ -156,6 +156,7 @@ public class ButtonLock extends JavaPlugin {
 	
 		//register commands ...
 		try {
+			
 			PluginCommand setpw;
 			setpw = this.getCommand(COMMAND_SETPASSWORD);
 			setpw.setExecutor(new SetPasswordCommandExecuter());
@@ -451,4 +452,5 @@ public class ButtonLock extends JavaPlugin {
 
 		return true;
 	}
+
 }

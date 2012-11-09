@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.LineNumberReader;
+
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -42,7 +44,7 @@ public class LockedGroupsConfig {
 	private static final String fileFormat_list_seperate  = ","; 
 	
 	public void read() {
-		LineNumberReader reader;
+		LineNumberReader reader = null;
 		
 		boolean errorsORwarinings = false;
 		
@@ -75,21 +77,28 @@ public class LockedGroupsConfig {
 		
 		//clear all current locked groups before loading ...
 		ButtonLock.grouplist.clear();
-
+		
 		//read file for each World ...
 		for (int worldIndex = 0; worldIndex < server.getWorlds().size(); worldIndex++) {
 			World currentworld = server.getWorlds().get(worldIndex);
 			
 			//make a directory for each World
-			String filePath = configFilePath + currentworld.getName() + "/";
+			String filePath = configFilePath + currentworld.getName() + File.separator;
+			
 //			blockWorld = currentworld.getName();
+			
+			//ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading World: " + String.format("%-30s", currentworld.getName() + " ..."));
 			
 			//--- Read a file ---
 			try {
 				reader = new LineNumberReader(new FileReader(filePath + configFileName));
 				int lineNr = 0;
-				try {				
+				
+				try {	
+					if (new File(filePath + configFileName).length() > 0 && reader.ready() == false) throw new IOException("Unable to read from the File: ");  
+					
 					while (reader.ready()) {
+						
 						String currentline = reader.readLine().trim();
 						lineNr += 1;
 						
@@ -214,7 +223,7 @@ public class LockedGroupsConfig {
 								protection = PROTECTION_MODE.valueOf(line[1]);
 							}
 						}
-					}
+					} //end while
 
 					//add last Group
 					if (currentGroup != null && groupNr > -1) {
@@ -244,8 +253,21 @@ public class LockedGroupsConfig {
 			} catch (FileNotFoundException e) {
 				ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Save files not found.");
 				errorsORwarinings = true;
+			}finally{
+				try {
+					if (reader != null) reader.close();
+				} catch (IOException e) {
+					ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Unable to close file stream: " + filePath + configFileName);
+					errorsORwarinings = true;
+				}
 			}
 			//-------------------
+			
+			if (errorsORwarinings)ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "ERROR");
+			else{
+				if (new File(filePath + configFileName).length() <= 176) ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "EMPTY");
+				else ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "OK");
+			}
 			
 		}
 		
@@ -256,7 +278,7 @@ public class LockedGroupsConfig {
 	}
 
 	public boolean write() {
-		FileWriter writer;
+		FileWriter writer = null;
 		
 		//get current Server ...
 		Server server = ButtonLock.getCurrentServer();
@@ -280,7 +302,6 @@ public class LockedGroupsConfig {
 				for (int groupIndex = 0; groupIndex < ButtonLock.grouplist.size(); groupIndex++) {
 					LockedBlockGroup group = ButtonLock.grouplist.get(groupIndex);
 					
-
 					if (group.getGroupSize() != 0) {
 						if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
 

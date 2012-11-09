@@ -3,7 +3,7 @@
 =================
     
 Title:        ButtonLock
-Version:      1.3.2 r58
+Version:      1.3.3 r59
 
 Description:  Lockable Buttons and Levers in Minecraft for Bukkit
 website:      http://dev.bukkit.org/server-mods/buttonlock/
@@ -21,6 +21,10 @@ License:
     
 
 Changelog:
+    Version: 1.3.3
+        * Add: Hidden "/buttonlock getall" command
+		* Add: ButtenLock saves its config files auomaticly when using the server command "/save-all" to save the World
+        * FIX: Loading LockedGroups error
 
     Version: 1.3.2
         * Add: /clearPasswordlist command

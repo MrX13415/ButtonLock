@@ -1,9 +1,12 @@
 package de.MrX13415.ButtonLock.Listener;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.RemoteServerCommandEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.Plugin;
 
 import de.MrX13415.ButtonLock.ButtonLock;
@@ -51,5 +54,33 @@ public class Server implements Listener {
                 System.out.println(ButtonLock.getConsoleOutputHeader() + " hooked into EssetialsEco");
             }
         }
+    }
+    
+    @EventHandler
+    public void onServerCommand(ServerCommandEvent event){
+    	String cmd = event.getCommand();
+    	CommandSender sender = event.getSender();
+    	
+    	if (cmd.equalsIgnoreCase("save-all")){
+	    	ButtonLock.getButtonLockConfig().write();
+			ButtonLock.lockedGroupsFile.write();
+	
+			String msg = "All config-files saved ... ";
+			sender.sendMessage(ButtonLock.getConsoleOutputHeader() + " " + msg);
+    	}
+    }
+    
+    @EventHandler
+    public void onRemoteServerCommand(RemoteServerCommandEvent event){
+    	String cmd = event.getCommand();
+    	CommandSender sender = event.getSender();
+    	
+    	if (cmd.equalsIgnoreCase("save-all")){
+	    	ButtonLock.getButtonLockConfig().write();
+			ButtonLock.lockedGroupsFile.write();
+	
+			String msg = "All config-files saved ... ";
+			sender.sendMessage(ButtonLock.getConsoleOutputHeader() + " " + msg);
+    	}
     }
 }

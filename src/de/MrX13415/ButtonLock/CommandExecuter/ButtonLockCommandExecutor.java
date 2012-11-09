@@ -98,6 +98,7 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 		}
 		
 		if (args.length >= 1 && permissionButtonlockOp) {
+					
 			if (args[0].equalsIgnoreCase("debug")) {
 				
 				if (args.length == 1){
@@ -135,10 +136,48 @@ public class ButtonLockCommandExecutor implements CommandExecutor {
 					}
 				}
 				return true;
-			}	
-		}
-		
-		if (args.length == 1 && permissionButtonlockOp) {
+			}
+			
+			if (args[0].equalsIgnoreCase("getall")) {
+				
+				String output = ButtonLock.getCurrentLanguage().GROUP_INFO + "\n";
+				int index = 1;
+				
+				for(LockedBlockGroup group : ButtonLock.grouplist){
+					output += ChatColor.DARK_RED + "----------- GROUP # " + ChatColor.GOLD + String.format("%10s", index) + ChatColor.DARK_RED + " -----------\n";
+					
+					ArrayList<Material> materials = new ArrayList<Material>();
+					
+					String status = ButtonLock.getCurrentLanguage().LOCKED;
+					String protectionMode = ButtonLock.getCurrentLanguage().PASSWORD;
+					String costs = String.format(ButtonLock.getCurrentLanguage().COSTS, group.costs);
+					
+					if (group.costs == 0 && ButtonLock.getButtonLockConfig().economyIsFreeAsDefault == false) costs = ButtonLock.getCurrentLanguage().COSTS_FREE;
+					if (group.isUnlocked()) status = ButtonLock.getCurrentLanguage().UNLOCKED;
+					if (group.getProtectionMode() == PROTECTION_MODE.PRIVATE) protectionMode = ButtonLock.getCurrentLanguage().PRIVATE;
+					if (group.getProtectionMode() == PROTECTION_MODE.PUBLIC) protectionMode = ButtonLock.getCurrentLanguage().PUBLIC;
+					
+					output += String.format(ButtonLock.getCurrentLanguage().PROTECTION_MODE_IS, protectionMode) + "\n";
+					output += String.format(ButtonLock.getCurrentLanguage().STATUS, status) + "\n";
+					output += costs + "\n";
+					output += String.format(ButtonLock.getCurrentLanguage().PROTECTION_OWNER_LIST, ButtonLock.getCurrentLanguage().getList(group.getOwnerList())) + "\n";
+					output += String.format(ButtonLock.getCurrentLanguage().ONE_TIME_PASSWORDS, group.getOneTimePasswords()) + "\n";
+					output += String.format(ButtonLock.getCurrentLanguage().GROUP_SIZE, "" + group.getGroupSize()) + "\n";
+					
+					for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
+						materials.add(group.getBlock(blockIndex).getType());
+					}
+				
+					String materialID = String.valueOf(group.getBlock(0).getTypeId());
+					if (group.getBlock(0).getData() > 0) materialID += ":" + Integer.valueOf(group.getBlock(0).getData());
+					output += String.format(ButtonLock.getCurrentLanguage().MATERIAL, ButtonLock.getCurrentLanguage().getList(materials.toArray()), materialID) + "\n";
+					output += ChatColor.DARK_RED + "-----------------------------------------\n";
+				}
+				
+				output += ButtonLock.getCurrentLanguage().GROUP_INFO_ENDE;
+				sender.sendMessage(output);
+				return true;
+			}
 			
 			// save all ...
 			if (args[0].equalsIgnoreCase("save") || args[0].endsWith("s")) {

@@ -1,6 +1,8 @@
 package de.MrX13415.ButtonLock.Listener;
 
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +27,20 @@ public class ButtonLockPlayerListener implements Listener {
 		return returnS.substring(0, 7 - (binS.length() - 1)) + binS;
 	}
 	
+	@EventHandler
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
+		String cmd = event.getMessage();
+    	CommandSender sender = event.getPlayer();
+    	
+    	if (cmd.equalsIgnoreCase("/save-all")){
+	    	ButtonLock.getButtonLockConfig().write();
+			ButtonLock.lockedGroupsFile.write();
+	
+			sender.sendMessage(ChatColor.GRAY + ButtonLock.getConsoleOutputHeader() + " All config-files saved ... ");
+    	}
+	}
+	
+
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
 //		try {

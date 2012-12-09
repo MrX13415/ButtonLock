@@ -122,15 +122,16 @@ public class Language {
 	
 	public String getList(Object[] listArray, boolean useColors){
 		String returnStr = "";
-		for (Object object : listArray) {
-			if (useColors) {
-				returnStr += ChatColor.GOLD + object.toString() + ChatColor.GRAY + this.SEPERATE_CHR;
-			}else{
-				returnStr += object.toString() + this.SEPERATE_CHR;
+		try{
+			for (Object object : listArray) {
+				if (useColors) {
+					returnStr += ChatColor.GOLD + object.toString() + ChatColor.GRAY + this.SEPERATE_CHR;
+				}else{
+					returnStr += object.toString() + this.SEPERATE_CHR;
+				}
 			}
-		}
-		System.out.println(returnStr.substring(0, returnStr.length() - 1));
-		if (returnStr.length() >= 2) return returnStr = returnStr.substring(0, returnStr.length() - 1);
+			if (returnStr.length() >= 2) return returnStr = returnStr.substring(0, returnStr.length() - 1);
+		}catch(Exception e){}
 		return returnStr;
 	}
 	

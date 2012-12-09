@@ -255,6 +255,14 @@ public class LockedBlockGroup{
 		return "";
 	}
 	
+	public String addOwnerAny(String player) {
+		if (! ownerList.contains(player)){
+			ownerList.add(player);
+			return player;
+		}
+		return "";
+	}
+	
 	public String[] getOwnerList() {
 		String[] returnlist = new String[ownerList.size()];
 		for (int ownerIndex = 0; ownerIndex < ownerList.size(); ownerIndex++) {

@@ -236,7 +236,7 @@ public class LockedGroupsConfig {
 					if (currentGroup != null && groupNr > -1) {
 						if (pwIsSet) {
 							for (String owner : list) {
-								currentGroup.addOwner(owner);	
+								currentGroup.addOwnerAny(owner);	
 							}
 							currentGroup.setProtectionMode(protection);
 							currentGroup.setPassword(groupPW);

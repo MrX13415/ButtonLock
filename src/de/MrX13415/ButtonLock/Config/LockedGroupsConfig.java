@@ -47,6 +47,7 @@ public class LockedGroupsConfig {
 		LineNumberReader reader = null;
 		
 		boolean errorsORwarinings = false;
+		boolean errorsORwariningsCurWorld = false;
 		
 		int groupNr = -1;
 		int blockNr = -1;
@@ -75,12 +76,18 @@ public class LockedGroupsConfig {
 		//get current Server ...
 		Server server = ButtonLock.getCurrentServer();
 		
+		
+		ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Worlds found: " + server.getWorlds().size());
+		if (server.getWorlds().size() < 1) ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " No worlds found on server!");
+		 
 		//clear all current locked groups before loading ...
 		ButtonLock.grouplist.clear();
 		
 		//read file for each World ...
 		for (int worldIndex = 0; worldIndex < server.getWorlds().size(); worldIndex++) {
 			World currentworld = server.getWorlds().get(worldIndex);
+			 
+			errorsORwariningsCurWorld = false;
 			
 			//make a directory for each World
 			String filePath = configFilePath + currentworld.getName() + File.separator;
@@ -108,7 +115,7 @@ public class LockedGroupsConfig {
 							if (currentGroup != null && groupNr > -1) {
 								if (! pwIsSet) {
 									ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
-									errorsORwarinings = true;
+									errorsORwariningsCurWorld = true;
 									groupPW = 49; //hash 49 = char "1" 
 								}
 
@@ -186,7 +193,7 @@ public class LockedGroupsConfig {
 									currentGroup.addBlock(block);
 								}else{
 									ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Missing coordinate form Block " + blockNr + " in Group " + groupNr + "!");
-									errorsORwarinings = true;
+									errorsORwariningsCurWorld = true;
 								}
 							}
 						
@@ -243,27 +250,30 @@ public class LockedGroupsConfig {
 							currentGroup = null;
 						}else{
 							ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Password for Group " + groupNr + " not found! - Default password: \"1\"");
-							errorsORwarinings = true;
+							errorsORwariningsCurWorld = true;
 						}
 					}
 				} catch (Exception e) {
 					ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while loading locked groups at line: " + lineNr + " | Java Error: " + e);
+					errorsORwariningsCurWorld = true;
 					errorsORwarinings = true;
 				}
 			} catch (FileNotFoundException e) {
 				ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Save files not found.");
+				errorsORwariningsCurWorld = true;
 				errorsORwarinings = true;
 			}finally{
 				try {
 					if (reader != null) reader.close();
 				} catch (IOException e) {
 					ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: Unable to close file stream: " + filePath + configFileName);
+					errorsORwariningsCurWorld = true;
 					errorsORwarinings = true;
 				}
 			}
 			//-------------------
 			
-			if (errorsORwarinings)ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "ERROR");
+			if (errorsORwariningsCurWorld)ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "ERROR");
 			else{
 				if (new File(filePath + configFileName).length() <= 176) ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "EMPTY");
 				else ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Loading groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "OK");
@@ -280,13 +290,21 @@ public class LockedGroupsConfig {
 	public boolean write() {
 		FileWriter writer = null;
 		
+		boolean errorsORwarinings = true;
+		boolean errorsORwariningsCurWorld = false;
+		
 		//get current Server ...
 		Server server = ButtonLock.getCurrentServer();
+		
+		ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Worlds found: " + server.getWorlds().size());
+		if (server.getWorlds().size() < 1) ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " No worlds found on server!");
 		
 		try {
 			//write file for each World ...
 			for (int worldIndex = 0; worldIndex < server.getWorlds().size(); worldIndex++) {
 				World currentworld = server.getWorlds().get(worldIndex);
+				
+				errorsORwariningsCurWorld = false;
 				
 				//make a directory for each World
 				String filePath = configFilePath + currentworld.getName() + "/";
@@ -297,60 +315,79 @@ public class LockedGroupsConfig {
 
 //				new File(filePath + configFileName).delete();
 				
-				writer = new FileWriter(filePath + configFileName);
+				int groupsizeCurWorld = 0;
 				
-				for (int groupIndex = 0; groupIndex < ButtonLock.grouplist.size(); groupIndex++) {
-					LockedBlockGroup group = ButtonLock.grouplist.get(groupIndex);
+				try{
+					writer = new FileWriter(filePath + configFileName);
 					
-					if (group.getGroupSize() != 0) {
-						if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
-
-							writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
-							
-							String ownerList = "";
-							for (int index = 0; index < group.getOwnerListSize(); index++) {
-								ownerList += group.getOwner(index) + fileFormat_list_seperate;
-							}
-							
-							if (ownerList.endsWith(fileFormat_list_seperate)) ownerList.substring(0, ownerList.length() - 1);
-							ownerList = fileFormat_list_start + ownerList + fileFormat_list_end; 
+					for (int groupIndex = 0; groupIndex < ButtonLock.grouplist.size(); groupIndex++) {
+						LockedBlockGroup group = ButtonLock.grouplist.get(groupIndex);
+						
+						if (group.getGroupSize() != 0) {
+							if (group.getBlock(0).getWorld().getName().equals(currentworld.getName())) {
+								
+								groupsizeCurWorld++;
+								
+								writer.write(String.format(fileFormat_Section, keyGroupNr + groupIndex) + "\n");
+								
+								String ownerList = "";
+								for (int index = 0; index < group.getOwnerListSize(); index++) {
+									ownerList += group.getOwner(index) + fileFormat_list_seperate;
+								}
+								
+								if (ownerList.endsWith(fileFormat_list_seperate)) ownerList.substring(0, ownerList.length() - 1);
+								ownerList = fileFormat_list_start + ownerList + fileFormat_list_end; 
+										
+								writer.write(String.format(fileFormat_keys, keyOwnerList, ownerList) + "\n");
+								writer.write(String.format(fileFormat_keys, keyProtection, group.getProtectionMode()) + "\n");
+								writer.write(String.format(fileFormat_keys, keyGroupPW, group.getPassword()) + "\n");
+								
+								if (group.changedSetting_forceEnterPasswordEveryTime) 
+									writer.write(String.format(fileFormat_keys, keyForcePW, group.isForceingEnterPasswordEveryTime()) + "\n");
+								
+								if (group.ChangedSetting_costs) 
+									writer.write(String.format(fileFormat_keys, keyCosts, group.costs) + "\n");
+								
+								for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
 									
-							writer.write(String.format(fileFormat_keys, keyOwnerList, ownerList) + "\n");
-							writer.write(String.format(fileFormat_keys, keyProtection, group.getProtectionMode()) + "\n");
-							writer.write(String.format(fileFormat_keys, keyGroupPW, group.getPassword()) + "\n");
-							
-							if (group.changedSetting_forceEnterPasswordEveryTime) 
-								writer.write(String.format(fileFormat_keys, keyForcePW, group.isForceingEnterPasswordEveryTime()) + "\n");
-							
-							if (group.ChangedSetting_costs) 
-								writer.write(String.format(fileFormat_keys, keyCosts, group.costs) + "\n");
-							
-							for (int blockIndex = 0; blockIndex < group.getGroupSize(); blockIndex++) {
-								
-								int blockPosX = group.getBlock(blockIndex).getX();
-								int blockPosY = group.getBlock(blockIndex).getY();
-								int blockPosZ = group.getBlock(blockIndex).getZ();
-								
-								writer.write(String.format(fileFormat_Sub_Section, keyBlockNr + blockIndex) + "\n");
-			//					writer.write(String.format(fileFormat_Sub_Sub + fileFormat_keys, keyBlockWorld, blockWorld) + "\n");	//no need any more ...
-								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosX, blockPosX) + "\n");
-								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosY, blockPosY) + "\n");
-								writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosZ, blockPosZ) + "\n");
-							}
-						}					
+									int blockPosX = group.getBlock(blockIndex).getX();
+									int blockPosY = group.getBlock(blockIndex).getY();
+									int blockPosZ = group.getBlock(blockIndex).getZ();
+									
+									writer.write(String.format(fileFormat_Sub_Section, keyBlockNr + blockIndex) + "\n");
+				//					writer.write(String.format(fileFormat_Sub_Sub + fileFormat_keys, keyBlockWorld, blockWorld) + "\n");	//no need any more ...
+									writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosX, blockPosX) + "\n");
+									writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosY, blockPosY) + "\n");
+									writer.write(String.format(fileFormat_Sub + fileFormat_keys, keyBlockPosZ, blockPosZ) + "\n");
+								}
+							}					
+						}
+					
 					}
-				
+					writer.close();
+				}catch(Exception e){
+					ButtonLock.getButtonlockLogger().warning(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while saving locked groups | Java Error: " + e);
+					errorsORwariningsCurWorld = true;
+				}finally{
+					if (writer != null) writer.close();
 				}
-				writer.close();
-				//--------------------
+								
+				if (errorsORwariningsCurWorld)ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Saving groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "ERROR");
+				else{
+					if (groupsizeCurWorld <= 0) ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Saving groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "EMPTY");
+					else ButtonLock.getButtonlockLogger().info(ButtonLock.getConsoleOutputHeader() + " Saving groups for World: " + String.format("%-30s", currentworld.getName() + " ...") + "OK");
+				}
 			}
 			
 			return true;
 		} catch (Exception e1) {
-			System.err.println(ButtonLock.getConsoleOutputHeader() + " Error: An error occurred while saveing all locked groups");
+			errorsORwarinings = true;
 			e1.printStackTrace();
 		}
 		
+		if (errorsORwarinings) {
+			ButtonLock.getCurrentServer().broadcastMessage(String.format(ButtonLock.getCurrentLanguage().ERROR_SAVING, ButtonLock.getConsoleOutputHeader()));
+		}
 		
 		return false;
 	}

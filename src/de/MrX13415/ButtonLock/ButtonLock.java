@@ -37,7 +37,7 @@ import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.3.3 r59
+ * @version 1.3.4 r60
  */
 public class ButtonLock extends JavaPlugin {
 
@@ -101,7 +101,7 @@ public class ButtonLock extends JavaPlugin {
 	public void onLoad() {
 		//set static vars ...
 		server = this.getServer();
-		 log = server.getLogger();
+		log = server.getLogger();
 		
 		pdfFile = this.getDescription();
 		pluginName = pdfFile.getName();
@@ -109,7 +109,11 @@ public class ButtonLock extends JavaPlugin {
 		
 		LanguageLoader.updateLanguages(false);
 		language = LanguageLoader.loadDefaultLanguage();
-        
+	}
+	
+	
+	@Override
+	public void onEnable() {  
         //load config ...
         configFile = new Config();
         configFile.read();
@@ -122,11 +126,10 @@ public class ButtonLock extends JavaPlugin {
         //load locked Buttons ...
         lockedGroupsFile = new LockedGroupsConfig();
         lockedGroupsFile.read();
-	}
-	
-	
-	@Override
-	public void onEnable() {        
+	    
+		//permission
+		setupPermissions();
+		
         //register events ...
         getServer().getPluginManager().registerEvents(pListener, this);
         getServer().getPluginManager().registerEvents(bListener, this);
@@ -189,9 +192,6 @@ public class ButtonLock extends JavaPlugin {
 //		getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_ENABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
 //	    getServer().getPluginManager().registerEvent(org.bukkit.event.Event.Type.PLUGIN_DISABLE, new de.MrX13415.ButtonLock.Server(this), Priority.Monitor, this);
 	    getServer().getPluginManager().registerEvents(new de.MrX13415.ButtonLock.Listener.Server(this), this);
-	    
-		//permission
-		setupPermissions();
 	}
 	
 //    public boolean isDebugging(final Player player) {

@@ -48,6 +48,7 @@ public class English extends Language{
 		ONE_TIME_CODE = ChatColor.GRAY + "Your one-time password is: " + ChatColor.GOLD + "%s";	
 		FOR_PLAYERS = ChatColor.GRAY + "For Player(s): " + ChatColor.GOLD + "%s";	
 		ERROR_LOADING = ChatColor.GRAY + "%s " + ChatColor.RED + "Some errors occurred during loading ... (see console)";
+		ERROR_SAVING = ChatColor.GRAY + "%s " + ChatColor.RED + "Some errors occurred during saving ... (see console)";
 		GROUP_FORCEPW = ChatColor.GRAY + "At this group, you must enter a password " + ChatColor.GOLD + "every time" + ChatColor.GRAY +  " ...";
 		GROUP_NOT_FORCEPW = ChatColor.GRAY + "At this group, you must enter a password " + ChatColor.GOLD + "only once" + ChatColor.GRAY + " ...";
 		GROUP_BLOCK_ADD = ChatColor.GRAY + "Click at a Block to add it to the current Locked group ... (it is locked too, after that)";

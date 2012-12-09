@@ -48,6 +48,7 @@ public class Language {
 	public String ONE_TIME_CODE;
 	public String FOR_PLAYERS;
 	public String ERROR_LOADING;
+	public String ERROR_SAVING;
 	public String GROUP_FORCEPW;
 	public String GROUP_NOT_FORCEPW;
 	public String GROUP_BLOCK_ADD;

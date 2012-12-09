@@ -48,6 +48,7 @@ public class German extends Language{
 		ONE_TIME_CODE = ChatColor.GRAY + "ihr Einmal Passwort ist: " + ChatColor.GOLD + "%s";	
 		FOR_PLAYERS = ChatColor.GRAY + "Für die Spieler: " + ChatColor.GOLD + "%s";	
 		ERROR_LOADING = ChatColor.GRAY + "%s " + ChatColor.RED + "Einige Fehler sind beim laden aufgetreten ... (siehe Konsole)";
+		ERROR_SAVING = ChatColor.GRAY + "%s " + ChatColor.RED + "Einige Fehler sind beim speichern aufgetreten ... (siehe Konsole)";
 		GROUP_FORCEPW = ChatColor.GRAY + "Für diese Gruppe, müssen Sie das Passwort " + ChatColor.GOLD + "jedesmal" + ChatColor.GRAY +  " eingeben ...";
 		GROUP_NOT_FORCEPW = ChatColor.GRAY + "Für diese Gruppe, müssen Sie das Passwort " + ChatColor.GOLD + "nur einmal" + ChatColor.GRAY +  " eingeben ...";
 		GROUP_BLOCK_ADD = ChatColor.GRAY + "Klicken Sie auf einen Block, um ihn der aktuellen Gruppe hinzufügen ... (Block is auch geschützt)";

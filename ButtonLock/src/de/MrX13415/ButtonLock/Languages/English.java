@@ -6,14 +6,14 @@ import org.bukkit.ChatColor;
 public class English extends Language{
 
 	public English(){
-		_LastVersion = "1.5"; 
+		_LastVersion = "1.6"; 
 		_languageName = "english";
-	    _version = "1.5";
+	    _version = "1.6";
 	
 	    GROUP_INFO = ChatColor.GRAY + "-- Group Information ----------";
 	    GROUP_INFO_ENDE = ChatColor.GRAY + "-----------------------------";
 	    ONE_TIME_PASSWORDS = ChatColor.GRAY + "One-time passwords: " + ChatColor.GOLD + "%s";
-	    COSTS = ChatColor.GRAY + "Costs: " + ChatColor.GOLD + "$%s";
+	    COSTS = ChatColor.GRAY + "Costs: " + ChatColor.GOLD + "%s";
 	    COSTS_FREE = ChatColor.GRAY + "Costs: " + ChatColor.GOLD + "FREE";
 	    MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + " (ID: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + ")";
 	    PROTECTABLE = ChatColor.GRAY + "Block is protectable: " + ChatColor.GOLD + "%s";
@@ -35,8 +35,9 @@ public class English extends Language{
 	    PROTECTION_REMOVED = ChatColor.GRAY + "Protection removed ...";
 	    ICONOMY_NO_ACC = ChatColor.GRAY + "You have no account ...";
 	    ICONOMY_NOT_VALID_ACC = ChatColor.GRAY + "The account is not valid ...";
-	    ICONOMY_LESS_MONY = ChatColor.GRAY + "You dont have enough mony. You need: " + ChatColor.GOLD + "$%s";
-	    ICONOMY_MONY_SUBTRACTED = ChatColor.GRAY + "Used costs: " + ChatColor.GOLD + "$%s";
+	    ICONOMY_LESS_MONY = ChatColor.GRAY + "You dont have enough mony. You need: " + ChatColor.GOLD + "%s";
+	    ICONOMY_MONY_SUBTRACTED = ChatColor.GRAY + "Used costs: " + ChatColor.GOLD + "%s";
+	    ICONOMY_MONY_GAINED = ChatColor.GRAY + "Money gained: " + ChatColor.GOLD + "%s";
 	    ICONOMY_MONY_SUBTRACTED_FREE = ChatColor.GRAY + "Used costs: " + ChatColor.GOLD + "FREE";
 	    ENTER_CODE_FIRST = ChatColor.GRAY + "Enter the password first ...";
 	    UNLOCK_BLOCK = ChatColor.GRAY + "Password entered: Click at a Block to unlock it ...";
@@ -57,7 +58,7 @@ public class English extends Language{
 		GROUP_BLOCK_REMOVED = ChatColor.GRAY + "Block removed ...";
 		PW_BYPASS = ChatColor.GRAY + "You by-passed the Password: Access " + ChatColor.GREEN + "SUCCEED";
 		ECONOMY_BYPASS = ChatColor.GRAY + "You by-passed IConomy: Access " + ChatColor.GREEN + "SUCCEED";
-		GROUP_COSTS_CHANGED_COSTS = ChatColor.GRAY + "Costs changed for this group. New costs: " + ChatColor.GOLD + "$%s";
+		GROUP_COSTS_CHANGED_COSTS = ChatColor.GRAY + "Costs changed for this group. New costs: " + ChatColor.GOLD + "%s";
 		GROUP_COSTS_CHANGED_FREE = ChatColor.GRAY + "Costs changed for this group. New costs: " + ChatColor.GOLD + "FREE";
 		GROUP_PROTECTION = ChatColor.GRAY + "Protection mode changed to: " + ChatColor.GOLD + "%s";
 		PROTECTION_OWNER_LIST = ChatColor.GRAY + "Owner(s): " + ChatColor.GOLD + "%s";

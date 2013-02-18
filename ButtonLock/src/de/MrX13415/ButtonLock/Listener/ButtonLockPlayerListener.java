@@ -321,26 +321,37 @@ public class ButtonLockPlayerListener implements Listener {
 				player.sendMessage(ButtonLock.getCurrentLanguage().ECONOMY_BYPASS);
 				
 			}else{
-				if (accounts.exists(player.getName())){
+				if (accounts.exists(player.getName()) &&
+						accounts.exists(group.getOwner(0))){
 				
-					Account account = accounts.get(player.getName());
-					if(account != null){ // check if the account is valid
-						Holdings balance = account.getHoldings();
-						
-						Double costs = group.costs;
+					Account accountUser = accounts.get(player.getName());
+					Account accountOwner0 = accounts.get(group.getOwner(0));
+					
+					if(accountUser != null && accountOwner0 != null){ // check if the account is valid
+						Holdings balance = accountUser.getHoldings();
 
+						Double costs = group.costs;
 						
 						if (balance.hasEnough(costs)) {
 							balance.subtract(costs);
+							accountOwner0.getHoldings().add(costs);
+
 							if (costs > 0) {
-								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, costs));
+								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
+
+								for (Player owner : ButtonLock.getCurrentServer().getOnlinePlayers()) {
+									if (owner.getName().equalsIgnoreCase(group.getOwner(0))){
+										player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_GAINED, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
+										break;
+									}
+								}
 							}else if (! ButtonLock.getButtonLockConfig().economyIsFreeAsDefault) {
 								player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED_FREE);
 							}
 						}else {
 							//not enough mony ...
 							player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
-							player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_LESS_MONY, costs));
+							player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_LESS_MONY, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
 							event.setCancelled(true);
 						}
 					}else{
@@ -382,23 +393,31 @@ public class ButtonLockPlayerListener implements Listener {
 				
 				String name = player.getName();
 				
-				if (Economy.playerExists(name)){
+				if (Economy.playerExists(name) && Economy.playerExists(group.getOwner(0))){
 					
 					try{
 						double costs = group.costs;
 						
 						if (Economy.hasEnough(name, costs)) {
 							Economy.subtract(name, costs);
+							Economy.add(group.getOwner(0), costs);
 							
 							if (costs > 0) {
-								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, costs));
+								player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
+
+								for (Player owner : ButtonLock.getCurrentServer().getOnlinePlayers()) {
+									if (owner.getName().equalsIgnoreCase(group.getOwner(0))){
+										player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_MONY_GAINED, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
+										break;
+									}
+								}
 							}else if (! ButtonLock.getButtonLockConfig().economyIsFreeAsDefault) {
 								player.sendMessage(ButtonLock.getCurrentLanguage().ICONOMY_MONY_SUBTRACTED_FREE);
 							}	
 						}else {
 							//not enough money ...
 							player.sendMessage(ButtonLock.getCurrentLanguage().DENIED);
-							player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_LESS_MONY, costs));
+							player.sendMessage(String.format(ButtonLock.getCurrentLanguage().ICONOMY_LESS_MONY, String.format(ButtonLock.getButtonLockConfig().economyUnitFormat, costs)));
 							event.setCancelled(true);
 						}
 					}catch (Exception e){	

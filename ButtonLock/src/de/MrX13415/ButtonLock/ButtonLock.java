@@ -37,7 +37,7 @@ import de.MrX13415.ButtonLock.Listener.ButtonLockPlayerListener;
 /** ButtonLock for Bukkit
  * 
  * @author MrX13415
- * @version 1.3.4 r60
+ * @version 1.3.5 r61
  */
 public class ButtonLock extends JavaPlugin {
 

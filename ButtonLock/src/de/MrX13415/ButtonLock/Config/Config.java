@@ -34,6 +34,7 @@ public class Config {
 	private static final String keyEconomyCosts = "DefaultPriceIfNotFree";
 	private static final String keyTimeforEnteringPassword = "TimeforEnteringPassword";
 	private static final String listLockableBlocks = "LockableBlocksList:";
+	private static final String keyEconomyUnitFormat = "MoneyFormat";
 	private static final String fileFormat_keys = "%s: %s"; 
 	private static String fileFormat_keys_key_value_seperator = ":";
 	private static final String fileFormat_lists_start = "  - "; 
@@ -56,6 +57,7 @@ public class Config {
 	public boolean offlinePlayersAreAddable = false;
 	public boolean economyIsFreeAsDefault = true;
 	public double economyCosts = 0.50;
+	public String economyUnitFormat = "$%s";
 	public long timeforEnteringPassword = 10000;  //millis
 	//------------------
 	public String currentlist;	
@@ -79,6 +81,7 @@ public class Config {
 		offlinePlayersAreAddable = false;
 		economyIsFreeAsDefault = true;
 		economyCosts = 0.50;
+		economyUnitFormat = "$%s";
 		timeforEnteringPassword = 10000;  //millis
 	}
 	
@@ -160,6 +163,10 @@ public class Config {
 						
 						if (keyLine[0].equalsIgnoreCase(keyEconomyCosts)) {
 							economyCosts = Double.valueOf(keyLine[1]);
+						}
+						
+						if (keyLine[0].equalsIgnoreCase(keyEconomyUnitFormat)) {
+							economyUnitFormat = keyLine[1];
 						}
 						
 						if (keyLine[0].equalsIgnoreCase(keyTimeforEnteringPassword)) {
@@ -269,6 +276,7 @@ public class Config {
 			writer.write(String.format(fileFormat_keys, keyEnableIConomyByPass, enableEonomyByPass) + "\n");
 			writer.write(String.format(fileFormat_keys, keyEconomyIsFreeAsDefault , economyIsFreeAsDefault) + "\n");
 			writer.write(String.format(fileFormat_keys, keyEconomyCosts , economyCosts) + "\n");
+			writer.write(String.format(fileFormat_keys, keyEconomyUnitFormat , economyUnitFormat) + "\n");
 			writer.write("\n");
 			writer.write(listLockableBlocks + "\n");
 			

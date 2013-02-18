@@ -38,6 +38,7 @@ public class Language {
 	public String ICONOMY_LESS_MONY;
 	public String ICONOMY_MONY_SUBTRACTED;
 	public String ICONOMY_MONY_SUBTRACTED_FREE;
+	public String ICONOMY_MONY_GAINED;
 	public String ENTER_CODE_FIRST;
 	public String UNLOCK_BLOCK;
 	public String ONE_TIME_CODE_UESED;

@@ -6,14 +6,14 @@ import org.bukkit.ChatColor;
 public class German extends Language{
 
 	public German(){
-		_LastVersion = "1.5"; 
+		_LastVersion = "1.6"; 
 		_languageName = "german";
-		_version = "1.5";
+		_version = "1.6";
 		
 		GROUP_INFO = ChatColor.GRAY + "-- Gruppen Informationen ------";
 		GROUP_INFO_ENDE = ChatColor.GRAY + "-----------------------------";
 		ONE_TIME_PASSWORDS = ChatColor.GRAY + "Einmal Passwörter: " + ChatColor.GOLD + "%s";
-		COSTS = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "%s Euro";
+		COSTS = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "%s";
 		COSTS_FREE = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "kostenlos";
 		MATERIAL = ChatColor.GRAY + "Material: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + " (ID: " + ChatColor.GOLD + "%s" + ChatColor.GRAY + ")";
 		PROTECTABLE = ChatColor.GRAY + "Block ist schützbar: " + ChatColor.GOLD + "%s";
@@ -35,9 +35,10 @@ public class German extends Language{
 		PROTECTION_REMOVED = ChatColor.GRAY + "Schütz entfernt ...";
 		ICONOMY_NO_ACC = ChatColor.GRAY + "Sie haben kein Bank-Account ...";
 		ICONOMY_NOT_VALID_ACC = ChatColor.GRAY + "Ihr Bank-Account ist ungültig ...";
-		ICONOMY_LESS_MONY = ChatColor.GRAY + "Sie haben nicht genügend Geld. Sie brauchend: " + ChatColor.GOLD + "%s Euro";
-		ICONOMY_MONY_SUBTRACTED = ChatColor.GRAY + "Genutzte Kosten: " + ChatColor.GOLD + "%s Euro";
-		ICONOMY_MONY_SUBTRACTED_FREE = ChatColor.GRAY + "Genutzte Kosten: " + ChatColor.GOLD + "FREE";
+		ICONOMY_LESS_MONY = ChatColor.GRAY + "Sie haben nicht genügend Geld. Sie brauchend: " + ChatColor.GOLD + "%s";
+		ICONOMY_MONY_SUBTRACTED = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "%s";
+		ICONOMY_MONY_SUBTRACTED_FREE = ChatColor.GRAY + "Kosten: " + ChatColor.GOLD + "FREE";
+		ICONOMY_MONY_GAINED = ChatColor.GRAY + "Erhalten: " + ChatColor.GOLD + "%s";
 		ENTER_CODE_FIRST = ChatColor.GRAY + "Geben Sie zuerst das Passwort ein ...";
 		UNLOCK_BLOCK = ChatColor.GRAY + "Ein Passwort wurde eingegeben: Klicken Sie auf ein Block um den Schutz aufzuheben ...";
 		ONE_TIME_CODE_UESED = ChatColor.GRAY + "Einmal Passwort verbraucht ... (funktioniert kein 2. mal)";

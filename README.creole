@@ -3,7 +3,7 @@
 =================
     
 Title:        ButtonLock
-Version:      1.3.4 r60
+Version:      1.3.5 r61
 
 Description:  Lockable Buttons and Levers in Minecraft for Bukkit
 website:      http://dev.bukkit.org/server-mods/buttonlock/
@@ -21,6 +21,10 @@ License:
     
 
 Changelog:
+    Version: 1.3.5
+        * ADD: Money unit is changeable in config
+        * FIX: Owner doesn't gain money
+    
     Version: 1.3.4
         * FIX: Server doesn't load locked groups automaticly (you have to issue the command /bl reload)
 
